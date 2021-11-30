@@ -1,13 +1,3 @@
-(* Représentation des programmes.
-   En réponse à l'indication de l'énoncé, j'associe une valeur entière
-   à chaque variable globale. Mais vous voudrez peut-être faire évoluer
-   cela (et procéder de même pour les variables locales des fonctions). *)
-type prog = 
-{
-  globals: (string * typ * int) list;
-  functions: fun_def list;
-}
-
 (* Représentation des types. *)
 type typ =
   | Int
@@ -64,4 +54,14 @@ type fun_def =
   code: seq;
 }
 
+(* Représentation des programmes.
+   En réponse à l'indication de l'énoncé, j'associe une valeur entière
+   à chaque variable globale. Mais vous voudrez peut-être faire évoluer
+   cela (et procéder de même pour les variables locales des fonctions). *)
+
+type prog = 
+{
+  globals: (string * typ * int) list;
+  functions: fun_def list;
+}
 

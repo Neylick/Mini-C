@@ -1,5 +1,6 @@
 int PARAM = 5;
 
-int f() {
+int f() 
+{
   return 0;
 }

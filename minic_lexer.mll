@@ -11,8 +11,12 @@
     [ 
     "return",   RETURN;
     "true",     BOOL_CST true;
-    "false",     BOOL_CST false;
+    "false",    BOOL_CST false;
     "int",      INT;
+    "bool",     BOOL;
+    "if",       IF;
+    "else",     ELSE;
+    "while",    WHILE;
     ] ;
     fun s ->
       try  Hashtbl.find h s
@@ -39,7 +43,6 @@ rule token = parse
   | [' ' '\t' '\r']+ { token lexbuf }
   | number as n { CST(int_of_string n) }
   | ident as id { keyword_or_ident id }
-
   | ";" { SEMI }
   | "=" { SET }
   | "(" { LPAR }

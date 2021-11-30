@@ -1,16 +1,38 @@
 type token =
-    SET
+    XOR
+  | WHILE
+  | SUB
+  | SET
   | SEMI
   | RPAR
   | RETURN
+  | OR
+  | NEQ
+  | MUL
+  | MOD
+  | LT
   | LPAR
+  | LET
   | INT
+  | IF
   | IDENT of string
+  | GT
+  | GET
+  | EQ
   | EOF
   | END
+  | ELSE
+  | DIV
   | CST of int
+  | BXOR
+  | BOR
   | BOOL_CST of bool
+  | BOOL
+  | BNEQ
   | BEGIN
+  | BAND
+  | AND
+  | ADD
 val menhir_begin_marker : int
 val xv_variable_decl : string * Minic_ast.typ * int
 val xv_typ : Minic_ast.typ
