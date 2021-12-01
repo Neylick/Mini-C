@@ -41,7 +41,7 @@ type instr =
   | If of expr * seq * seq (* if (c) { s1 } else { s2 } *)
   | While of expr * seq (* while (c) { s } *)
   | Return of expr (* return v; *)
-  | Skip of expr (* *)
+  | Skip (* *)
 and seq = instr list
 
 (* Représentétion des fonctions. *)

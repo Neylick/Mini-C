@@ -82,15 +82,19 @@ instruction:
   | RETURN SEMI { Return(Undef) }
 (* If *)
   | IF LPAR c=expression RPAR BEGIN e1 = list(instruction) END ELSE BEGIN e2 = list(instruction) END { If(c,e1,e2) }
-  | IF LPAR c=expression RPAR BEGIN e = list(instruction) END { If(c, e, []) } 
+  | IF LPAR c=expression RPAR BEGIN e = list(instruction) END { If(c, e, []) }
+  | IF LPAR c=expression RPAR e1 = instruction ELSE e2 = instruction { If(c, [e1], [e2]) } 
+  | IF LPAR c=expression RPAR e = instruction  { If(c, [e], []) } 
+  | IF LPAR c=expression RPAR SEMI { Skip } 
 (* While *)
   | WHILE LPAR c=expression RPAR BEGIN e = list(instruction) END { While(c,e) }
   | WHILE LPAR c=expression RPAR SEMI { While(c, []) }
 (* Decls and sets *)
-  | decl=variable_decl { Set(decl) }
+  | decl = variable_decl { Set(decl) }
 ;
 
 expression:
+  | LPAR e=expression RPAR { e }
   | n=CST { Cst(n) }
   | b=BOOL_CST { BCst(b) }
   | i=IDENT { Get(i) }

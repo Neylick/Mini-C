@@ -2,14 +2,26 @@ int PARAM = 5;
 
 int f() 
 {
+
 	int a = 0;
 	while(false)
 	{
-		
+		int b = 0xFFFF + 0X0001 % 0123 - 4;
+		int c;
+		c = 36;
+		if(a > b)
+		{
+			if(a < b) return 1;
+			else return 2;
+		}
+		a = a * (b / c);
 	}
-	if(false)
+
+	if(false || (true && false))
 	{
-		b = 1;
+		while(false^false);
+		bool b = true;
+		b = b & b | b;
 	}
 	else
 	{
