@@ -4,6 +4,7 @@
 type token = 
   | XOR
   | WHILE
+  | VOID
   | SUB
   | SET
   | SEMI

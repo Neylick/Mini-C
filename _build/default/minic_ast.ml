@@ -1,14 +1,14 @@
-(* Représentation des types. *)
+(*Représentation des types.*)
 type typ =
   | Int
   | Bool
   | Void
+  | None
 
-(* Représentation des expressions.
-   Ajouté : les constantes booléennes. *)
+(* Représentation des expressions.*)
 type expr =
-  | Cst of int (* 0 *)
-  | BCst of bool (* true *)
+  | Get of string
+  | Call of string * expr list  (* f(a,b,...) *)
   (* Ops *)
     | Add of expr * expr (* + *)
     | Mul of expr * expr (* * *)
@@ -30,27 +30,26 @@ type expr =
     | BAnd  of expr * expr (* & *)
     | Xor  of expr * expr (* ^= *)
     | BXor  of expr * expr (* ^ *)
-
-  | Get of string
-  | Call of string * expr list  (* f(a,b,...) *)
+  | Cst of int (* 0 *)
+  | BCst of bool (* true *)
+  | Undef
 
 (* Représentation des instructions et séquences. *)
 type instr =
   | Putchar of expr (* putchar(n); *)
-  | Set of string * expr (* x = n; *)
-  | If  of expr * seq * seq (* if (c) { s1 } else { s2 } *)
+  | Set of (typ * string * expr)
+  | If of expr * seq * seq (* if (c) { s1 } else { s2 } *)
   | While of expr * seq (* while (c) { s } *)
-  | Return of expr (* return(v); *)
-  | Expr of expr (*  *)
+  | Return of expr (* return v; *)
+  | Skip of expr (* *)
 and seq = instr list
 
 (* Représentétion des fonctions. *)
 type fun_def = 
 {
   name: string;
-  params: (string * typ) list;
+  params: (typ * string) list;
   return: typ;
-  locals: (string * typ) list;
   code: seq;
 }
 
@@ -61,7 +60,7 @@ type fun_def =
 
 type prog = 
 {
-  globals: (string * typ * int) list;
+  globals: (typ * string * expr) list;
   functions: fun_def list;
 }
 

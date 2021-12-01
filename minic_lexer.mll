@@ -2,21 +2,20 @@
   open Lexing
   open Minic_parser
 
-  (* Fonction auxiliaire pour rassembler les mots-clés 
-     À COMPLÉTER
-   *)
+  (* Fonction auxiliaire pour rassembler les mots-clés *)
   let keyword_or_ident =
     let h = Hashtbl.create 17 in
-    List.iter (fun (s, k) -> Hashtbl.add h s k)
+    List.iter (fun (str, token) -> Hashtbl.add h str token)
     [ 
-    "return",   RETURN;
-    "true",     BOOL_CST true;
-    "false",    BOOL_CST false;
-    "int",      INT;
-    "bool",     BOOL;
-    "if",       IF;
-    "else",     ELSE;
-    "while",    WHILE;
+      "return",   RETURN;
+      "true",     BOOL_CST true;
+      "false",    BOOL_CST false;
+      "int",      INT;
+      "bool",     BOOL;
+      "if",       IF;
+      "else",     ELSE;
+      "while",    WHILE;
+      "void",     VOID;
     ] ;
     fun s ->
       try  Hashtbl.find h s
@@ -35,9 +34,7 @@ let number = (['-']? digit+) | hexnumber | octnumber
 let alpha = ['a'-'z' 'A'-'Z']
 let ident = alpha (alpha | '_' | digit)*
 
-(* Règles de reconnaissance 
-   À COMPLÉTER
-*)
+(* Règles de reconnaissance *)
 rule token = parse
   | ['\n'] { new_line lexbuf; token lexbuf }
   | [' ' '\t' '\r']+ { token lexbuf }

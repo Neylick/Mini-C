@@ -2,5 +2,18 @@ int PARAM = 5;
 
 int f() 
 {
-  return 0;
+	int a = 0;
+	while(false)
+	{
+		
+	}
+	if(false)
+	{
+		
+	}
+	else
+	{
+
+	}
+  return 0+0;
 }
