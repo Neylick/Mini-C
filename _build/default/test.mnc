@@ -6,16 +6,25 @@ int myfun(int a, int b)
 	return a + b;
 }
 
+// Comment can also be out of function
+/* Also /*works*/ with blocks, even with multiple layered ones */
+
 
 int main() 
 {
+	/* 
+		THIS IS A COMMENT	
+	*/
+	// THIS IS ALSO A COMMENT
 	
 	int a = 0;
 	while(false)
 	{
+		// Custom scope with local variables
 		{
 			int d = 0;
 		}
+		int d = 2;
 		int b = 0xFFFF + 0X0001 % 0123 - 4;
 		int c;
 		c = 36;
@@ -28,10 +37,12 @@ int main()
 		a = a * (b / c);
 	}
 
+	/* OK */
+	// Ok
 	if(false || (true && false))
 	{
-		while(false^false);
-		bool b = true;
+		while(false^false); //while syntax
+		bool b = true; //Redefining variables in different scopes
 		b = b & b | b;
 		int d = 0;
 	}
@@ -40,4 +51,9 @@ int main()
 
 	}
   return 0+0;
+}
+
+void afficher()
+{
+	// We could do stuff here
 }

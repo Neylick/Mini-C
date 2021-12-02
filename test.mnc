@@ -6,10 +6,15 @@ int myfun(int a, int b)
 	return a + b;
 }
 
+// Comment can also be out of function
+/* Also /*works*/ with blocks, even with multiple layered ones */
+
 
 int main() 
 {
-	/* THIS IS A COMMENT	*/
+	/* 
+		THIS IS A COMMENT	
+	*/
 	// THIS IS ALSO A COMMENT
 	
 	int a = 0;
@@ -19,6 +24,7 @@ int main()
 		{
 			int d = 0;
 		}
+		int d = 2;
 		int b = 0xFFFF + 0X0001 % 0123 - 4;
 		int c;
 		c = 36;

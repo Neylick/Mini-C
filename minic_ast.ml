@@ -55,14 +55,23 @@ type fun_def =
   code: seq;
 }
 
-(* Représentation des programmes.
-   En réponse à l'indication de l'énoncé, j'associe une valeur entière
-   à chaque variable globale. Mais vous voudrez peut-être faire évoluer
-   cela (et procéder de même pour les variables locales des fonctions). *)
-
+(* 
+Representation des definitions dans le programmes :
+- Fonction definies comme des fun_def (voir au dessus)
+- Variables globales definies comme des associations de type (typ), identifiant (string) et valeur (expression)
+Je ne separe pas les deux pour avoir acces a la timeline de nos definitions.
+*)
+type global_scope_def =
+  | Function of fun_def
+  | Variable of (typ * string * expr)
+  
+(* Représentation des programmes. *)
+(*
 type prog = 
 {
   globals: (typ * string * expr) list;
   functions: fun_def list;
 }
+*)
 
+type prog = global_scope_def list

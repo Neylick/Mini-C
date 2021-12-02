@@ -11,6 +11,7 @@ type token =
   | SEMI
   | RPAR
   | RETURN
+  | PUTCHAR
   | OR
   | NEQ
   | MUL
@@ -29,7 +30,6 @@ type token =
   | ELSE
   | DIV
   | CST of (int)
-  | COMMENT
   | BXOR
   | BOR
   | BOOL_CST of (bool)

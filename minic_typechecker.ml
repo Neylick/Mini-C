@@ -3,29 +3,29 @@ module Env = Map.Make(String)
 
 (* Limitation on variables for each scope *)
 
+let rec find_return_instr = function
+  | Return _ -> true
+  | Scope s -> find_return_seq s
+  | If(_, s1, s2) -> find_return_seq s1 || find_return_seq s2
+  | While(_, s) ->  find_return_seq s
+  | _ -> false
+and find_return_seq s = List.fold_left (fun acc i -> find_return_instr i || acc) false s
 
 let typecheck_program (prog: prog) =  
   (* 
     TODO
     - Verifier le bon typage des globals.
+    - Putchar 
     - Return dans chaque path de fonction
     - Traduire en assembleur ?
   *)
-
-  
-  if not (List.fold_left (fun acc f -> if f.name = "main" then true else acc) false prog.functions) 
-  then failwith "Couldn't find main function (no entry point) : error";
-
-  let global_env = Hashtbl.create 100 in 
-  let _ = List.iter (fun (t, i, v) -> 
-                      Hashtbl.add global_env i (t, v)
-                    ) 
-          prog.globals in
+  let global_env = Hashtbl.create 100 in
+  let function_list = Hashtbl.create 100 in 
 
   let typecheck_function (fdef: fun_def) =
     (* Return exists *)
     if fdef.return <> Void && fdef.name <> "main"
-    then  if not (List.fold_left (fun acc i->match i with| Return _ -> true| _ -> acc) false fdef.code) 
+    then  if not (find_return_seq fdef.code)
           then failwith "Couldn't find return in non void and non main function : error";
     let local_env = Hashtbl.create 100 in
     let _ = List.iter (fun (t, i) -> Hashtbl.add local_env i (t, Param)) fdef.params in
@@ -64,10 +64,11 @@ let typecheck_program (prog: prog) =
               else t
             with Not_found -> failwith errmsg
         end
-      | Call (name, params) ->  let f = List.find (fun f -> (f.name = name)) prog.functions in 
-                                List.iter2 (fun p (t, _) -> if type_expr p <> t then failwith "Parameter type unmatched : error") params f.params;
-                                f.return
-      
+      | Call (name, params) ->  try let f = Hashtbl.find function_list name in 
+                                  begin
+                                    List.iter2 (fun p (t, _) -> if type_expr p <> t then failwith "Parameter type unmatched : error") params f.params; f.return
+                                  end
+                                with Not_found -> failwith ("Function "^name^" is not defined")
     in
     let rec typecheck_instr = function
       | Skip -> ()
@@ -109,4 +110,33 @@ let typecheck_program (prog: prog) =
     and typecheck_seq s = List.iter typecheck_instr s in
     typecheck_seq (fdef.code);
   in
-  List.iter typecheck_function (prog.functions)
+
+  (* Used for initial checks : exisiting main and maybe we could check some reserved globals or things like that *)
+  let functions, globals =
+    List.fold_right
+      (
+        fun def acc ->
+        match def with
+        | Variable(t,i,v) -> let (fs,vs) = acc in (fs, (t,i,v)::vs) 
+        | Function f -> let (fs,vs) = acc in (f::fs, vs)
+      )
+      prog ([],[])
+  in 
+
+  if not (List.fold_left (fun acc f -> if f.name = "main" then true else acc) false functions) 
+  then failwith "Couldn't find main function (no entry point) : error";
+
+  let _ = List.iter (fun (t, i, v) -> 
+                      Hashtbl.add global_env i (t, v)
+                    ) 
+          globals in
+
+  (* List.iter typecheck_function functions *)
+  List.iter 
+    (
+      fun def ->
+      match def with
+      | Variable(t,i,v) -> Hashtbl.add global_env i (t, v)
+      | Function f -> Hashtbl.add function_list f.name f; typecheck_function f
+    )
+  prog

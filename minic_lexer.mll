@@ -15,6 +15,7 @@
       "else",     ELSE;
       "while",    WHILE;
       "void",     VOID;
+      "putchar",  PUTCHAR;
     ] ;
     fun s ->
       try  Hashtbl.find h s
@@ -32,21 +33,23 @@ let number = (['-']? digit+) | hexnumber | octnumber
 let alpha = ['a'-'z' 'A'-'Z']
 let ident = alpha (alpha | '_' | digit)*
 
-let comment = ("//" [^'\n']* "\n") | ("/*" _* "*/")
+let line_comment = ("//" [^'\n']* '\n') 
+let block_comment = ("/*" _* "*/")
 
 rule token = parse
   | ['\n'] { new_line lexbuf; token lexbuf }
   | [' ' '\t' '\r']+ { token lexbuf }
+  | line_comment { new_line lexbuf; token lexbuf }
+  | "/*" { comment_block lexbuf; token lexbuf }
   | number as n { CST(int_of_string n) }
   | ident as id { resolve_keyword id }
-  | comment { COMMENT }
   | ";" { SEMI }
+  | "," { SEPARATOR }
   | "=" { SET }
   | "(" { LPAR }
   | ")" { RPAR }
   | "{" { BEGIN }
   | "}" { END }
-  | "," { SEPARATOR }
   (* Ops *)
     | '+' { ADD }
     | '*' { MUL }
@@ -71,3 +74,9 @@ rule token = parse
 
   | eof { EOF }
   | _ { failwith ("Unknown character : " ^ (lexeme lexbuf)) }
+
+and comment_block = parse
+| "*/" { }
+| "/*" { comment_block lexbuf; comment_block lexbuf}
+| ['\n'] { new_line lexbuf; comment_block lexbuf }
+| _ { comment_block lexbuf }

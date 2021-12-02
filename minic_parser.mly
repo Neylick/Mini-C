@@ -14,9 +14,9 @@
 %token RETURN SET SEMI SEPARATOR
 %token EOF
 
-%token INT BOOL VOID
+%token PUTCHAR
 
-%token COMMENT
+%token INT BOOL VOID
 
 %token LT GT 
 %token LET GET EQ
@@ -28,6 +28,28 @@
 %type <Minic_ast.prog> program
 
 %%
+
+program:
+| p = global_scope_def_list EOF {p}
+| error 
+  { 
+      let pos = $startpos in
+      let message = Printf.sprintf "Syntax error at line %d:%d" pos.pos_lnum (pos.pos_cnum - pos.pos_bol) in 
+      failwith message 
+  }
+;
+
+global_scope_def_list:
+| { [] }
+| d = global_scope_def l=global_scope_def_list { d::l }
+;
+
+global_scope_def:
+| vd = variable_decl {Variable(vd)}
+| fd = function_decl {Function(fd)}
+;
+
+(*
 
 program:
 | dl = declaration_list EOF 
@@ -51,6 +73,7 @@ declaration_list:
   | fd = function_decl dl = declaration_list { let vl, fl = dl in vl, fd :: fl }
 ;
 
+*)
 
 typ:
   | INT { Int }
@@ -75,17 +98,15 @@ variable_decl:
 
 (* Function decls *)
 function_decl:
-| t = typ f = IDENT LPAR p = parameter_list RPAR BEGIN s = list(instruction) END
-  { { 
-      name = f; 
-      code = s; 
-      params = p; 
-      return = t;
-  } }
+  | t = typ f = IDENT LPAR p = parameter_list RPAR BEGIN s = list(instruction) END
+    { { 
+        name = f; 
+        code = s; 
+        params = p; 
+        return = t;
+    } }
 ;
 instruction:
-  (* Comments, handled in the lexer *)
-    | COMMENT {Skip}
   (* Return *)
     (* return _; *)
     | RETURN e=expression SEMI { Return(e) }
@@ -111,14 +132,15 @@ instruction:
     | WHILE LPAR c=expression RPAR SEMI { While(c, []) }
   (* Decls and sets *)
     | decl = variable_decl { Set(decl) }
+    | PUTCHAR LPAR e=expression RPAR SEMI {Putchar(e)} 
   (* Scope creation : { s } *)
     | BEGIN s = list(instruction) END { Scope(s) }
-  ;
+;
 
 call_list:
   | { [] }
-  | i=IDENT { [Get(i)] } 
-  | i=IDENT SEPARATOR is=call_list { Get(i)::is } 
+  | e=expression { [e] } 
+  | e=expression SEPARATOR cl=call_list { e::cl } 
 
 expression:
   | f=IDENT LPAR p=call_list RPAR {Call(f, p)} 
