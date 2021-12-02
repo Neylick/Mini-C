@@ -1,5 +1,9 @@
 # Implementation
 ## Implementation necessaire :
+### Variables Globales
+- int taille = 64;
+### Fonctions 
+- int pgcd(int a,int b) { ... }
 ### Instuctions
 - Fonction d'affichage par code ASCII `putchar(n);`
 - Affectation de valeur a une variable `x = n;`

@@ -27,7 +27,7 @@ let hexdigit = ['0'-'9'] | ['a' - 'f'] | ['A' - 'F']
 let octdigit = ['0'-'7']
 
 let hexnumber = ("0x" | "0X") hexdigit+   
-let octnumber = '0' octdigit*   
+let octnumber = '0' octdigit*  
 let number = (['-']? digit+) | hexnumber | octnumber 
 
 let alpha = ['a'-'z' 'A'-'Z']

@@ -1,10 +1,10 @@
 # dune build
 # OCAMLPARAM: unset
 # Workspace root: "/mnt/c/Users/Neiliku~/Documents/COURS/Info/Compil/Caml miniC lexer"
-$ /usr/bin/nproc > /tmp/dune05e32d.output 2> /dev/null
+$ /usr/bin/nproc > /tmp/dunefaf965.output 2> /dev/null
 # Auto-detected concurrency: 16
 # disable binary cache
-$ /usr/bin/ocamlc.opt -config > /tmp/dune5c07c1.output
+$ /usr/bin/ocamlc.opt -config > /tmp/dune78f836.output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"

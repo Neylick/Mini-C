@@ -71,12 +71,4 @@ type global_scope_def =
   | Variable of (typ * string * expr)
   
 (* Représentation des programmes. *)
-(*
-type prog = 
-{
-  globals: (typ * string * expr) list;
-  functions: fun_def list;
-}
-*)
-
 type prog = global_scope_def list

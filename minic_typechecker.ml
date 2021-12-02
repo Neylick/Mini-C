@@ -15,9 +15,9 @@ let typecheck_program (prog: prog) =
   (* 
     TODO
     - Verifier le bon typage des globals.
-    - Verifier que les hex et les oct sont bien convertis (surement pas)
     
     (?) Ligne et colonne dans les messages d'erreur du type checker 
+    (?) Convertir les oct en decimal manuellement
     (?) Return dans chaque path de fonction
     (?) Traduire en assembleur
   *)
@@ -29,7 +29,7 @@ let typecheck_program (prog: prog) =
     let local_env = Hashtbl.create 100 in
 
     let rec type_expr = function
-      | Cst _ -> Int
+      | Cst _ ->  Int
       | BCst _ -> Bool
       | Undef -> Void 
       | Param -> None 
@@ -37,50 +37,50 @@ let typecheck_program (prog: prog) =
         let t1 = type_expr e1 in 
         let t2 = type_expr e2 in
         if t1 <> t2 || t1 <> Int 
-        then failwith "Integer operand was given a non integer expression : error"
+        then failwith "[error] Integer operand was given a non integer expression"
         else Int
       | Lt (e1, e2) | Gt (e1, e2) | Leqt (e1, e2) |Geqt (e1, e2) |Eq (e1, e2) |Neq (e1, e2) ->
         let t1 = type_expr e1 in 
         let t2 = type_expr e2 in 
         if t1 <> t2 || t1 <> Int 
-        then failwith "Integer operand was given a non integer expression : error"
+        then failwith "[error] Integer operand was given a non integer expression"
         else Bool
       | Or (e1, e2) | And (e1, e2) | Xor (e1, e2) -> 
         let t1 = type_expr e1 in 
         let t2 = type_expr e2 in
         if t1 <> t2 || t1 <> Bool 
-        then failwith "Boolean operand was given a non boolean expression : error"
+        then failwith "[error] Boolean operand was given a non boolean expression"
         else Bool
         (* Really depends on how we implement things temp : *)
       | BNeq (e1, e2) |BOr (e1, e2) |BAnd (e1, e2) | BXor (e1, e2) -> 
         let t1 = type_expr e1 in 
         let t2 = type_expr e2 in
         if t1 <> t2
-        then failwith "Operand was given two expression with different size : error"
+        then failwith "[error] Operand was given two expression with different size"
         else Bool
       | Get i -> 
         begin
-          try let t, v = Hashtbl.find local_env i in if v = Undef then failwith "Variable not initialised : error " else t
+          try let t, v = Hashtbl.find local_env i in if v = Undef then failwith "[error] Variable not initialised" else t
           with Not_found -> 
             try let t, v = Hashtbl.find global_env i in 
               if v = Undef 
-              then failwith "Variable not initialised : error " 
+              then failwith "[error] Variable not initialised" 
               else t
-            with Not_found -> failwith ("Undefined variable \""^i^"\" : error")
+            with Not_found -> failwith ("[error] Undefined variable \""^i^"\"")
         end
       | Call (name, params) ->  
         begin
           try let f = Hashtbl.find function_list name in 
-            List.iter2 (fun p (t, _) -> if type_expr p <> t then failwith "Parameter type unmatched : error") params f.params; f.return
-          with Not_found -> failwith ("Function "^name^" is not defined")
+            List.iter2 (fun p (t, _) -> if type_expr p <> t then failwith "[error] Parameter type unmatched") params f.params; f.return
+          with Not_found -> failwith ("[error] Function "^name^" is not defined")
         end
     in
 
     let rec typecheck_instr = function
       | Skip -> ()
       | Expr e -> let _ = type_expr e in ()
-      | Return e -> let t = type_expr e in if t <> fdef.return then failwith "Return type doesn't match function declaration : error"
-      | Putchar c ->  let t = type_expr c in if t <> Int then failwith "Non integer type given to putchar : error" 
+      | Return e -> let t = type_expr e in if t <> fdef.return then failwith "[error] Return type doesn't match function declaration"
+      | Putchar c ->  let t = type_expr c in if t <> Int then failwith "[error] Non integer type given to putchar" 
       | Scope s ->
         begin (* Makes a copy of the local environment to keep only the previously defined variables*)
           let prev_env = Hashtbl.copy local_env in 
@@ -92,28 +92,28 @@ let typecheck_program (prog: prog) =
         begin
           try let t, _ = Hashtbl.find local_env i in let te = type_expr v in  
             if t <> te  
-            then failwith "Value can't match declared type : error"
+            then failwith "[error] Value can't match declared type"
             else Hashtbl.add local_env i (t, v)
           with Not_found -> 
             try let t, _ = Hashtbl.find global_env i in let te = type_expr v in 
               if t <> te  
-              then failwith "Value can't match declared type : error"
+              then failwith "[error] Value can't match declared type"
               else Hashtbl.add global_env i (t, v)
-            with Not_found -> failwith ("Undefined variable : "^i)
+            with Not_found -> failwith ("[error] Undefined variable : "^i)
         end
       | Set (t, i, v) -> 
         if (Hashtbl.mem local_env i) ||  (Hashtbl.mem global_env i) 
-        then failwith "Variable declaration duplicate : error"
-        else let te = type_expr v in if t <> te  then failwith "Value can't match declared type : error"
+        then failwith "[error] Variable declaration duplicate"
+        else let te = type_expr v in if t <> te  then failwith "[error] Value can't match declared type"
                                   else Hashtbl.add local_env i (t, v) 
       | If(c, s1, s2) -> 
         let t = type_expr c in
-        if t <> Bool then failwith "Non boolean condition : error";
+        if t <> Bool then failwith "[error] Non boolean condition";
         typecheck_instr (Scope s1);
         typecheck_instr (Scope s2);
       | While(c, s) ->  
         let t = type_expr c in
-        if t <> Bool then failwith "Non boolean condition : error";
+        if t <> Bool then failwith "[error] Non boolean condition";
         typecheck_instr (Scope s);
 
     and typecheck_seq s = List.iter typecheck_instr s in
@@ -138,7 +138,7 @@ let typecheck_program (prog: prog) =
     in 
 
   if not (List.fold_left (fun acc f -> if f.name = "main" then true else acc) false functions) 
-  then failwith "Couldn't find main function (no entry point) : error";
+  then failwith "[error] Couldn't find main function (no entry point)";
 
   (* Doing the checks that way makes the timeline linear, instead of finding any global and any functions. *)
   List.iter 
@@ -150,7 +150,8 @@ let typecheck_program (prog: prog) =
       | Function f -> 
       (* Return exists *)
       if f.return <> Void && not (find_return_seq f.code)
-      then failwith ("Some of the paths of "^f.name^" don't have return : error")
-      else Hashtbl.add function_list f.name f; typecheck_function f
+      then failwith ("[error] Some of the paths of "^f.name^" don't have return")
+      else Hashtbl.add function_list f.name f; 
+      typecheck_function f
     )
   prog

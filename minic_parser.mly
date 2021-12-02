@@ -40,38 +40,14 @@ program:
 ;
 
 global_scope_def_list:
-| { [] }
-| d = global_scope_def l=global_scope_def_list { d::l }
+  | { [] }
+  | d = global_scope_def l=global_scope_def_list { d::l }
 ;
 
 global_scope_def:
-| vd = variable_decl {Variable(vd)}
-| fd = function_decl {Function(fd)}
+  | vd = variable_decl {Variable(vd)}
+  | fd = function_decl {Function(fd)}
 ;
-
-(* Old way we did things
-  program:
-  | dl = declaration_list EOF 
-    { let var_list, fun_list = dl in 
-      { 
-        globals = var_list; 
-        functions = fun_list; 
-      } 
-    }
-  | error 
-    { 
-      let pos = $startpos in
-      let message = Printf.sprintf "Syntax error at line %d:%d" pos.pos_lnum (pos.pos_cnum - pos.pos_bol) in 
-      failwith message 
-    }
-  ;
-
-  declaration_list:
-    | { [], [] } 
-    | vd = variable_decl dl = declaration_list { let vl, fl = dl in vd :: vl, fl }
-    | fd = function_decl dl = declaration_list { let vl, fl = dl in vl, fd :: fl }
-  ;
-*)
 
 typ:
   | INT { Int }
@@ -99,6 +75,7 @@ parameter_list:
   | { [] }
   | d=simple_var_decl { let (t, i, _) = d in [(t,i)] } (* No separator in that case *)
   | d=simple_var_decl SEPARATOR p=parameter_list { let (t, i, _) = d in (t,i)::p }
+;
 
 (* Function decls *)
 function_decl:
@@ -146,6 +123,7 @@ call_list:
   | { [] }
   | e=expression { [e] } 
   | e=expression SEPARATOR cl=call_list { e::cl } 
+;
 
 expression:
   | f=IDENT LPAR p=call_list RPAR {Call(f, p)} 
@@ -153,25 +131,25 @@ expression:
   | b=BOOL_CST { BCst(b) }
   | i=IDENT { Get(i) }
   | LPAR e=expression RPAR { e }
-(* Bool op *)
-  | a=expression LT b=expression  {Lt(a,b)} 
-  | a=expression GT b=expression  {Gt(a,b)}
-  | a=expression LET b=expression  {Leqt(a,b)}
-  | a=expression GET b=expression  {Geqt(a,b)}
-  | a=expression EQ b=expression  {Eq(a,b)}
+  (* Bool op *)
+    | a=expression LT b=expression  {Lt(a,b)} 
+    | a=expression GT b=expression  {Gt(a,b)}
+    | a=expression LET b=expression  {Leqt(a,b)}
+    | a=expression GET b=expression  {Geqt(a,b)}
+    | a=expression EQ b=expression  {Eq(a,b)}
 
-  | a=expression AND b=expression  {And(a,b)}
-  | a=expression BAND b=expression  {BAnd(a,b)}
-  | a=expression OR b=expression  {Or(a,b)}
-  | a=expression BOR b=expression  {BOr(a,b)}
-  | a=expression XOR b=expression  {Xor(a,b)}
-  | a=expression BXOR b=expression  {BXor(a,b)}
-  | a=expression NEQ b=expression  {Neq(a,b)}
-  | a=expression BNEQ b=expression  {BNeq(a,b)}
-(* Int op *)
-  | a=expression ADD b=expression  {Add(a,b)}
-  | a=expression MUL b=expression  {Mul(a,b)}
-  | a=expression DIV b=expression  {Div(a,b)}
-  | a=expression MOD b=expression  {Mod(a,b)}
-  | a=expression SUB b=expression  {Sub(a,b)}
+    | a=expression AND b=expression  {And(a,b)}
+    | a=expression BAND b=expression  {BAnd(a,b)}
+    | a=expression OR b=expression  {Or(a,b)}
+    | a=expression BOR b=expression  {BOr(a,b)}
+    | a=expression XOR b=expression  {Xor(a,b)}
+    | a=expression BXOR b=expression  {BXor(a,b)}
+    | a=expression NEQ b=expression  {Neq(a,b)}
+    | a=expression BNEQ b=expression  {BNeq(a,b)}
+  (* Int op *)
+    | a=expression ADD b=expression  {Add(a,b)}
+    | a=expression MUL b=expression  {Mul(a,b)}
+    | a=expression DIV b=expression  {Div(a,b)}
+    | a=expression MOD b=expression  {Mod(a,b)}
+    | a=expression SUB b=expression  {Sub(a,b)}
 ;
