@@ -19,15 +19,14 @@ let typecheck_program (prog: prog) =
   
   if not (List.fold_left (fun acc f -> if f.name = "main" then true else acc) false prog.functions) 
   then failwith "Couldn't find main function (no entry point) : error";
-  
+
   let global_env = Hashtbl.create 100 in 
   let _ = List.iter (fun (t, i, v) -> Hashtbl.add global_env i (t, v)) prog.globals in
 
   let typecheck_function (fdef: fun_def) =
     if fdef.return <> Void && fdef.name <> "main"
     then  if not (List.fold_left (fun acc i->match i with| Return _ -> true| _ -> acc) false fdef.code) 
-          then failwith "Couldn't find return in non void and non main function : error"
-    else () else ();
+          then failwith "Couldn't find return in non void and non main function : error";
     let local_env = Hashtbl.create 100 in
     let _ = List.iter (fun (t, i) -> Hashtbl.add local_env i (t, Undef)) fdef.params in
 
