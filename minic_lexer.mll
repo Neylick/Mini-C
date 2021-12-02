@@ -25,10 +25,12 @@
 let digit = ['0'-'9']
 let hexdigit = ['0'-'9'] | ['a' - 'f'] | ['A' - 'F']
 let octdigit = ['0'-'7']
+let bindigit = ['0' '1']
 
 let hexnumber = ("0x" | "0X") hexdigit+   
 let octnumber = '0' octdigit*  
-let number = (['-']? digit+) | hexnumber | octnumber 
+let binnumber = ("0b" | "0B") bindigit ('_'? bindigit) (* You can put _ between digits in C *)
+let number = (['-']? digit+) | hexnumber |binnumber
 
 let alpha = ['a'-'z' 'A'-'Z']
 let ident = alpha (alpha | '_' | digit)*
@@ -41,6 +43,7 @@ rule token = parse
   | [' ' '\t' '\r']+ { token lexbuf }
   | line_comment { new_line lexbuf; token lexbuf }
   | "/*" { comment_block lexbuf; token lexbuf }
+  | octnumber as n { CST(int_of_string ("0o"^n)) } (* Caml has a different syntax for octals, need to do the conversion *)
   | number as n { CST(int_of_string n) }
   | ident as id { resolve_keyword id }
   | ";" { SEMI }
