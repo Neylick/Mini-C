@@ -8,11 +8,7 @@ let typecheck_program (prog: prog) =
   (* 
     TODO
     - Verifier le bon typage des globals.
-    - Function parameters (in parser)
     - Return dans chaque path de fonction
-    - Commentaires
-    - Setting scope limits 
-
     - Traduire en assembleur ?
   *)
 
@@ -21,19 +17,24 @@ let typecheck_program (prog: prog) =
   then failwith "Couldn't find main function (no entry point) : error";
 
   let global_env = Hashtbl.create 100 in 
-  let _ = List.iter (fun (t, i, v) -> Hashtbl.add global_env i (t, v)) prog.globals in
+  let _ = List.iter (fun (t, i, v) -> 
+                      Hashtbl.add global_env i (t, v)
+                    ) 
+          prog.globals in
 
   let typecheck_function (fdef: fun_def) =
+    (* Return exists *)
     if fdef.return <> Void && fdef.name <> "main"
     then  if not (List.fold_left (fun acc i->match i with| Return _ -> true| _ -> acc) false fdef.code) 
           then failwith "Couldn't find return in non void and non main function : error";
     let local_env = Hashtbl.create 100 in
-    let _ = List.iter (fun (t, i) -> Hashtbl.add local_env i (t, Undef)) fdef.params in
+    let _ = List.iter (fun (t, i) -> Hashtbl.add local_env i (t, Param)) fdef.params in
 
     let rec type_expr = function
       | Cst _ -> Int
       | BCst _ -> Bool
-      | Undef -> Void
+      | Undef -> Void (* Check that for non initialized var and return types *)
+      | Param -> None (* We should'nt ever need to check that, if we do we should get an error *)
       | Add(e1, e2) | Mul (e1, e2) |Div (e1, e2) |Mod (e1, e2) |Sub (e1, e2) -> 
         let t1 = type_expr e1 in let t2 = type_expr e2 in
         if t1 <> t2 || t1 <> Int 
@@ -69,6 +70,13 @@ let typecheck_program (prog: prog) =
       
     in
     let rec typecheck_instr = function
+      | Skip -> ()
+      | Scope s ->
+        begin (* makes a copy of the local environment to keep only the previously defined variables*)
+          let prev_env = Hashtbl.copy local_env in 
+          typecheck_seq s;
+          Hashtbl.iter (fun i _ -> if not (Hashtbl.mem prev_env i) then Hashtbl.remove local_env i) local_env;
+        end
       | Return e -> let t = type_expr e in if t <> fdef.return then failwith "Return type doesn't match function declaration : error"
       | Putchar c ->  let t = type_expr c in if t <> Int then failwith "Non integer type given to putchar : error"
       | Set (t, i, Undef) -> Hashtbl.add local_env i (t, Undef) 
@@ -92,12 +100,11 @@ let typecheck_program (prog: prog) =
                                   else Hashtbl.add local_env i (t, v) 
       | If(c, s1, s2) -> let t = type_expr c in
                         if t <> Bool then failwith "Non boolean condition : error";
-                        typecheck_seq s1;
-                        typecheck_seq s2;
+                        typecheck_instr (Scope s1);
+                        typecheck_instr (Scope s2);
       | While(c, s) ->  let t = type_expr c in
                         if t <> Bool then failwith "Non boolean condition : error";
-                        typecheck_seq s;
-      | Skip -> ()
+                        typecheck_instr (Scope s);
 
     and typecheck_seq s = List.iter typecheck_instr s in
     typecheck_seq (fdef.code);

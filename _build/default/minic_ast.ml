@@ -33,6 +33,7 @@ type expr =
   | Cst of int (* 0 *)
   | BCst of bool (* true *)
   | Undef
+  | Param
 
 (* Représentation des instructions et séquences. *)
 type instr =
@@ -40,6 +41,7 @@ type instr =
   | Set of (typ * string * expr)
   | If of expr * seq * seq (* if (c) { s1 } else { s2 } *)
   | While of expr * seq (* while (c) { s } *)
+  | Scope of seq (* { s } *)
   | Return of expr (* return v; *)
   | Skip (* *)
 and seq = instr list

@@ -16,6 +16,8 @@
 
 %token INT BOOL VOID
 
+%token COMMENT
+
 %token LT GT 
 %token LET GET EQ
 %token AND OR BAND BOR XOR BXOR NEQ BNEQ
@@ -38,7 +40,7 @@ program:
 | error 
   { 
     let pos = $startpos in
-    let message = Printf.sprintf "Syntax error at %d, %d" pos.pos_lnum (pos.pos_cnum - pos.pos_bol) in 
+    let message = Printf.sprintf "Syntax error at line %d:%d" pos.pos_lnum (pos.pos_cnum - pos.pos_bol) in 
     failwith message 
   }
 ;
@@ -57,80 +59,92 @@ typ:
 ;
 
 simple_var_decl:
-  | t = typ i = IDENT SEMI { (t, i, Undef) }
+  | t = typ i = IDENT { (t, i, Undef) }
 
 parameter_list:
   | { [] }
-  | d=simple_var_decl { let (t, i, v) = d in [(t,i)] } (* No separator in that case *)
-  | d=simple_var_decl SEPARATOR p=parameter_list { let (t, i, v) = d in (t,i)::p }
+  | d=simple_var_decl { let (t, i, _) = d in [(t,i)] } (* No separator in that case *)
+  | d=simple_var_decl SEPARATOR p=parameter_list { let (t, i, _) = d in (t,i)::p }
 
 (* Decls and sets *)
 variable_decl:
   | t = typ i = IDENT SET v = expression SEMI { (t, i, v) }
-  | d = simple_var_decl { d }
+  | d = simple_var_decl SEMI { d }
   | i = IDENT SET v = expression SEMI { (None, i, v) }
 ;
 
 (* Function decls *)
 function_decl:
-  | t = typ f = IDENT LPAR RPAR BEGIN s = list(instruction) END
-    { { 
-        name = f; 
-        code = s; 
-        params = []; 
-        return = t;
-    } }
-
-  | t = typ f = IDENT LPAR p = parameter_list RPAR BEGIN s = list(instruction) END
-    { { 
-        name = f; 
-        code = s; 
-        params = p; 
-        return = t;
-    } }
+| t = typ f = IDENT LPAR p = parameter_list RPAR BEGIN s = list(instruction) END
+  { { 
+      name = f; 
+      code = s; 
+      params = p; 
+      return = t;
+  } }
 ;
 instruction:
+  (* Comments, handled in the lexer *)
+    | COMMENT {Skip}
   (* Return *)
+    (* return _; *)
     | RETURN e=expression SEMI { Return(e) }
+    (* return(_);*)
     | RETURN BEGIN e=expression END SEMI { Return(e) }
+    (* return;*)
     | RETURN SEMI { Return(Undef) }
   (* If *)
-    | IF LPAR c=expression RPAR BEGIN e1 = list(instruction) END ELSE BEGIN e2 = list(instruction) END { If(c,e1,e2) }
-    | IF LPAR c=expression RPAR BEGIN e = list(instruction) END { If(c, e, []) }
-    | IF LPAR c=expression RPAR e1 = instruction ELSE e2 = instruction { If(c, [e1], [e2]) } 
-    | IF LPAR c=expression RPAR e = instruction  { If(c, [e], []) } 
-    | IF LPAR c=expression RPAR SEMI { Skip } 
+    (* if(c) {s1} else {s2}*)
+    | IF LPAR c=expression RPAR BEGIN s1 = list(instruction) END ELSE BEGIN s2 = list(instruction) END { If(c,s1,s2) }
+    (* if(c) {s} *)    
+    | IF LPAR c=expression RPAR BEGIN s = list(instruction) END { If(c, s, []) }
+    (* if(c) i1 else i2*)
+    | IF LPAR c=expression RPAR i1 = instruction ELSE i2 = instruction { If(c, [i1], [i2]) } 
+    (* if(c) i*)
+    | IF LPAR c=expression RPAR i = instruction  { If(c, [i], []) } 
+    (* if(c);*)
+    | IF LPAR c=expression RPAR SEMI { If(c, [], []) } 
   (* While *)
-    | WHILE LPAR c=expression RPAR BEGIN e = list(instruction) END { While(c,e) }
+    (* While(c){s} *)
+    | WHILE LPAR c=expression RPAR BEGIN s = list(instruction) END { While(c,s) }
+    (* While(c); *)
     | WHILE LPAR c=expression RPAR SEMI { While(c, []) }
   (* Decls and sets *)
     | decl = variable_decl { Set(decl) }
+  (* Scope creation : { s } *)
+    | BEGIN s = list(instruction) END { Scope(s) }
   ;
 
-  expression:
-    | LPAR e=expression RPAR { e }
-    | n=CST { Cst(n) }
-    | b=BOOL_CST { BCst(b) }
-    | i=IDENT { Get(i) }
-  (* Bool op *)
-    | a=expression LT b=expression  {Lt(a,b)} 
-    | a=expression GT b=expression  {Gt(a,b)}
-    | a=expression LET b=expression  {Leqt(a,b)}
-    | a=expression GET b=expression  {Geqt(a,b)}
-    | a=expression EQ b=expression  {Eq(a,b)}
+call_list:
+  | { [] }
+  | i=IDENT { [Get(i)] } 
+  | i=IDENT SEPARATOR is=call_list { Get(i)::is } 
 
-    | a=expression AND b=expression  {And(a,b)}
-    | a=expression BAND b=expression  {BAnd(a,b)}
-    | a=expression OR b=expression  {Or(a,b)}
-    | a=expression BOR b=expression  {BOr(a,b)}
-    | a=expression XOR b=expression  {Xor(a,b)}
-    | a=expression BXOR b=expression  {BXor(a,b)}
-    | a=expression NEQ b=expression  {Neq(a,b)}
-    | a=expression BNEQ b=expression  {BNeq(a,b)}
-  (* Int op *)
-    | a=expression ADD b=expression  {Add(a,b)}
-    | a=expression MUL b=expression  {Mul(a,b)}
-    | a=expression DIV b=expression  {Div(a,b)}
-    | a=expression MOD b=expression  {Mod(a,b)}
-    | a=expression SUB b=expression  {Sub(a,b)}
+expression:
+  | f=IDENT LPAR p=call_list RPAR {Call(f, p)} 
+  | n=CST { Cst(n) }
+  | b=BOOL_CST { BCst(b) }
+  | i=IDENT { Get(i) }
+  | LPAR e=expression RPAR { e }
+(* Bool op *)
+  | a=expression LT b=expression  {Lt(a,b)} 
+  | a=expression GT b=expression  {Gt(a,b)}
+  | a=expression LET b=expression  {Leqt(a,b)}
+  | a=expression GET b=expression  {Geqt(a,b)}
+  | a=expression EQ b=expression  {Eq(a,b)}
+
+  | a=expression AND b=expression  {And(a,b)}
+  | a=expression BAND b=expression  {BAnd(a,b)}
+  | a=expression OR b=expression  {Or(a,b)}
+  | a=expression BOR b=expression  {BOr(a,b)}
+  | a=expression XOR b=expression  {Xor(a,b)}
+  | a=expression BXOR b=expression  {BXor(a,b)}
+  | a=expression NEQ b=expression  {Neq(a,b)}
+  | a=expression BNEQ b=expression  {BNeq(a,b)}
+(* Int op *)
+  | a=expression ADD b=expression  {Add(a,b)}
+  | a=expression MUL b=expression  {Mul(a,b)}
+  | a=expression DIV b=expression  {Div(a,b)}
+  | a=expression MOD b=expression  {Mod(a,b)}
+  | a=expression SUB b=expression  {Sub(a,b)}
 ;

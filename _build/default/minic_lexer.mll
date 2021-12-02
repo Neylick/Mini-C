@@ -32,11 +32,14 @@ let number = (['-']? digit+) | hexnumber | octnumber
 let alpha = ['a'-'z' 'A'-'Z']
 let ident = alpha (alpha | '_' | digit)*
 
+let comment = ("//" [^'\n']* "\n") | ("/*" _* "*/")
+
 rule token = parse
   | ['\n'] { new_line lexbuf; token lexbuf }
   | [' ' '\t' '\r']+ { token lexbuf }
   | number as n { CST(int_of_string n) }
   | ident as id { resolve_keyword id }
+  | comment { COMMENT }
   | ";" { SEMI }
   | "=" { SET }
   | "(" { LPAR }

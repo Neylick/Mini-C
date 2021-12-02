@@ -1,17 +1,28 @@
 int PARAM = 5;
 
+int myfun(int a, int b)
+{
+	bool my_bool = a>b;
+	return a + b;
+}
+
+
 int main() 
 {
-
+	
 	int a = 0;
 	while(false)
 	{
+		{
+			int d = 0;
+		}
 		int b = 0xFFFF + 0X0001 % 0123 - 4;
 		int c;
 		c = 36;
+		
 		if(a > b)
 		{
-			if(a < b) return 1;
+			if(a < b) return myfun(a,b);
 			else return 2;
 		}
 		a = a * (b / c);
@@ -22,6 +33,7 @@ int main()
 		while(false^false);
 		bool b = true;
 		b = b & b | b;
+		int d = 0;
 	}
 	else
 	{

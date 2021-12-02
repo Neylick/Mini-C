@@ -4,13 +4,13 @@ program' -> . program [ # ]
 -- On VOID shift to state 2
 -- On INT shift to state 3
 -- On IDENT shift to state 4
--- On BOOL shift to state 50
--- On variable_decl shift to state 51
--- On typ shift to state 52
--- On simple_var_decl shift to state 84
--- On program shift to state 113
--- On function_decl shift to state 110
--- On declaration_list shift to state 114
+-- On BOOL shift to state 56
+-- On variable_decl shift to state 57
+-- On typ shift to state 58
+-- On simple_var_decl shift to state 97
+-- On program shift to state 119
+-- On function_decl shift to state 116
+-- On declaration_list shift to state 120
 -- On EOF reduce production declaration_list -> 
 
 State 1:
@@ -26,27 +26,29 @@ typ -> INT . [ IDENT ]
 -- On IDENT reduce production typ -> INT 
 
 State 4:
-variable_decl -> IDENT . SET expression SEMI [ WHILE VOID RETURN INT IF IDENT EOF END ELSE BOOL ]
+variable_decl -> IDENT . SET expression SEMI [ WHILE VOID RETURN INT IF IDENT EOF END ELSE COMMENT BOOL BEGIN ]
 -- On SET shift to state 5
 
 State 5:
-variable_decl -> IDENT SET . expression SEMI [ WHILE VOID RETURN INT IF IDENT EOF END ELSE BOOL ]
+variable_decl -> IDENT SET . expression SEMI [ WHILE VOID RETURN INT IF IDENT EOF END ELSE COMMENT BOOL BEGIN ]
 -- On LPAR shift to state 6
 -- On IDENT shift to state 7
--- On CST shift to state 8
--- On BOOL_CST shift to state 9
--- On expression shift to state 48
+-- On CST shift to state 14
+-- On BOOL_CST shift to state 15
+-- On expression shift to state 54
 
 State 6:
 expression -> LPAR . expression RPAR [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 -- On LPAR shift to state 6
 -- On IDENT shift to state 7
--- On CST shift to state 8
--- On BOOL_CST shift to state 9
--- On expression shift to state 10
+-- On CST shift to state 14
+-- On BOOL_CST shift to state 15
+-- On expression shift to state 16
 
 State 7:
+expression -> IDENT . LPAR call_list RPAR [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> IDENT . [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
+-- On LPAR shift to state 8
 -- On XOR reduce production expression -> IDENT 
 -- On SUB reduce production expression -> IDENT 
 -- On SEMI reduce production expression -> IDENT 
@@ -70,6 +72,56 @@ expression -> IDENT . [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DI
 -- On ADD reduce production expression -> IDENT 
 
 State 8:
+expression -> IDENT LPAR . call_list RPAR [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
+-- On IDENT shift to state 9
+-- On call_list shift to state 12
+-- On RPAR reduce production call_list -> 
+
+State 9:
+call_list -> IDENT . [ RPAR ]
+call_list -> IDENT . SEPARATOR call_list [ RPAR ]
+-- On SEPARATOR shift to state 10
+-- On RPAR reduce production call_list -> IDENT 
+
+State 10:
+call_list -> IDENT SEPARATOR . call_list [ RPAR ]
+-- On IDENT shift to state 9
+-- On call_list shift to state 11
+-- On RPAR reduce production call_list -> 
+
+State 11:
+call_list -> IDENT SEPARATOR call_list . [ RPAR ]
+-- On RPAR reduce production call_list -> IDENT SEPARATOR call_list 
+
+State 12:
+expression -> IDENT LPAR call_list . RPAR [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
+-- On RPAR shift to state 13
+
+State 13:
+expression -> IDENT LPAR call_list RPAR . [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
+-- On XOR reduce production expression -> IDENT LPAR call_list RPAR 
+-- On SUB reduce production expression -> IDENT LPAR call_list RPAR 
+-- On SEMI reduce production expression -> IDENT LPAR call_list RPAR 
+-- On RPAR reduce production expression -> IDENT LPAR call_list RPAR 
+-- On OR reduce production expression -> IDENT LPAR call_list RPAR 
+-- On NEQ reduce production expression -> IDENT LPAR call_list RPAR 
+-- On MUL reduce production expression -> IDENT LPAR call_list RPAR 
+-- On MOD reduce production expression -> IDENT LPAR call_list RPAR 
+-- On LT reduce production expression -> IDENT LPAR call_list RPAR 
+-- On LET reduce production expression -> IDENT LPAR call_list RPAR 
+-- On GT reduce production expression -> IDENT LPAR call_list RPAR 
+-- On GET reduce production expression -> IDENT LPAR call_list RPAR 
+-- On EQ reduce production expression -> IDENT LPAR call_list RPAR 
+-- On END reduce production expression -> IDENT LPAR call_list RPAR 
+-- On DIV reduce production expression -> IDENT LPAR call_list RPAR 
+-- On BXOR reduce production expression -> IDENT LPAR call_list RPAR 
+-- On BOR reduce production expression -> IDENT LPAR call_list RPAR 
+-- On BNEQ reduce production expression -> IDENT LPAR call_list RPAR 
+-- On BAND reduce production expression -> IDENT LPAR call_list RPAR 
+-- On AND reduce production expression -> IDENT LPAR call_list RPAR 
+-- On ADD reduce production expression -> IDENT LPAR call_list RPAR 
+
+State 14:
 expression -> CST . [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 -- On XOR reduce production expression -> CST 
 -- On SUB reduce production expression -> CST 
@@ -93,7 +145,7 @@ expression -> CST . [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV 
 -- On AND reduce production expression -> CST 
 -- On ADD reduce production expression -> CST 
 
-State 9:
+State 15:
 expression -> BOOL_CST . [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 -- On XOR reduce production expression -> BOOL_CST 
 -- On SUB reduce production expression -> BOOL_CST 
@@ -117,7 +169,7 @@ expression -> BOOL_CST . [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END
 -- On AND reduce production expression -> BOOL_CST 
 -- On ADD reduce production expression -> BOOL_CST 
 
-State 10:
+State 16:
 expression -> LPAR expression . RPAR [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . LT expression [ XOR SUB RPAR OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . GT expression [ XOR SUB RPAR OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
@@ -137,35 +189,35 @@ expression -> expression . MUL expression [ XOR SUB RPAR OR NEQ MUL MOD LT LET G
 expression -> expression . DIV expression [ XOR SUB RPAR OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . MOD expression [ XOR SUB RPAR OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . SUB expression [ XOR SUB RPAR OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
--- On XOR shift to state 11
--- On SUB shift to state 13
--- On RPAR shift to state 47
--- On OR shift to state 15
--- On NEQ shift to state 17
--- On MUL shift to state 19
--- On MOD shift to state 21
--- On LT shift to state 23
--- On LET shift to state 25
--- On GT shift to state 27
--- On GET shift to state 29
--- On EQ shift to state 31
--- On DIV shift to state 33
--- On BXOR shift to state 35
--- On BOR shift to state 37
--- On BNEQ shift to state 39
--- On BAND shift to state 41
--- On AND shift to state 43
--- On ADD shift to state 45
+-- On XOR shift to state 17
+-- On SUB shift to state 19
+-- On RPAR shift to state 53
+-- On OR shift to state 21
+-- On NEQ shift to state 23
+-- On MUL shift to state 25
+-- On MOD shift to state 27
+-- On LT shift to state 29
+-- On LET shift to state 31
+-- On GT shift to state 33
+-- On GET shift to state 35
+-- On EQ shift to state 37
+-- On DIV shift to state 39
+-- On BXOR shift to state 41
+-- On BOR shift to state 43
+-- On BNEQ shift to state 45
+-- On BAND shift to state 47
+-- On AND shift to state 49
+-- On ADD shift to state 51
 
-State 11:
+State 17:
 expression -> expression XOR . expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 -- On LPAR shift to state 6
 -- On IDENT shift to state 7
--- On CST shift to state 8
--- On BOOL_CST shift to state 9
--- On expression shift to state 12
+-- On CST shift to state 14
+-- On BOOL_CST shift to state 15
+-- On expression shift to state 18
 
-State 12:
+State 18:
 expression -> expression . LT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . GT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . LET expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
@@ -185,24 +237,24 @@ expression -> expression . MUL expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 expression -> expression . DIV expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . MOD expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
--- On XOR shift to state 11
--- On SUB shift to state 13
--- On OR shift to state 15
--- On NEQ shift to state 17
--- On MUL shift to state 19
--- On MOD shift to state 21
--- On LT shift to state 23
--- On LET shift to state 25
--- On GT shift to state 27
--- On GET shift to state 29
--- On EQ shift to state 31
--- On DIV shift to state 33
--- On BXOR shift to state 35
--- On BOR shift to state 37
--- On BNEQ shift to state 39
--- On BAND shift to state 41
--- On AND shift to state 43
--- On ADD shift to state 45
+-- On XOR shift to state 17
+-- On SUB shift to state 19
+-- On OR shift to state 21
+-- On NEQ shift to state 23
+-- On MUL shift to state 25
+-- On MOD shift to state 27
+-- On LT shift to state 29
+-- On LET shift to state 31
+-- On GT shift to state 33
+-- On GET shift to state 35
+-- On EQ shift to state 37
+-- On DIV shift to state 39
+-- On BXOR shift to state 41
+-- On BOR shift to state 43
+-- On BNEQ shift to state 45
+-- On BAND shift to state 47
+-- On AND shift to state 49
+-- On ADD shift to state 51
 -- On XOR reduce production expression -> expression XOR expression 
 -- On SUB reduce production expression -> expression XOR expression 
 -- On SEMI reduce production expression -> expression XOR expression 
@@ -226,15 +278,15 @@ expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 -- On ADD reduce production expression -> expression XOR expression 
 ** Conflict on XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 
-State 13:
+State 19:
 expression -> expression SUB . expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 -- On LPAR shift to state 6
 -- On IDENT shift to state 7
--- On CST shift to state 8
--- On BOOL_CST shift to state 9
--- On expression shift to state 14
+-- On CST shift to state 14
+-- On BOOL_CST shift to state 15
+-- On expression shift to state 20
 
-State 14:
+State 20:
 expression -> expression . LT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . GT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . LET expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
@@ -254,24 +306,24 @@ expression -> expression . DIV expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 expression -> expression . MOD expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression SUB expression . [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
--- On XOR shift to state 11
--- On SUB shift to state 13
--- On OR shift to state 15
--- On NEQ shift to state 17
--- On MUL shift to state 19
--- On MOD shift to state 21
--- On LT shift to state 23
--- On LET shift to state 25
--- On GT shift to state 27
--- On GET shift to state 29
--- On EQ shift to state 31
--- On DIV shift to state 33
--- On BXOR shift to state 35
--- On BOR shift to state 37
--- On BNEQ shift to state 39
--- On BAND shift to state 41
--- On AND shift to state 43
--- On ADD shift to state 45
+-- On XOR shift to state 17
+-- On SUB shift to state 19
+-- On OR shift to state 21
+-- On NEQ shift to state 23
+-- On MUL shift to state 25
+-- On MOD shift to state 27
+-- On LT shift to state 29
+-- On LET shift to state 31
+-- On GT shift to state 33
+-- On GET shift to state 35
+-- On EQ shift to state 37
+-- On DIV shift to state 39
+-- On BXOR shift to state 41
+-- On BOR shift to state 43
+-- On BNEQ shift to state 45
+-- On BAND shift to state 47
+-- On AND shift to state 49
+-- On ADD shift to state 51
 -- On XOR reduce production expression -> expression SUB expression 
 -- On SUB reduce production expression -> expression SUB expression 
 -- On SEMI reduce production expression -> expression SUB expression 
@@ -295,15 +347,15 @@ expression -> expression SUB expression . [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 -- On ADD reduce production expression -> expression SUB expression 
 ** Conflict on XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 
-State 15:
+State 21:
 expression -> expression OR . expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 -- On LPAR shift to state 6
 -- On IDENT shift to state 7
--- On CST shift to state 8
--- On BOOL_CST shift to state 9
--- On expression shift to state 16
+-- On CST shift to state 14
+-- On BOOL_CST shift to state 15
+-- On expression shift to state 22
 
-State 16:
+State 22:
 expression -> expression . LT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . GT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . LET expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
@@ -323,24 +375,24 @@ expression -> expression . MUL expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 expression -> expression . DIV expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . MOD expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
--- On XOR shift to state 11
--- On SUB shift to state 13
--- On OR shift to state 15
--- On NEQ shift to state 17
--- On MUL shift to state 19
--- On MOD shift to state 21
--- On LT shift to state 23
--- On LET shift to state 25
--- On GT shift to state 27
--- On GET shift to state 29
--- On EQ shift to state 31
--- On DIV shift to state 33
--- On BXOR shift to state 35
--- On BOR shift to state 37
--- On BNEQ shift to state 39
--- On BAND shift to state 41
--- On AND shift to state 43
--- On ADD shift to state 45
+-- On XOR shift to state 17
+-- On SUB shift to state 19
+-- On OR shift to state 21
+-- On NEQ shift to state 23
+-- On MUL shift to state 25
+-- On MOD shift to state 27
+-- On LT shift to state 29
+-- On LET shift to state 31
+-- On GT shift to state 33
+-- On GET shift to state 35
+-- On EQ shift to state 37
+-- On DIV shift to state 39
+-- On BXOR shift to state 41
+-- On BOR shift to state 43
+-- On BNEQ shift to state 45
+-- On BAND shift to state 47
+-- On AND shift to state 49
+-- On ADD shift to state 51
 -- On XOR reduce production expression -> expression OR expression 
 -- On SUB reduce production expression -> expression OR expression 
 -- On SEMI reduce production expression -> expression OR expression 
@@ -364,15 +416,15 @@ expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 -- On ADD reduce production expression -> expression OR expression 
 ** Conflict on XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 
-State 17:
+State 23:
 expression -> expression NEQ . expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 -- On LPAR shift to state 6
 -- On IDENT shift to state 7
--- On CST shift to state 8
--- On BOOL_CST shift to state 9
--- On expression shift to state 18
+-- On CST shift to state 14
+-- On BOOL_CST shift to state 15
+-- On expression shift to state 24
 
-State 18:
+State 24:
 expression -> expression . LT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . GT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . LET expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
@@ -392,24 +444,24 @@ expression -> expression . MUL expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 expression -> expression . DIV expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . MOD expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
--- On XOR shift to state 11
--- On SUB shift to state 13
--- On OR shift to state 15
--- On NEQ shift to state 17
--- On MUL shift to state 19
--- On MOD shift to state 21
--- On LT shift to state 23
--- On LET shift to state 25
--- On GT shift to state 27
--- On GET shift to state 29
--- On EQ shift to state 31
--- On DIV shift to state 33
--- On BXOR shift to state 35
--- On BOR shift to state 37
--- On BNEQ shift to state 39
--- On BAND shift to state 41
--- On AND shift to state 43
--- On ADD shift to state 45
+-- On XOR shift to state 17
+-- On SUB shift to state 19
+-- On OR shift to state 21
+-- On NEQ shift to state 23
+-- On MUL shift to state 25
+-- On MOD shift to state 27
+-- On LT shift to state 29
+-- On LET shift to state 31
+-- On GT shift to state 33
+-- On GET shift to state 35
+-- On EQ shift to state 37
+-- On DIV shift to state 39
+-- On BXOR shift to state 41
+-- On BOR shift to state 43
+-- On BNEQ shift to state 45
+-- On BAND shift to state 47
+-- On AND shift to state 49
+-- On ADD shift to state 51
 -- On XOR reduce production expression -> expression NEQ expression 
 -- On SUB reduce production expression -> expression NEQ expression 
 -- On SEMI reduce production expression -> expression NEQ expression 
@@ -433,15 +485,15 @@ expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 -- On ADD reduce production expression -> expression NEQ expression 
 ** Conflict on XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 
-State 19:
+State 25:
 expression -> expression MUL . expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 -- On LPAR shift to state 6
 -- On IDENT shift to state 7
--- On CST shift to state 8
--- On BOOL_CST shift to state 9
--- On expression shift to state 20
+-- On CST shift to state 14
+-- On BOOL_CST shift to state 15
+-- On expression shift to state 26
 
-State 20:
+State 26:
 expression -> expression . LT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . GT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . LET expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
@@ -461,24 +513,24 @@ expression -> expression MUL expression . [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 expression -> expression . DIV expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . MOD expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
--- On XOR shift to state 11
--- On SUB shift to state 13
--- On OR shift to state 15
--- On NEQ shift to state 17
--- On MUL shift to state 19
--- On MOD shift to state 21
--- On LT shift to state 23
--- On LET shift to state 25
--- On GT shift to state 27
--- On GET shift to state 29
--- On EQ shift to state 31
--- On DIV shift to state 33
--- On BXOR shift to state 35
--- On BOR shift to state 37
--- On BNEQ shift to state 39
--- On BAND shift to state 41
--- On AND shift to state 43
--- On ADD shift to state 45
+-- On XOR shift to state 17
+-- On SUB shift to state 19
+-- On OR shift to state 21
+-- On NEQ shift to state 23
+-- On MUL shift to state 25
+-- On MOD shift to state 27
+-- On LT shift to state 29
+-- On LET shift to state 31
+-- On GT shift to state 33
+-- On GET shift to state 35
+-- On EQ shift to state 37
+-- On DIV shift to state 39
+-- On BXOR shift to state 41
+-- On BOR shift to state 43
+-- On BNEQ shift to state 45
+-- On BAND shift to state 47
+-- On AND shift to state 49
+-- On ADD shift to state 51
 -- On XOR reduce production expression -> expression MUL expression 
 -- On SUB reduce production expression -> expression MUL expression 
 -- On SEMI reduce production expression -> expression MUL expression 
@@ -502,15 +554,15 @@ expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 -- On ADD reduce production expression -> expression MUL expression 
 ** Conflict on XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 
-State 21:
+State 27:
 expression -> expression MOD . expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 -- On LPAR shift to state 6
 -- On IDENT shift to state 7
--- On CST shift to state 8
--- On BOOL_CST shift to state 9
--- On expression shift to state 22
+-- On CST shift to state 14
+-- On BOOL_CST shift to state 15
+-- On expression shift to state 28
 
-State 22:
+State 28:
 expression -> expression . LT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . GT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . LET expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
@@ -530,24 +582,24 @@ expression -> expression . DIV expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 expression -> expression . MOD expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression MOD expression . [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
--- On XOR shift to state 11
--- On SUB shift to state 13
--- On OR shift to state 15
--- On NEQ shift to state 17
--- On MUL shift to state 19
--- On MOD shift to state 21
--- On LT shift to state 23
--- On LET shift to state 25
--- On GT shift to state 27
--- On GET shift to state 29
--- On EQ shift to state 31
--- On DIV shift to state 33
--- On BXOR shift to state 35
--- On BOR shift to state 37
--- On BNEQ shift to state 39
--- On BAND shift to state 41
--- On AND shift to state 43
--- On ADD shift to state 45
+-- On XOR shift to state 17
+-- On SUB shift to state 19
+-- On OR shift to state 21
+-- On NEQ shift to state 23
+-- On MUL shift to state 25
+-- On MOD shift to state 27
+-- On LT shift to state 29
+-- On LET shift to state 31
+-- On GT shift to state 33
+-- On GET shift to state 35
+-- On EQ shift to state 37
+-- On DIV shift to state 39
+-- On BXOR shift to state 41
+-- On BOR shift to state 43
+-- On BNEQ shift to state 45
+-- On BAND shift to state 47
+-- On AND shift to state 49
+-- On ADD shift to state 51
 -- On XOR reduce production expression -> expression MOD expression 
 -- On SUB reduce production expression -> expression MOD expression 
 -- On SEMI reduce production expression -> expression MOD expression 
@@ -571,15 +623,15 @@ expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 -- On ADD reduce production expression -> expression MOD expression 
 ** Conflict on XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 
-State 23:
+State 29:
 expression -> expression LT . expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 -- On LPAR shift to state 6
 -- On IDENT shift to state 7
--- On CST shift to state 8
--- On BOOL_CST shift to state 9
--- On expression shift to state 24
+-- On CST shift to state 14
+-- On BOOL_CST shift to state 15
+-- On expression shift to state 30
 
-State 24:
+State 30:
 expression -> expression . LT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression LT expression . [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . GT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
@@ -599,24 +651,24 @@ expression -> expression . MUL expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 expression -> expression . DIV expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . MOD expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
--- On XOR shift to state 11
--- On SUB shift to state 13
--- On OR shift to state 15
--- On NEQ shift to state 17
--- On MUL shift to state 19
--- On MOD shift to state 21
--- On LT shift to state 23
--- On LET shift to state 25
--- On GT shift to state 27
--- On GET shift to state 29
--- On EQ shift to state 31
--- On DIV shift to state 33
--- On BXOR shift to state 35
--- On BOR shift to state 37
--- On BNEQ shift to state 39
--- On BAND shift to state 41
--- On AND shift to state 43
--- On ADD shift to state 45
+-- On XOR shift to state 17
+-- On SUB shift to state 19
+-- On OR shift to state 21
+-- On NEQ shift to state 23
+-- On MUL shift to state 25
+-- On MOD shift to state 27
+-- On LT shift to state 29
+-- On LET shift to state 31
+-- On GT shift to state 33
+-- On GET shift to state 35
+-- On EQ shift to state 37
+-- On DIV shift to state 39
+-- On BXOR shift to state 41
+-- On BOR shift to state 43
+-- On BNEQ shift to state 45
+-- On BAND shift to state 47
+-- On AND shift to state 49
+-- On ADD shift to state 51
 -- On XOR reduce production expression -> expression LT expression 
 -- On SUB reduce production expression -> expression LT expression 
 -- On SEMI reduce production expression -> expression LT expression 
@@ -640,15 +692,15 @@ expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 -- On ADD reduce production expression -> expression LT expression 
 ** Conflict on XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 
-State 25:
+State 31:
 expression -> expression LET . expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 -- On LPAR shift to state 6
 -- On IDENT shift to state 7
--- On CST shift to state 8
--- On BOOL_CST shift to state 9
--- On expression shift to state 26
+-- On CST shift to state 14
+-- On BOOL_CST shift to state 15
+-- On expression shift to state 32
 
-State 26:
+State 32:
 expression -> expression . LT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . GT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . LET expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
@@ -668,24 +720,24 @@ expression -> expression . MUL expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 expression -> expression . DIV expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . MOD expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
--- On XOR shift to state 11
--- On SUB shift to state 13
--- On OR shift to state 15
--- On NEQ shift to state 17
--- On MUL shift to state 19
--- On MOD shift to state 21
--- On LT shift to state 23
--- On LET shift to state 25
--- On GT shift to state 27
--- On GET shift to state 29
--- On EQ shift to state 31
--- On DIV shift to state 33
--- On BXOR shift to state 35
--- On BOR shift to state 37
--- On BNEQ shift to state 39
--- On BAND shift to state 41
--- On AND shift to state 43
--- On ADD shift to state 45
+-- On XOR shift to state 17
+-- On SUB shift to state 19
+-- On OR shift to state 21
+-- On NEQ shift to state 23
+-- On MUL shift to state 25
+-- On MOD shift to state 27
+-- On LT shift to state 29
+-- On LET shift to state 31
+-- On GT shift to state 33
+-- On GET shift to state 35
+-- On EQ shift to state 37
+-- On DIV shift to state 39
+-- On BXOR shift to state 41
+-- On BOR shift to state 43
+-- On BNEQ shift to state 45
+-- On BAND shift to state 47
+-- On AND shift to state 49
+-- On ADD shift to state 51
 -- On XOR reduce production expression -> expression LET expression 
 -- On SUB reduce production expression -> expression LET expression 
 -- On SEMI reduce production expression -> expression LET expression 
@@ -709,15 +761,15 @@ expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 -- On ADD reduce production expression -> expression LET expression 
 ** Conflict on XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 
-State 27:
+State 33:
 expression -> expression GT . expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 -- On LPAR shift to state 6
 -- On IDENT shift to state 7
--- On CST shift to state 8
--- On BOOL_CST shift to state 9
--- On expression shift to state 28
+-- On CST shift to state 14
+-- On BOOL_CST shift to state 15
+-- On expression shift to state 34
 
-State 28:
+State 34:
 expression -> expression . LT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . GT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression GT expression . [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
@@ -737,24 +789,24 @@ expression -> expression . MUL expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 expression -> expression . DIV expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . MOD expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
--- On XOR shift to state 11
--- On SUB shift to state 13
--- On OR shift to state 15
--- On NEQ shift to state 17
--- On MUL shift to state 19
--- On MOD shift to state 21
--- On LT shift to state 23
--- On LET shift to state 25
--- On GT shift to state 27
--- On GET shift to state 29
--- On EQ shift to state 31
--- On DIV shift to state 33
--- On BXOR shift to state 35
--- On BOR shift to state 37
--- On BNEQ shift to state 39
--- On BAND shift to state 41
--- On AND shift to state 43
--- On ADD shift to state 45
+-- On XOR shift to state 17
+-- On SUB shift to state 19
+-- On OR shift to state 21
+-- On NEQ shift to state 23
+-- On MUL shift to state 25
+-- On MOD shift to state 27
+-- On LT shift to state 29
+-- On LET shift to state 31
+-- On GT shift to state 33
+-- On GET shift to state 35
+-- On EQ shift to state 37
+-- On DIV shift to state 39
+-- On BXOR shift to state 41
+-- On BOR shift to state 43
+-- On BNEQ shift to state 45
+-- On BAND shift to state 47
+-- On AND shift to state 49
+-- On ADD shift to state 51
 -- On XOR reduce production expression -> expression GT expression 
 -- On SUB reduce production expression -> expression GT expression 
 -- On SEMI reduce production expression -> expression GT expression 
@@ -778,15 +830,15 @@ expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 -- On ADD reduce production expression -> expression GT expression 
 ** Conflict on XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 
-State 29:
+State 35:
 expression -> expression GET . expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 -- On LPAR shift to state 6
 -- On IDENT shift to state 7
--- On CST shift to state 8
--- On BOOL_CST shift to state 9
--- On expression shift to state 30
+-- On CST shift to state 14
+-- On BOOL_CST shift to state 15
+-- On expression shift to state 36
 
-State 30:
+State 36:
 expression -> expression . LT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . GT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . LET expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
@@ -806,24 +858,24 @@ expression -> expression . MUL expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 expression -> expression . DIV expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . MOD expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
--- On XOR shift to state 11
--- On SUB shift to state 13
--- On OR shift to state 15
--- On NEQ shift to state 17
--- On MUL shift to state 19
--- On MOD shift to state 21
--- On LT shift to state 23
--- On LET shift to state 25
--- On GT shift to state 27
--- On GET shift to state 29
--- On EQ shift to state 31
--- On DIV shift to state 33
--- On BXOR shift to state 35
--- On BOR shift to state 37
--- On BNEQ shift to state 39
--- On BAND shift to state 41
--- On AND shift to state 43
--- On ADD shift to state 45
+-- On XOR shift to state 17
+-- On SUB shift to state 19
+-- On OR shift to state 21
+-- On NEQ shift to state 23
+-- On MUL shift to state 25
+-- On MOD shift to state 27
+-- On LT shift to state 29
+-- On LET shift to state 31
+-- On GT shift to state 33
+-- On GET shift to state 35
+-- On EQ shift to state 37
+-- On DIV shift to state 39
+-- On BXOR shift to state 41
+-- On BOR shift to state 43
+-- On BNEQ shift to state 45
+-- On BAND shift to state 47
+-- On AND shift to state 49
+-- On ADD shift to state 51
 -- On XOR reduce production expression -> expression GET expression 
 -- On SUB reduce production expression -> expression GET expression 
 -- On SEMI reduce production expression -> expression GET expression 
@@ -847,15 +899,15 @@ expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 -- On ADD reduce production expression -> expression GET expression 
 ** Conflict on XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 
-State 31:
+State 37:
 expression -> expression EQ . expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 -- On LPAR shift to state 6
 -- On IDENT shift to state 7
--- On CST shift to state 8
--- On BOOL_CST shift to state 9
--- On expression shift to state 32
+-- On CST shift to state 14
+-- On BOOL_CST shift to state 15
+-- On expression shift to state 38
 
-State 32:
+State 38:
 expression -> expression . LT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . GT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . LET expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
@@ -875,24 +927,24 @@ expression -> expression . MUL expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 expression -> expression . DIV expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . MOD expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
--- On XOR shift to state 11
--- On SUB shift to state 13
--- On OR shift to state 15
--- On NEQ shift to state 17
--- On MUL shift to state 19
--- On MOD shift to state 21
--- On LT shift to state 23
--- On LET shift to state 25
--- On GT shift to state 27
--- On GET shift to state 29
--- On EQ shift to state 31
--- On DIV shift to state 33
--- On BXOR shift to state 35
--- On BOR shift to state 37
--- On BNEQ shift to state 39
--- On BAND shift to state 41
--- On AND shift to state 43
--- On ADD shift to state 45
+-- On XOR shift to state 17
+-- On SUB shift to state 19
+-- On OR shift to state 21
+-- On NEQ shift to state 23
+-- On MUL shift to state 25
+-- On MOD shift to state 27
+-- On LT shift to state 29
+-- On LET shift to state 31
+-- On GT shift to state 33
+-- On GET shift to state 35
+-- On EQ shift to state 37
+-- On DIV shift to state 39
+-- On BXOR shift to state 41
+-- On BOR shift to state 43
+-- On BNEQ shift to state 45
+-- On BAND shift to state 47
+-- On AND shift to state 49
+-- On ADD shift to state 51
 -- On XOR reduce production expression -> expression EQ expression 
 -- On SUB reduce production expression -> expression EQ expression 
 -- On SEMI reduce production expression -> expression EQ expression 
@@ -916,15 +968,15 @@ expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 -- On ADD reduce production expression -> expression EQ expression 
 ** Conflict on XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 
-State 33:
+State 39:
 expression -> expression DIV . expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 -- On LPAR shift to state 6
 -- On IDENT shift to state 7
--- On CST shift to state 8
--- On BOOL_CST shift to state 9
--- On expression shift to state 34
+-- On CST shift to state 14
+-- On BOOL_CST shift to state 15
+-- On expression shift to state 40
 
-State 34:
+State 40:
 expression -> expression . LT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . GT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . LET expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
@@ -944,24 +996,24 @@ expression -> expression . DIV expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 expression -> expression DIV expression . [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . MOD expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
--- On XOR shift to state 11
--- On SUB shift to state 13
--- On OR shift to state 15
--- On NEQ shift to state 17
--- On MUL shift to state 19
--- On MOD shift to state 21
--- On LT shift to state 23
--- On LET shift to state 25
--- On GT shift to state 27
--- On GET shift to state 29
--- On EQ shift to state 31
--- On DIV shift to state 33
--- On BXOR shift to state 35
--- On BOR shift to state 37
--- On BNEQ shift to state 39
--- On BAND shift to state 41
--- On AND shift to state 43
--- On ADD shift to state 45
+-- On XOR shift to state 17
+-- On SUB shift to state 19
+-- On OR shift to state 21
+-- On NEQ shift to state 23
+-- On MUL shift to state 25
+-- On MOD shift to state 27
+-- On LT shift to state 29
+-- On LET shift to state 31
+-- On GT shift to state 33
+-- On GET shift to state 35
+-- On EQ shift to state 37
+-- On DIV shift to state 39
+-- On BXOR shift to state 41
+-- On BOR shift to state 43
+-- On BNEQ shift to state 45
+-- On BAND shift to state 47
+-- On AND shift to state 49
+-- On ADD shift to state 51
 -- On XOR reduce production expression -> expression DIV expression 
 -- On SUB reduce production expression -> expression DIV expression 
 -- On SEMI reduce production expression -> expression DIV expression 
@@ -985,15 +1037,15 @@ expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 -- On ADD reduce production expression -> expression DIV expression 
 ** Conflict on XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 
-State 35:
+State 41:
 expression -> expression BXOR . expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 -- On LPAR shift to state 6
 -- On IDENT shift to state 7
--- On CST shift to state 8
--- On BOOL_CST shift to state 9
--- On expression shift to state 36
+-- On CST shift to state 14
+-- On BOOL_CST shift to state 15
+-- On expression shift to state 42
 
-State 36:
+State 42:
 expression -> expression . LT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . GT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . LET expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
@@ -1013,24 +1065,24 @@ expression -> expression . MUL expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 expression -> expression . DIV expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . MOD expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
--- On XOR shift to state 11
--- On SUB shift to state 13
--- On OR shift to state 15
--- On NEQ shift to state 17
--- On MUL shift to state 19
--- On MOD shift to state 21
--- On LT shift to state 23
--- On LET shift to state 25
--- On GT shift to state 27
--- On GET shift to state 29
--- On EQ shift to state 31
--- On DIV shift to state 33
--- On BXOR shift to state 35
--- On BOR shift to state 37
--- On BNEQ shift to state 39
--- On BAND shift to state 41
--- On AND shift to state 43
--- On ADD shift to state 45
+-- On XOR shift to state 17
+-- On SUB shift to state 19
+-- On OR shift to state 21
+-- On NEQ shift to state 23
+-- On MUL shift to state 25
+-- On MOD shift to state 27
+-- On LT shift to state 29
+-- On LET shift to state 31
+-- On GT shift to state 33
+-- On GET shift to state 35
+-- On EQ shift to state 37
+-- On DIV shift to state 39
+-- On BXOR shift to state 41
+-- On BOR shift to state 43
+-- On BNEQ shift to state 45
+-- On BAND shift to state 47
+-- On AND shift to state 49
+-- On ADD shift to state 51
 -- On XOR reduce production expression -> expression BXOR expression 
 -- On SUB reduce production expression -> expression BXOR expression 
 -- On SEMI reduce production expression -> expression BXOR expression 
@@ -1054,15 +1106,15 @@ expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 -- On ADD reduce production expression -> expression BXOR expression 
 ** Conflict on XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 
-State 37:
+State 43:
 expression -> expression BOR . expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 -- On LPAR shift to state 6
 -- On IDENT shift to state 7
--- On CST shift to state 8
--- On BOOL_CST shift to state 9
--- On expression shift to state 38
+-- On CST shift to state 14
+-- On BOOL_CST shift to state 15
+-- On expression shift to state 44
 
-State 38:
+State 44:
 expression -> expression . LT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . GT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . LET expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
@@ -1082,24 +1134,24 @@ expression -> expression . MUL expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 expression -> expression . DIV expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . MOD expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
--- On XOR shift to state 11
--- On SUB shift to state 13
--- On OR shift to state 15
--- On NEQ shift to state 17
--- On MUL shift to state 19
--- On MOD shift to state 21
--- On LT shift to state 23
--- On LET shift to state 25
--- On GT shift to state 27
--- On GET shift to state 29
--- On EQ shift to state 31
--- On DIV shift to state 33
--- On BXOR shift to state 35
--- On BOR shift to state 37
--- On BNEQ shift to state 39
--- On BAND shift to state 41
--- On AND shift to state 43
--- On ADD shift to state 45
+-- On XOR shift to state 17
+-- On SUB shift to state 19
+-- On OR shift to state 21
+-- On NEQ shift to state 23
+-- On MUL shift to state 25
+-- On MOD shift to state 27
+-- On LT shift to state 29
+-- On LET shift to state 31
+-- On GT shift to state 33
+-- On GET shift to state 35
+-- On EQ shift to state 37
+-- On DIV shift to state 39
+-- On BXOR shift to state 41
+-- On BOR shift to state 43
+-- On BNEQ shift to state 45
+-- On BAND shift to state 47
+-- On AND shift to state 49
+-- On ADD shift to state 51
 -- On XOR reduce production expression -> expression BOR expression 
 -- On SUB reduce production expression -> expression BOR expression 
 -- On SEMI reduce production expression -> expression BOR expression 
@@ -1123,15 +1175,15 @@ expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 -- On ADD reduce production expression -> expression BOR expression 
 ** Conflict on XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 
-State 39:
+State 45:
 expression -> expression BNEQ . expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 -- On LPAR shift to state 6
 -- On IDENT shift to state 7
--- On CST shift to state 8
--- On BOOL_CST shift to state 9
--- On expression shift to state 40
+-- On CST shift to state 14
+-- On BOOL_CST shift to state 15
+-- On expression shift to state 46
 
-State 40:
+State 46:
 expression -> expression . LT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . GT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . LET expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
@@ -1151,24 +1203,24 @@ expression -> expression . MUL expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 expression -> expression . DIV expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . MOD expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
--- On XOR shift to state 11
--- On SUB shift to state 13
--- On OR shift to state 15
--- On NEQ shift to state 17
--- On MUL shift to state 19
--- On MOD shift to state 21
--- On LT shift to state 23
--- On LET shift to state 25
--- On GT shift to state 27
--- On GET shift to state 29
--- On EQ shift to state 31
--- On DIV shift to state 33
--- On BXOR shift to state 35
--- On BOR shift to state 37
--- On BNEQ shift to state 39
--- On BAND shift to state 41
--- On AND shift to state 43
--- On ADD shift to state 45
+-- On XOR shift to state 17
+-- On SUB shift to state 19
+-- On OR shift to state 21
+-- On NEQ shift to state 23
+-- On MUL shift to state 25
+-- On MOD shift to state 27
+-- On LT shift to state 29
+-- On LET shift to state 31
+-- On GT shift to state 33
+-- On GET shift to state 35
+-- On EQ shift to state 37
+-- On DIV shift to state 39
+-- On BXOR shift to state 41
+-- On BOR shift to state 43
+-- On BNEQ shift to state 45
+-- On BAND shift to state 47
+-- On AND shift to state 49
+-- On ADD shift to state 51
 -- On XOR reduce production expression -> expression BNEQ expression 
 -- On SUB reduce production expression -> expression BNEQ expression 
 -- On SEMI reduce production expression -> expression BNEQ expression 
@@ -1192,15 +1244,15 @@ expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 -- On ADD reduce production expression -> expression BNEQ expression 
 ** Conflict on XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 
-State 41:
+State 47:
 expression -> expression BAND . expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 -- On LPAR shift to state 6
 -- On IDENT shift to state 7
--- On CST shift to state 8
--- On BOOL_CST shift to state 9
--- On expression shift to state 42
+-- On CST shift to state 14
+-- On BOOL_CST shift to state 15
+-- On expression shift to state 48
 
-State 42:
+State 48:
 expression -> expression . LT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . GT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . LET expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
@@ -1220,24 +1272,24 @@ expression -> expression . MUL expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 expression -> expression . DIV expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . MOD expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
--- On XOR shift to state 11
--- On SUB shift to state 13
--- On OR shift to state 15
--- On NEQ shift to state 17
--- On MUL shift to state 19
--- On MOD shift to state 21
--- On LT shift to state 23
--- On LET shift to state 25
--- On GT shift to state 27
--- On GET shift to state 29
--- On EQ shift to state 31
--- On DIV shift to state 33
--- On BXOR shift to state 35
--- On BOR shift to state 37
--- On BNEQ shift to state 39
--- On BAND shift to state 41
--- On AND shift to state 43
--- On ADD shift to state 45
+-- On XOR shift to state 17
+-- On SUB shift to state 19
+-- On OR shift to state 21
+-- On NEQ shift to state 23
+-- On MUL shift to state 25
+-- On MOD shift to state 27
+-- On LT shift to state 29
+-- On LET shift to state 31
+-- On GT shift to state 33
+-- On GET shift to state 35
+-- On EQ shift to state 37
+-- On DIV shift to state 39
+-- On BXOR shift to state 41
+-- On BOR shift to state 43
+-- On BNEQ shift to state 45
+-- On BAND shift to state 47
+-- On AND shift to state 49
+-- On ADD shift to state 51
 -- On XOR reduce production expression -> expression BAND expression 
 -- On SUB reduce production expression -> expression BAND expression 
 -- On SEMI reduce production expression -> expression BAND expression 
@@ -1261,15 +1313,15 @@ expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 -- On ADD reduce production expression -> expression BAND expression 
 ** Conflict on XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 
-State 43:
+State 49:
 expression -> expression AND . expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 -- On LPAR shift to state 6
 -- On IDENT shift to state 7
--- On CST shift to state 8
--- On BOOL_CST shift to state 9
--- On expression shift to state 44
+-- On CST shift to state 14
+-- On BOOL_CST shift to state 15
+-- On expression shift to state 50
 
-State 44:
+State 50:
 expression -> expression . LT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . GT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . LET expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
@@ -1289,24 +1341,24 @@ expression -> expression . MUL expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 expression -> expression . DIV expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . MOD expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
--- On XOR shift to state 11
--- On SUB shift to state 13
--- On OR shift to state 15
--- On NEQ shift to state 17
--- On MUL shift to state 19
--- On MOD shift to state 21
--- On LT shift to state 23
--- On LET shift to state 25
--- On GT shift to state 27
--- On GET shift to state 29
--- On EQ shift to state 31
--- On DIV shift to state 33
--- On BXOR shift to state 35
--- On BOR shift to state 37
--- On BNEQ shift to state 39
--- On BAND shift to state 41
--- On AND shift to state 43
--- On ADD shift to state 45
+-- On XOR shift to state 17
+-- On SUB shift to state 19
+-- On OR shift to state 21
+-- On NEQ shift to state 23
+-- On MUL shift to state 25
+-- On MOD shift to state 27
+-- On LT shift to state 29
+-- On LET shift to state 31
+-- On GT shift to state 33
+-- On GET shift to state 35
+-- On EQ shift to state 37
+-- On DIV shift to state 39
+-- On BXOR shift to state 41
+-- On BOR shift to state 43
+-- On BNEQ shift to state 45
+-- On BAND shift to state 47
+-- On AND shift to state 49
+-- On ADD shift to state 51
 -- On XOR reduce production expression -> expression AND expression 
 -- On SUB reduce production expression -> expression AND expression 
 -- On SEMI reduce production expression -> expression AND expression 
@@ -1330,15 +1382,15 @@ expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 -- On ADD reduce production expression -> expression AND expression 
 ** Conflict on XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 
-State 45:
+State 51:
 expression -> expression ADD . expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 -- On LPAR shift to state 6
 -- On IDENT shift to state 7
--- On CST shift to state 8
--- On BOOL_CST shift to state 9
--- On expression shift to state 46
+-- On CST shift to state 14
+-- On BOOL_CST shift to state 15
+-- On expression shift to state 52
 
-State 46:
+State 52:
 expression -> expression . LT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . GT expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . LET expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
@@ -1358,24 +1410,24 @@ expression -> expression . MUL expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 expression -> expression . DIV expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . MOD expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
--- On XOR shift to state 11
--- On SUB shift to state 13
--- On OR shift to state 15
--- On NEQ shift to state 17
--- On MUL shift to state 19
--- On MOD shift to state 21
--- On LT shift to state 23
--- On LET shift to state 25
--- On GT shift to state 27
--- On GET shift to state 29
--- On EQ shift to state 31
--- On DIV shift to state 33
--- On BXOR shift to state 35
--- On BOR shift to state 37
--- On BNEQ shift to state 39
--- On BAND shift to state 41
--- On AND shift to state 43
--- On ADD shift to state 45
+-- On XOR shift to state 17
+-- On SUB shift to state 19
+-- On OR shift to state 21
+-- On NEQ shift to state 23
+-- On MUL shift to state 25
+-- On MOD shift to state 27
+-- On LT shift to state 29
+-- On LET shift to state 31
+-- On GT shift to state 33
+-- On GET shift to state 35
+-- On EQ shift to state 37
+-- On DIV shift to state 39
+-- On BXOR shift to state 41
+-- On BOR shift to state 43
+-- On BNEQ shift to state 45
+-- On BAND shift to state 47
+-- On AND shift to state 49
+-- On ADD shift to state 51
 -- On XOR reduce production expression -> expression ADD expression 
 -- On SUB reduce production expression -> expression ADD expression 
 -- On SEMI reduce production expression -> expression ADD expression 
@@ -1399,7 +1451,7 @@ expression -> expression . SUB expression [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT 
 -- On ADD reduce production expression -> expression ADD expression 
 ** Conflict on XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 
-State 47:
+State 53:
 expression -> LPAR expression RPAR . [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 -- On XOR reduce production expression -> LPAR expression RPAR 
 -- On SUB reduce production expression -> LPAR expression RPAR 
@@ -1423,7 +1475,7 @@ expression -> LPAR expression RPAR . [ XOR SUB SEMI RPAR OR NEQ MUL MOD LT LET G
 -- On AND reduce production expression -> LPAR expression RPAR 
 -- On ADD reduce production expression -> LPAR expression RPAR 
 
-State 48:
+State 54:
 expression -> expression . LT expression [ XOR SUB SEMI OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . GT expression [ XOR SUB SEMI OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . LET expression [ XOR SUB SEMI OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
@@ -1442,29 +1494,29 @@ expression -> expression . MUL expression [ XOR SUB SEMI OR NEQ MUL MOD LT LET G
 expression -> expression . DIV expression [ XOR SUB SEMI OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . MOD expression [ XOR SUB SEMI OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . SUB expression [ XOR SUB SEMI OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
-variable_decl -> IDENT SET expression . SEMI [ WHILE VOID RETURN INT IF IDENT EOF END ELSE BOOL ]
--- On XOR shift to state 11
--- On SUB shift to state 13
--- On SEMI shift to state 49
--- On OR shift to state 15
--- On NEQ shift to state 17
--- On MUL shift to state 19
--- On MOD shift to state 21
--- On LT shift to state 23
--- On LET shift to state 25
--- On GT shift to state 27
--- On GET shift to state 29
--- On EQ shift to state 31
--- On DIV shift to state 33
--- On BXOR shift to state 35
--- On BOR shift to state 37
--- On BNEQ shift to state 39
--- On BAND shift to state 41
--- On AND shift to state 43
--- On ADD shift to state 45
+variable_decl -> IDENT SET expression . SEMI [ WHILE VOID RETURN INT IF IDENT EOF END ELSE COMMENT BOOL BEGIN ]
+-- On XOR shift to state 17
+-- On SUB shift to state 19
+-- On SEMI shift to state 55
+-- On OR shift to state 21
+-- On NEQ shift to state 23
+-- On MUL shift to state 25
+-- On MOD shift to state 27
+-- On LT shift to state 29
+-- On LET shift to state 31
+-- On GT shift to state 33
+-- On GET shift to state 35
+-- On EQ shift to state 37
+-- On DIV shift to state 39
+-- On BXOR shift to state 41
+-- On BOR shift to state 43
+-- On BNEQ shift to state 45
+-- On BAND shift to state 47
+-- On AND shift to state 49
+-- On ADD shift to state 51
 
-State 49:
-variable_decl -> IDENT SET expression SEMI . [ WHILE VOID RETURN INT IF IDENT EOF END ELSE BOOL ]
+State 55:
+variable_decl -> IDENT SET expression SEMI . [ WHILE VOID RETURN INT IF IDENT EOF END ELSE COMMENT BOOL BEGIN ]
 -- On WHILE reduce production variable_decl -> IDENT SET expression SEMI 
 -- On VOID reduce production variable_decl -> IDENT SET expression SEMI 
 -- On RETURN reduce production variable_decl -> IDENT SET expression SEMI 
@@ -1474,50 +1526,50 @@ variable_decl -> IDENT SET expression SEMI . [ WHILE VOID RETURN INT IF IDENT EO
 -- On EOF reduce production variable_decl -> IDENT SET expression SEMI 
 -- On END reduce production variable_decl -> IDENT SET expression SEMI 
 -- On ELSE reduce production variable_decl -> IDENT SET expression SEMI 
+-- On COMMENT reduce production variable_decl -> IDENT SET expression SEMI 
 -- On BOOL reduce production variable_decl -> IDENT SET expression SEMI 
+-- On BEGIN reduce production variable_decl -> IDENT SET expression SEMI 
 
-State 50:
+State 56:
 typ -> BOOL . [ IDENT ]
 -- On IDENT reduce production typ -> BOOL 
 
-State 51:
+State 57:
 declaration_list -> variable_decl . declaration_list [ EOF ]
 -- On VOID shift to state 2
 -- On INT shift to state 3
 -- On IDENT shift to state 4
--- On BOOL shift to state 50
--- On variable_decl shift to state 51
--- On typ shift to state 52
--- On simple_var_decl shift to state 84
--- On function_decl shift to state 110
--- On declaration_list shift to state 112
+-- On BOOL shift to state 56
+-- On variable_decl shift to state 57
+-- On typ shift to state 58
+-- On simple_var_decl shift to state 97
+-- On function_decl shift to state 116
+-- On declaration_list shift to state 118
 -- On EOF reduce production declaration_list -> 
 
-State 52:
-function_decl -> typ . IDENT LPAR RPAR BEGIN list(instruction) END [ VOID INT IDENT EOF BOOL ]
+State 58:
 function_decl -> typ . IDENT LPAR parameter_list RPAR BEGIN list(instruction) END [ VOID INT IDENT EOF BOOL ]
-simple_var_decl -> typ . IDENT SEMI [ VOID INT IDENT EOF BOOL ]
+simple_var_decl -> typ . IDENT [ SEMI ]
 variable_decl -> typ . IDENT SET expression SEMI [ VOID INT IDENT EOF BOOL ]
--- On IDENT shift to state 53
+-- On IDENT shift to state 59
 
-State 53:
-function_decl -> typ IDENT . LPAR RPAR BEGIN list(instruction) END [ VOID INT IDENT EOF BOOL ]
+State 59:
 function_decl -> typ IDENT . LPAR parameter_list RPAR BEGIN list(instruction) END [ VOID INT IDENT EOF BOOL ]
-simple_var_decl -> typ IDENT . SEMI [ VOID INT IDENT EOF BOOL ]
+simple_var_decl -> typ IDENT . [ SEMI ]
 variable_decl -> typ IDENT . SET expression SEMI [ VOID INT IDENT EOF BOOL ]
--- On SET shift to state 54
--- On SEMI shift to state 57
--- On LPAR shift to state 58
+-- On SET shift to state 60
+-- On LPAR shift to state 63
+-- On SEMI reduce production simple_var_decl -> typ IDENT 
 
-State 54:
-variable_decl -> typ IDENT SET . expression SEMI [ WHILE VOID RETURN INT IF IDENT EOF END ELSE BOOL ]
+State 60:
+variable_decl -> typ IDENT SET . expression SEMI [ WHILE VOID RETURN INT IF IDENT EOF END ELSE COMMENT BOOL BEGIN ]
 -- On LPAR shift to state 6
 -- On IDENT shift to state 7
--- On CST shift to state 8
--- On BOOL_CST shift to state 9
--- On expression shift to state 55
+-- On CST shift to state 14
+-- On BOOL_CST shift to state 15
+-- On expression shift to state 61
 
-State 55:
+State 61:
 expression -> expression . LT expression [ XOR SUB SEMI OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . GT expression [ XOR SUB SEMI OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . LET expression [ XOR SUB SEMI OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
@@ -1536,29 +1588,29 @@ expression -> expression . MUL expression [ XOR SUB SEMI OR NEQ MUL MOD LT LET G
 expression -> expression . DIV expression [ XOR SUB SEMI OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . MOD expression [ XOR SUB SEMI OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . SUB expression [ XOR SUB SEMI OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
-variable_decl -> typ IDENT SET expression . SEMI [ WHILE VOID RETURN INT IF IDENT EOF END ELSE BOOL ]
--- On XOR shift to state 11
--- On SUB shift to state 13
--- On SEMI shift to state 56
--- On OR shift to state 15
--- On NEQ shift to state 17
--- On MUL shift to state 19
--- On MOD shift to state 21
--- On LT shift to state 23
--- On LET shift to state 25
--- On GT shift to state 27
--- On GET shift to state 29
--- On EQ shift to state 31
--- On DIV shift to state 33
--- On BXOR shift to state 35
--- On BOR shift to state 37
--- On BNEQ shift to state 39
--- On BAND shift to state 41
--- On AND shift to state 43
--- On ADD shift to state 45
+variable_decl -> typ IDENT SET expression . SEMI [ WHILE VOID RETURN INT IF IDENT EOF END ELSE COMMENT BOOL BEGIN ]
+-- On XOR shift to state 17
+-- On SUB shift to state 19
+-- On SEMI shift to state 62
+-- On OR shift to state 21
+-- On NEQ shift to state 23
+-- On MUL shift to state 25
+-- On MOD shift to state 27
+-- On LT shift to state 29
+-- On LET shift to state 31
+-- On GT shift to state 33
+-- On GET shift to state 35
+-- On EQ shift to state 37
+-- On DIV shift to state 39
+-- On BXOR shift to state 41
+-- On BOR shift to state 43
+-- On BNEQ shift to state 45
+-- On BAND shift to state 47
+-- On AND shift to state 49
+-- On ADD shift to state 51
 
-State 56:
-variable_decl -> typ IDENT SET expression SEMI . [ WHILE VOID RETURN INT IF IDENT EOF END ELSE BOOL ]
+State 62:
+variable_decl -> typ IDENT SET expression SEMI . [ WHILE VOID RETURN INT IF IDENT EOF END ELSE COMMENT BOOL BEGIN ]
 -- On WHILE reduce production variable_decl -> typ IDENT SET expression SEMI 
 -- On VOID reduce production variable_decl -> typ IDENT SET expression SEMI 
 -- On RETURN reduce production variable_decl -> typ IDENT SET expression SEMI 
@@ -1568,71 +1620,90 @@ variable_decl -> typ IDENT SET expression SEMI . [ WHILE VOID RETURN INT IF IDEN
 -- On EOF reduce production variable_decl -> typ IDENT SET expression SEMI 
 -- On END reduce production variable_decl -> typ IDENT SET expression SEMI 
 -- On ELSE reduce production variable_decl -> typ IDENT SET expression SEMI 
+-- On COMMENT reduce production variable_decl -> typ IDENT SET expression SEMI 
 -- On BOOL reduce production variable_decl -> typ IDENT SET expression SEMI 
-
-State 57:
-simple_var_decl -> typ IDENT SEMI . [ WHILE VOID SEPARATOR RPAR RETURN INT IF IDENT EOF END ELSE BOOL ]
--- On WHILE reduce production simple_var_decl -> typ IDENT SEMI 
--- On VOID reduce production simple_var_decl -> typ IDENT SEMI 
--- On SEPARATOR reduce production simple_var_decl -> typ IDENT SEMI 
--- On RPAR reduce production simple_var_decl -> typ IDENT SEMI 
--- On RETURN reduce production simple_var_decl -> typ IDENT SEMI 
--- On INT reduce production simple_var_decl -> typ IDENT SEMI 
--- On IF reduce production simple_var_decl -> typ IDENT SEMI 
--- On IDENT reduce production simple_var_decl -> typ IDENT SEMI 
--- On EOF reduce production simple_var_decl -> typ IDENT SEMI 
--- On END reduce production simple_var_decl -> typ IDENT SEMI 
--- On ELSE reduce production simple_var_decl -> typ IDENT SEMI 
--- On BOOL reduce production simple_var_decl -> typ IDENT SEMI 
-
-State 58:
-function_decl -> typ IDENT LPAR . RPAR BEGIN list(instruction) END [ VOID INT IDENT EOF BOOL ]
-function_decl -> typ IDENT LPAR . parameter_list RPAR BEGIN list(instruction) END [ VOID INT IDENT EOF BOOL ]
--- On VOID shift to state 2
--- On RPAR shift to state 59
--- On INT shift to state 3
--- On BOOL shift to state 50
--- On typ shift to state 100
--- On simple_var_decl shift to state 102
--- On parameter_list shift to state 105
--- On RPAR reduce production parameter_list -> 
-** Conflict on RPAR
-
-State 59:
-function_decl -> typ IDENT LPAR RPAR . BEGIN list(instruction) END [ VOID INT IDENT EOF BOOL ]
--- On BEGIN shift to state 60
-
-State 60:
-function_decl -> typ IDENT LPAR RPAR BEGIN . list(instruction) END [ VOID INT IDENT EOF BOOL ]
--- On WHILE shift to state 61
--- On VOID shift to state 2
--- On RETURN shift to state 67
--- On INT shift to state 3
--- On IF shift to state 75
--- On IDENT shift to state 4
--- On BOOL shift to state 50
--- On variable_decl shift to state 81
--- On typ shift to state 82
--- On simple_var_decl shift to state 84
--- On list(instruction) shift to state 98
--- On instruction shift to state 91
--- On END reduce production list(instruction) -> 
-
-State 61:
-instruction -> WHILE . LPAR expression RPAR BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
-instruction -> WHILE . LPAR expression RPAR SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
--- On LPAR shift to state 62
-
-State 62:
-instruction -> WHILE LPAR . expression RPAR BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
-instruction -> WHILE LPAR . expression RPAR SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
--- On LPAR shift to state 6
--- On IDENT shift to state 7
--- On CST shift to state 8
--- On BOOL_CST shift to state 9
--- On expression shift to state 63
+-- On BEGIN reduce production variable_decl -> typ IDENT SET expression SEMI 
 
 State 63:
+function_decl -> typ IDENT LPAR . parameter_list RPAR BEGIN list(instruction) END [ VOID INT IDENT EOF BOOL ]
+-- On VOID shift to state 2
+-- On INT shift to state 3
+-- On BOOL shift to state 56
+-- On typ shift to state 64
+-- On simple_var_decl shift to state 66
+-- On parameter_list shift to state 69
+-- On RPAR reduce production parameter_list -> 
+
+State 64:
+simple_var_decl -> typ . IDENT [ SEPARATOR RPAR ]
+-- On IDENT shift to state 65
+
+State 65:
+simple_var_decl -> typ IDENT . [ SEPARATOR RPAR ]
+-- On SEPARATOR reduce production simple_var_decl -> typ IDENT 
+-- On RPAR reduce production simple_var_decl -> typ IDENT 
+
+State 66:
+parameter_list -> simple_var_decl . [ RPAR ]
+parameter_list -> simple_var_decl . SEPARATOR parameter_list [ RPAR ]
+-- On SEPARATOR shift to state 67
+-- On RPAR reduce production parameter_list -> simple_var_decl 
+
+State 67:
+parameter_list -> simple_var_decl SEPARATOR . parameter_list [ RPAR ]
+-- On VOID shift to state 2
+-- On INT shift to state 3
+-- On BOOL shift to state 56
+-- On typ shift to state 64
+-- On simple_var_decl shift to state 66
+-- On parameter_list shift to state 68
+-- On RPAR reduce production parameter_list -> 
+
+State 68:
+parameter_list -> simple_var_decl SEPARATOR parameter_list . [ RPAR ]
+-- On RPAR reduce production parameter_list -> simple_var_decl SEPARATOR parameter_list 
+
+State 69:
+function_decl -> typ IDENT LPAR parameter_list . RPAR BEGIN list(instruction) END [ VOID INT IDENT EOF BOOL ]
+-- On RPAR shift to state 70
+
+State 70:
+function_decl -> typ IDENT LPAR parameter_list RPAR . BEGIN list(instruction) END [ VOID INT IDENT EOF BOOL ]
+-- On BEGIN shift to state 71
+
+State 71:
+function_decl -> typ IDENT LPAR parameter_list RPAR BEGIN . list(instruction) END [ VOID INT IDENT EOF BOOL ]
+-- On WHILE shift to state 72
+-- On VOID shift to state 2
+-- On RETURN shift to state 78
+-- On INT shift to state 3
+-- On IF shift to state 86
+-- On IDENT shift to state 4
+-- On COMMENT shift to state 91
+-- On BOOL shift to state 56
+-- On BEGIN shift to state 93
+-- On variable_decl shift to state 94
+-- On typ shift to state 95
+-- On simple_var_decl shift to state 97
+-- On list(instruction) shift to state 114
+-- On instruction shift to state 101
+-- On END reduce production list(instruction) -> 
+
+State 72:
+instruction -> WHILE . LPAR expression RPAR BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+instruction -> WHILE . LPAR expression RPAR SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+-- On LPAR shift to state 73
+
+State 73:
+instruction -> WHILE LPAR . expression RPAR BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+instruction -> WHILE LPAR . expression RPAR SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+-- On LPAR shift to state 6
+-- On IDENT shift to state 7
+-- On CST shift to state 14
+-- On BOOL_CST shift to state 15
+-- On expression shift to state 74
+
+State 74:
 expression -> expression . LT expression [ XOR SUB RPAR OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . GT expression [ XOR SUB RPAR OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . LET expression [ XOR SUB RPAR OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
@@ -1651,36 +1722,36 @@ expression -> expression . MUL expression [ XOR SUB RPAR OR NEQ MUL MOD LT LET G
 expression -> expression . DIV expression [ XOR SUB RPAR OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . MOD expression [ XOR SUB RPAR OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . SUB expression [ XOR SUB RPAR OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
-instruction -> WHILE LPAR expression . RPAR BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
-instruction -> WHILE LPAR expression . RPAR SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
--- On XOR shift to state 11
--- On SUB shift to state 13
--- On RPAR shift to state 64
--- On OR shift to state 15
--- On NEQ shift to state 17
--- On MUL shift to state 19
--- On MOD shift to state 21
--- On LT shift to state 23
--- On LET shift to state 25
--- On GT shift to state 27
--- On GET shift to state 29
--- On EQ shift to state 31
--- On DIV shift to state 33
--- On BXOR shift to state 35
--- On BOR shift to state 37
--- On BNEQ shift to state 39
--- On BAND shift to state 41
--- On AND shift to state 43
--- On ADD shift to state 45
+instruction -> WHILE LPAR expression . RPAR BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+instruction -> WHILE LPAR expression . RPAR SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+-- On XOR shift to state 17
+-- On SUB shift to state 19
+-- On RPAR shift to state 75
+-- On OR shift to state 21
+-- On NEQ shift to state 23
+-- On MUL shift to state 25
+-- On MOD shift to state 27
+-- On LT shift to state 29
+-- On LET shift to state 31
+-- On GT shift to state 33
+-- On GET shift to state 35
+-- On EQ shift to state 37
+-- On DIV shift to state 39
+-- On BXOR shift to state 41
+-- On BOR shift to state 43
+-- On BNEQ shift to state 45
+-- On BAND shift to state 47
+-- On AND shift to state 49
+-- On ADD shift to state 51
 
-State 64:
-instruction -> WHILE LPAR expression RPAR . BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
-instruction -> WHILE LPAR expression RPAR . SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
--- On SEMI shift to state 65
--- On BEGIN shift to state 66
+State 75:
+instruction -> WHILE LPAR expression RPAR . BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+instruction -> WHILE LPAR expression RPAR . SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+-- On SEMI shift to state 76
+-- On BEGIN shift to state 77
 
-State 65:
-instruction -> WHILE LPAR expression RPAR SEMI . [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
+State 76:
+instruction -> WHILE LPAR expression RPAR SEMI . [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
 -- On WHILE reduce production instruction -> WHILE LPAR expression RPAR SEMI 
 -- On VOID reduce production instruction -> WHILE LPAR expression RPAR SEMI 
 -- On RETURN reduce production instruction -> WHILE LPAR expression RPAR SEMI 
@@ -1689,38 +1760,42 @@ instruction -> WHILE LPAR expression RPAR SEMI . [ WHILE VOID RETURN INT IF IDEN
 -- On IDENT reduce production instruction -> WHILE LPAR expression RPAR SEMI 
 -- On END reduce production instruction -> WHILE LPAR expression RPAR SEMI 
 -- On ELSE reduce production instruction -> WHILE LPAR expression RPAR SEMI 
+-- On COMMENT reduce production instruction -> WHILE LPAR expression RPAR SEMI 
 -- On BOOL reduce production instruction -> WHILE LPAR expression RPAR SEMI 
+-- On BEGIN reduce production instruction -> WHILE LPAR expression RPAR SEMI 
 
-State 66:
-instruction -> WHILE LPAR expression RPAR BEGIN . list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
--- On WHILE shift to state 61
+State 77:
+instruction -> WHILE LPAR expression RPAR BEGIN . list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+-- On WHILE shift to state 72
 -- On VOID shift to state 2
--- On RETURN shift to state 67
+-- On RETURN shift to state 78
 -- On INT shift to state 3
--- On IF shift to state 75
+-- On IF shift to state 86
 -- On IDENT shift to state 4
--- On BOOL shift to state 50
--- On variable_decl shift to state 81
--- On typ shift to state 82
--- On simple_var_decl shift to state 84
--- On list(instruction) shift to state 96
--- On instruction shift to state 91
+-- On COMMENT shift to state 91
+-- On BOOL shift to state 56
+-- On BEGIN shift to state 93
+-- On variable_decl shift to state 94
+-- On typ shift to state 95
+-- On simple_var_decl shift to state 97
+-- On list(instruction) shift to state 112
+-- On instruction shift to state 101
 -- On END reduce production list(instruction) -> 
 
-State 67:
-instruction -> RETURN . expression SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
-instruction -> RETURN . BEGIN expression END SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
-instruction -> RETURN . SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
--- On SEMI shift to state 68
+State 78:
+instruction -> RETURN . expression SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+instruction -> RETURN . BEGIN expression END SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+instruction -> RETURN . SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+-- On SEMI shift to state 79
 -- On LPAR shift to state 6
 -- On IDENT shift to state 7
--- On CST shift to state 8
--- On BOOL_CST shift to state 9
--- On BEGIN shift to state 69
--- On expression shift to state 73
+-- On CST shift to state 14
+-- On BOOL_CST shift to state 15
+-- On BEGIN shift to state 80
+-- On expression shift to state 84
 
-State 68:
-instruction -> RETURN SEMI . [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
+State 79:
+instruction -> RETURN SEMI . [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
 -- On WHILE reduce production instruction -> RETURN SEMI 
 -- On VOID reduce production instruction -> RETURN SEMI 
 -- On RETURN reduce production instruction -> RETURN SEMI 
@@ -1729,17 +1804,19 @@ instruction -> RETURN SEMI . [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
 -- On IDENT reduce production instruction -> RETURN SEMI 
 -- On END reduce production instruction -> RETURN SEMI 
 -- On ELSE reduce production instruction -> RETURN SEMI 
+-- On COMMENT reduce production instruction -> RETURN SEMI 
 -- On BOOL reduce production instruction -> RETURN SEMI 
+-- On BEGIN reduce production instruction -> RETURN SEMI 
 
-State 69:
-instruction -> RETURN BEGIN . expression END SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
+State 80:
+instruction -> RETURN BEGIN . expression END SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
 -- On LPAR shift to state 6
 -- On IDENT shift to state 7
--- On CST shift to state 8
--- On BOOL_CST shift to state 9
--- On expression shift to state 70
+-- On CST shift to state 14
+-- On BOOL_CST shift to state 15
+-- On expression shift to state 81
 
-State 70:
+State 81:
 expression -> expression . LT expression [ XOR SUB OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . GT expression [ XOR SUB OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . LET expression [ XOR SUB OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
@@ -1758,33 +1835,33 @@ expression -> expression . MUL expression [ XOR SUB OR NEQ MUL MOD LT LET GT GET
 expression -> expression . DIV expression [ XOR SUB OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . MOD expression [ XOR SUB OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . SUB expression [ XOR SUB OR NEQ MUL MOD LT LET GT GET EQ END DIV BXOR BOR BNEQ BAND AND ADD ]
-instruction -> RETURN BEGIN expression . END SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
--- On XOR shift to state 11
--- On SUB shift to state 13
--- On OR shift to state 15
--- On NEQ shift to state 17
--- On MUL shift to state 19
--- On MOD shift to state 21
--- On LT shift to state 23
--- On LET shift to state 25
--- On GT shift to state 27
--- On GET shift to state 29
--- On EQ shift to state 31
--- On END shift to state 71
--- On DIV shift to state 33
--- On BXOR shift to state 35
--- On BOR shift to state 37
--- On BNEQ shift to state 39
--- On BAND shift to state 41
--- On AND shift to state 43
--- On ADD shift to state 45
+instruction -> RETURN BEGIN expression . END SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+-- On XOR shift to state 17
+-- On SUB shift to state 19
+-- On OR shift to state 21
+-- On NEQ shift to state 23
+-- On MUL shift to state 25
+-- On MOD shift to state 27
+-- On LT shift to state 29
+-- On LET shift to state 31
+-- On GT shift to state 33
+-- On GET shift to state 35
+-- On EQ shift to state 37
+-- On END shift to state 82
+-- On DIV shift to state 39
+-- On BXOR shift to state 41
+-- On BOR shift to state 43
+-- On BNEQ shift to state 45
+-- On BAND shift to state 47
+-- On AND shift to state 49
+-- On ADD shift to state 51
 
-State 71:
-instruction -> RETURN BEGIN expression END . SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
--- On SEMI shift to state 72
+State 82:
+instruction -> RETURN BEGIN expression END . SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+-- On SEMI shift to state 83
 
-State 72:
-instruction -> RETURN BEGIN expression END SEMI . [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
+State 83:
+instruction -> RETURN BEGIN expression END SEMI . [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
 -- On WHILE reduce production instruction -> RETURN BEGIN expression END SEMI 
 -- On VOID reduce production instruction -> RETURN BEGIN expression END SEMI 
 -- On RETURN reduce production instruction -> RETURN BEGIN expression END SEMI 
@@ -1793,9 +1870,11 @@ instruction -> RETURN BEGIN expression END SEMI . [ WHILE VOID RETURN INT IF IDE
 -- On IDENT reduce production instruction -> RETURN BEGIN expression END SEMI 
 -- On END reduce production instruction -> RETURN BEGIN expression END SEMI 
 -- On ELSE reduce production instruction -> RETURN BEGIN expression END SEMI 
+-- On COMMENT reduce production instruction -> RETURN BEGIN expression END SEMI 
 -- On BOOL reduce production instruction -> RETURN BEGIN expression END SEMI 
+-- On BEGIN reduce production instruction -> RETURN BEGIN expression END SEMI 
 
-State 73:
+State 84:
 expression -> expression . LT expression [ XOR SUB SEMI OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . GT expression [ XOR SUB SEMI OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . LET expression [ XOR SUB SEMI OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
@@ -1814,29 +1893,29 @@ expression -> expression . MUL expression [ XOR SUB SEMI OR NEQ MUL MOD LT LET G
 expression -> expression . DIV expression [ XOR SUB SEMI OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . MOD expression [ XOR SUB SEMI OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . SUB expression [ XOR SUB SEMI OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
-instruction -> RETURN expression . SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
--- On XOR shift to state 11
--- On SUB shift to state 13
--- On SEMI shift to state 74
--- On OR shift to state 15
--- On NEQ shift to state 17
--- On MUL shift to state 19
--- On MOD shift to state 21
--- On LT shift to state 23
--- On LET shift to state 25
--- On GT shift to state 27
--- On GET shift to state 29
--- On EQ shift to state 31
--- On DIV shift to state 33
--- On BXOR shift to state 35
--- On BOR shift to state 37
--- On BNEQ shift to state 39
--- On BAND shift to state 41
--- On AND shift to state 43
--- On ADD shift to state 45
+instruction -> RETURN expression . SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+-- On XOR shift to state 17
+-- On SUB shift to state 19
+-- On SEMI shift to state 85
+-- On OR shift to state 21
+-- On NEQ shift to state 23
+-- On MUL shift to state 25
+-- On MOD shift to state 27
+-- On LT shift to state 29
+-- On LET shift to state 31
+-- On GT shift to state 33
+-- On GET shift to state 35
+-- On EQ shift to state 37
+-- On DIV shift to state 39
+-- On BXOR shift to state 41
+-- On BOR shift to state 43
+-- On BNEQ shift to state 45
+-- On BAND shift to state 47
+-- On AND shift to state 49
+-- On ADD shift to state 51
 
-State 74:
-instruction -> RETURN expression SEMI . [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
+State 85:
+instruction -> RETURN expression SEMI . [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
 -- On WHILE reduce production instruction -> RETURN expression SEMI 
 -- On VOID reduce production instruction -> RETURN expression SEMI 
 -- On RETURN reduce production instruction -> RETURN expression SEMI 
@@ -1845,29 +1924,31 @@ instruction -> RETURN expression SEMI . [ WHILE VOID RETURN INT IF IDENT END ELS
 -- On IDENT reduce production instruction -> RETURN expression SEMI 
 -- On END reduce production instruction -> RETURN expression SEMI 
 -- On ELSE reduce production instruction -> RETURN expression SEMI 
+-- On COMMENT reduce production instruction -> RETURN expression SEMI 
 -- On BOOL reduce production instruction -> RETURN expression SEMI 
+-- On BEGIN reduce production instruction -> RETURN expression SEMI 
 
-State 75:
-instruction -> IF . LPAR expression RPAR BEGIN list(instruction) END ELSE BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
-instruction -> IF . LPAR expression RPAR BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
-instruction -> IF . LPAR expression RPAR instruction ELSE instruction [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
-instruction -> IF . LPAR expression RPAR instruction [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
-instruction -> IF . LPAR expression RPAR SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
--- On LPAR shift to state 76
+State 86:
+instruction -> IF . LPAR expression RPAR BEGIN list(instruction) END ELSE BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+instruction -> IF . LPAR expression RPAR BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+instruction -> IF . LPAR expression RPAR instruction ELSE instruction [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+instruction -> IF . LPAR expression RPAR instruction [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+instruction -> IF . LPAR expression RPAR SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+-- On LPAR shift to state 87
 
-State 76:
-instruction -> IF LPAR . expression RPAR BEGIN list(instruction) END ELSE BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
-instruction -> IF LPAR . expression RPAR BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
-instruction -> IF LPAR . expression RPAR instruction ELSE instruction [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
-instruction -> IF LPAR . expression RPAR instruction [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
-instruction -> IF LPAR . expression RPAR SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
+State 87:
+instruction -> IF LPAR . expression RPAR BEGIN list(instruction) END ELSE BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+instruction -> IF LPAR . expression RPAR BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+instruction -> IF LPAR . expression RPAR instruction ELSE instruction [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+instruction -> IF LPAR . expression RPAR instruction [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+instruction -> IF LPAR . expression RPAR SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
 -- On LPAR shift to state 6
 -- On IDENT shift to state 7
--- On CST shift to state 8
--- On BOOL_CST shift to state 9
--- On expression shift to state 77
+-- On CST shift to state 14
+-- On BOOL_CST shift to state 15
+-- On expression shift to state 88
 
-State 77:
+State 88:
 expression -> expression . LT expression [ XOR SUB RPAR OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . GT expression [ XOR SUB RPAR OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . LET expression [ XOR SUB RPAR OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
@@ -1886,53 +1967,54 @@ expression -> expression . MUL expression [ XOR SUB RPAR OR NEQ MUL MOD LT LET G
 expression -> expression . DIV expression [ XOR SUB RPAR OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . MOD expression [ XOR SUB RPAR OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
 expression -> expression . SUB expression [ XOR SUB RPAR OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD ]
-instruction -> IF LPAR expression . RPAR BEGIN list(instruction) END ELSE BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
-instruction -> IF LPAR expression . RPAR BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
-instruction -> IF LPAR expression . RPAR instruction ELSE instruction [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
-instruction -> IF LPAR expression . RPAR instruction [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
-instruction -> IF LPAR expression . RPAR SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
--- On XOR shift to state 11
--- On SUB shift to state 13
--- On RPAR shift to state 78
--- On OR shift to state 15
--- On NEQ shift to state 17
--- On MUL shift to state 19
--- On MOD shift to state 21
--- On LT shift to state 23
--- On LET shift to state 25
--- On GT shift to state 27
--- On GET shift to state 29
--- On EQ shift to state 31
--- On DIV shift to state 33
--- On BXOR shift to state 35
--- On BOR shift to state 37
--- On BNEQ shift to state 39
--- On BAND shift to state 41
--- On AND shift to state 43
--- On ADD shift to state 45
+instruction -> IF LPAR expression . RPAR BEGIN list(instruction) END ELSE BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+instruction -> IF LPAR expression . RPAR BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+instruction -> IF LPAR expression . RPAR instruction ELSE instruction [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+instruction -> IF LPAR expression . RPAR instruction [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+instruction -> IF LPAR expression . RPAR SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+-- On XOR shift to state 17
+-- On SUB shift to state 19
+-- On RPAR shift to state 89
+-- On OR shift to state 21
+-- On NEQ shift to state 23
+-- On MUL shift to state 25
+-- On MOD shift to state 27
+-- On LT shift to state 29
+-- On LET shift to state 31
+-- On GT shift to state 33
+-- On GET shift to state 35
+-- On EQ shift to state 37
+-- On DIV shift to state 39
+-- On BXOR shift to state 41
+-- On BOR shift to state 43
+-- On BNEQ shift to state 45
+-- On BAND shift to state 47
+-- On AND shift to state 49
+-- On ADD shift to state 51
 
-State 78:
-instruction -> IF LPAR expression RPAR . BEGIN list(instruction) END ELSE BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
-instruction -> IF LPAR expression RPAR . BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
-instruction -> IF LPAR expression RPAR . instruction ELSE instruction [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
-instruction -> IF LPAR expression RPAR . instruction [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
-instruction -> IF LPAR expression RPAR . SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
--- On WHILE shift to state 61
+State 89:
+instruction -> IF LPAR expression RPAR . BEGIN list(instruction) END ELSE BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+instruction -> IF LPAR expression RPAR . BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+instruction -> IF LPAR expression RPAR . instruction ELSE instruction [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+instruction -> IF LPAR expression RPAR . instruction [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+instruction -> IF LPAR expression RPAR . SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+-- On WHILE shift to state 72
 -- On VOID shift to state 2
--- On SEMI shift to state 79
--- On RETURN shift to state 67
+-- On SEMI shift to state 90
+-- On RETURN shift to state 78
 -- On INT shift to state 3
--- On IF shift to state 75
+-- On IF shift to state 86
 -- On IDENT shift to state 4
--- On BOOL shift to state 50
--- On BEGIN shift to state 80
--- On variable_decl shift to state 81
--- On typ shift to state 82
--- On simple_var_decl shift to state 84
--- On instruction shift to state 93
+-- On COMMENT shift to state 91
+-- On BOOL shift to state 56
+-- On BEGIN shift to state 92
+-- On variable_decl shift to state 94
+-- On typ shift to state 95
+-- On simple_var_decl shift to state 97
+-- On instruction shift to state 109
 
-State 79:
-instruction -> IF LPAR expression RPAR SEMI . [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
+State 90:
+instruction -> IF LPAR expression RPAR SEMI . [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
 -- On WHILE reduce production instruction -> IF LPAR expression RPAR SEMI 
 -- On VOID reduce production instruction -> IF LPAR expression RPAR SEMI 
 -- On RETURN reduce production instruction -> IF LPAR expression RPAR SEMI 
@@ -1941,27 +2023,64 @@ instruction -> IF LPAR expression RPAR SEMI . [ WHILE VOID RETURN INT IF IDENT E
 -- On IDENT reduce production instruction -> IF LPAR expression RPAR SEMI 
 -- On END reduce production instruction -> IF LPAR expression RPAR SEMI 
 -- On ELSE reduce production instruction -> IF LPAR expression RPAR SEMI 
+-- On COMMENT reduce production instruction -> IF LPAR expression RPAR SEMI 
 -- On BOOL reduce production instruction -> IF LPAR expression RPAR SEMI 
+-- On BEGIN reduce production instruction -> IF LPAR expression RPAR SEMI 
 
-State 80:
-instruction -> IF LPAR expression RPAR BEGIN . list(instruction) END ELSE BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
-instruction -> IF LPAR expression RPAR BEGIN . list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
--- On WHILE shift to state 61
+State 91:
+instruction -> COMMENT . [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+-- On WHILE reduce production instruction -> COMMENT 
+-- On VOID reduce production instruction -> COMMENT 
+-- On RETURN reduce production instruction -> COMMENT 
+-- On INT reduce production instruction -> COMMENT 
+-- On IF reduce production instruction -> COMMENT 
+-- On IDENT reduce production instruction -> COMMENT 
+-- On END reduce production instruction -> COMMENT 
+-- On ELSE reduce production instruction -> COMMENT 
+-- On COMMENT reduce production instruction -> COMMENT 
+-- On BOOL reduce production instruction -> COMMENT 
+-- On BEGIN reduce production instruction -> COMMENT 
+
+State 92:
+instruction -> IF LPAR expression RPAR BEGIN . list(instruction) END ELSE BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+instruction -> IF LPAR expression RPAR BEGIN . list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+instruction -> BEGIN . list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+-- On WHILE shift to state 72
 -- On VOID shift to state 2
--- On RETURN shift to state 67
+-- On RETURN shift to state 78
 -- On INT shift to state 3
--- On IF shift to state 75
+-- On IF shift to state 86
 -- On IDENT shift to state 4
--- On BOOL shift to state 50
--- On variable_decl shift to state 81
--- On typ shift to state 82
--- On simple_var_decl shift to state 84
--- On list(instruction) shift to state 85
--- On instruction shift to state 91
+-- On COMMENT shift to state 91
+-- On BOOL shift to state 56
+-- On BEGIN shift to state 93
+-- On variable_decl shift to state 94
+-- On typ shift to state 95
+-- On simple_var_decl shift to state 97
+-- On list(instruction) shift to state 103
+-- On instruction shift to state 101
 -- On END reduce production list(instruction) -> 
 
-State 81:
-instruction -> variable_decl . [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
+State 93:
+instruction -> BEGIN . list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+-- On WHILE shift to state 72
+-- On VOID shift to state 2
+-- On RETURN shift to state 78
+-- On INT shift to state 3
+-- On IF shift to state 86
+-- On IDENT shift to state 4
+-- On COMMENT shift to state 91
+-- On BOOL shift to state 56
+-- On BEGIN shift to state 93
+-- On variable_decl shift to state 94
+-- On typ shift to state 95
+-- On simple_var_decl shift to state 97
+-- On list(instruction) shift to state 99
+-- On instruction shift to state 101
+-- On END reduce production list(instruction) -> 
+
+State 94:
+instruction -> variable_decl . [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
 -- On WHILE reduce production instruction -> variable_decl 
 -- On VOID reduce production instruction -> variable_decl 
 -- On RETURN reduce production instruction -> variable_decl 
@@ -1970,78 +2089,143 @@ instruction -> variable_decl . [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
 -- On IDENT reduce production instruction -> variable_decl 
 -- On END reduce production instruction -> variable_decl 
 -- On ELSE reduce production instruction -> variable_decl 
+-- On COMMENT reduce production instruction -> variable_decl 
 -- On BOOL reduce production instruction -> variable_decl 
+-- On BEGIN reduce production instruction -> variable_decl 
 
-State 82:
-simple_var_decl -> typ . IDENT SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
-variable_decl -> typ . IDENT SET expression SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
--- On IDENT shift to state 83
+State 95:
+simple_var_decl -> typ . IDENT [ SEMI ]
+variable_decl -> typ . IDENT SET expression SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+-- On IDENT shift to state 96
 
-State 83:
-simple_var_decl -> typ IDENT . SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
-variable_decl -> typ IDENT . SET expression SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
--- On SET shift to state 54
--- On SEMI shift to state 57
+State 96:
+simple_var_decl -> typ IDENT . [ SEMI ]
+variable_decl -> typ IDENT . SET expression SEMI [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+-- On SET shift to state 60
+-- On SEMI reduce production simple_var_decl -> typ IDENT 
 
-State 84:
-variable_decl -> simple_var_decl . [ WHILE VOID RETURN INT IF IDENT EOF END ELSE BOOL ]
--- On WHILE reduce production variable_decl -> simple_var_decl 
--- On VOID reduce production variable_decl -> simple_var_decl 
--- On RETURN reduce production variable_decl -> simple_var_decl 
--- On INT reduce production variable_decl -> simple_var_decl 
--- On IF reduce production variable_decl -> simple_var_decl 
--- On IDENT reduce production variable_decl -> simple_var_decl 
--- On EOF reduce production variable_decl -> simple_var_decl 
--- On END reduce production variable_decl -> simple_var_decl 
--- On ELSE reduce production variable_decl -> simple_var_decl 
--- On BOOL reduce production variable_decl -> simple_var_decl 
+State 97:
+variable_decl -> simple_var_decl . SEMI [ WHILE VOID RETURN INT IF IDENT EOF END ELSE COMMENT BOOL BEGIN ]
+-- On SEMI shift to state 98
 
-State 85:
-instruction -> IF LPAR expression RPAR BEGIN list(instruction) . END ELSE BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
-instruction -> IF LPAR expression RPAR BEGIN list(instruction) . END [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
--- On END shift to state 86
+State 98:
+variable_decl -> simple_var_decl SEMI . [ WHILE VOID RETURN INT IF IDENT EOF END ELSE COMMENT BOOL BEGIN ]
+-- On WHILE reduce production variable_decl -> simple_var_decl SEMI 
+-- On VOID reduce production variable_decl -> simple_var_decl SEMI 
+-- On RETURN reduce production variable_decl -> simple_var_decl SEMI 
+-- On INT reduce production variable_decl -> simple_var_decl SEMI 
+-- On IF reduce production variable_decl -> simple_var_decl SEMI 
+-- On IDENT reduce production variable_decl -> simple_var_decl SEMI 
+-- On EOF reduce production variable_decl -> simple_var_decl SEMI 
+-- On END reduce production variable_decl -> simple_var_decl SEMI 
+-- On ELSE reduce production variable_decl -> simple_var_decl SEMI 
+-- On COMMENT reduce production variable_decl -> simple_var_decl SEMI 
+-- On BOOL reduce production variable_decl -> simple_var_decl SEMI 
+-- On BEGIN reduce production variable_decl -> simple_var_decl SEMI 
 
-State 86:
-instruction -> IF LPAR expression RPAR BEGIN list(instruction) END . ELSE BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
-instruction -> IF LPAR expression RPAR BEGIN list(instruction) END . [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
--- On ELSE shift to state 87
--- On WHILE reduce production instruction -> IF LPAR expression RPAR BEGIN list(instruction) END 
--- On VOID reduce production instruction -> IF LPAR expression RPAR BEGIN list(instruction) END 
--- On RETURN reduce production instruction -> IF LPAR expression RPAR BEGIN list(instruction) END 
--- On INT reduce production instruction -> IF LPAR expression RPAR BEGIN list(instruction) END 
--- On IF reduce production instruction -> IF LPAR expression RPAR BEGIN list(instruction) END 
--- On IDENT reduce production instruction -> IF LPAR expression RPAR BEGIN list(instruction) END 
--- On END reduce production instruction -> IF LPAR expression RPAR BEGIN list(instruction) END 
--- On ELSE reduce production instruction -> IF LPAR expression RPAR BEGIN list(instruction) END 
--- On BOOL reduce production instruction -> IF LPAR expression RPAR BEGIN list(instruction) END 
-** Conflict on ELSE
+State 99:
+instruction -> BEGIN list(instruction) . END [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+-- On END shift to state 100
 
-State 87:
-instruction -> IF LPAR expression RPAR BEGIN list(instruction) END ELSE . BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
--- On BEGIN shift to state 88
+State 100:
+instruction -> BEGIN list(instruction) END . [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+-- On WHILE reduce production instruction -> BEGIN list(instruction) END 
+-- On VOID reduce production instruction -> BEGIN list(instruction) END 
+-- On RETURN reduce production instruction -> BEGIN list(instruction) END 
+-- On INT reduce production instruction -> BEGIN list(instruction) END 
+-- On IF reduce production instruction -> BEGIN list(instruction) END 
+-- On IDENT reduce production instruction -> BEGIN list(instruction) END 
+-- On END reduce production instruction -> BEGIN list(instruction) END 
+-- On ELSE reduce production instruction -> BEGIN list(instruction) END 
+-- On COMMENT reduce production instruction -> BEGIN list(instruction) END 
+-- On BOOL reduce production instruction -> BEGIN list(instruction) END 
+-- On BEGIN reduce production instruction -> BEGIN list(instruction) END 
 
-State 88:
-instruction -> IF LPAR expression RPAR BEGIN list(instruction) END ELSE BEGIN . list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
--- On WHILE shift to state 61
+State 101:
+list(instruction) -> instruction . list(instruction) [ END ]
+-- On WHILE shift to state 72
 -- On VOID shift to state 2
--- On RETURN shift to state 67
+-- On RETURN shift to state 78
 -- On INT shift to state 3
--- On IF shift to state 75
+-- On IF shift to state 86
 -- On IDENT shift to state 4
--- On BOOL shift to state 50
--- On variable_decl shift to state 81
--- On typ shift to state 82
--- On simple_var_decl shift to state 84
--- On list(instruction) shift to state 89
--- On instruction shift to state 91
+-- On COMMENT shift to state 91
+-- On BOOL shift to state 56
+-- On BEGIN shift to state 93
+-- On variable_decl shift to state 94
+-- On typ shift to state 95
+-- On simple_var_decl shift to state 97
+-- On list(instruction) shift to state 102
+-- On instruction shift to state 101
 -- On END reduce production list(instruction) -> 
 
-State 89:
-instruction -> IF LPAR expression RPAR BEGIN list(instruction) END ELSE BEGIN list(instruction) . END [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
--- On END shift to state 90
+State 102:
+list(instruction) -> instruction list(instruction) . [ END ]
+-- On END reduce production list(instruction) -> instruction list(instruction) 
 
-State 90:
-instruction -> IF LPAR expression RPAR BEGIN list(instruction) END ELSE BEGIN list(instruction) END . [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
+State 103:
+instruction -> IF LPAR expression RPAR BEGIN list(instruction) . END ELSE BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+instruction -> IF LPAR expression RPAR BEGIN list(instruction) . END [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+instruction -> BEGIN list(instruction) . END [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+-- On END shift to state 104
+
+State 104:
+instruction -> IF LPAR expression RPAR BEGIN list(instruction) END . ELSE BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+instruction -> IF LPAR expression RPAR BEGIN list(instruction) END . [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+instruction -> BEGIN list(instruction) END . [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+-- On ELSE shift to state 105
+-- On WHILE reduce production instruction -> IF LPAR expression RPAR BEGIN list(instruction) END 
+-- On WHILE reduce production instruction -> BEGIN list(instruction) END 
+-- On VOID reduce production instruction -> IF LPAR expression RPAR BEGIN list(instruction) END 
+-- On VOID reduce production instruction -> BEGIN list(instruction) END 
+-- On RETURN reduce production instruction -> IF LPAR expression RPAR BEGIN list(instruction) END 
+-- On RETURN reduce production instruction -> BEGIN list(instruction) END 
+-- On INT reduce production instruction -> IF LPAR expression RPAR BEGIN list(instruction) END 
+-- On INT reduce production instruction -> BEGIN list(instruction) END 
+-- On IF reduce production instruction -> IF LPAR expression RPAR BEGIN list(instruction) END 
+-- On IF reduce production instruction -> BEGIN list(instruction) END 
+-- On IDENT reduce production instruction -> IF LPAR expression RPAR BEGIN list(instruction) END 
+-- On IDENT reduce production instruction -> BEGIN list(instruction) END 
+-- On END reduce production instruction -> IF LPAR expression RPAR BEGIN list(instruction) END 
+-- On END reduce production instruction -> BEGIN list(instruction) END 
+-- On ELSE reduce production instruction -> IF LPAR expression RPAR BEGIN list(instruction) END 
+-- On ELSE reduce production instruction -> BEGIN list(instruction) END 
+-- On COMMENT reduce production instruction -> IF LPAR expression RPAR BEGIN list(instruction) END 
+-- On COMMENT reduce production instruction -> BEGIN list(instruction) END 
+-- On BOOL reduce production instruction -> IF LPAR expression RPAR BEGIN list(instruction) END 
+-- On BOOL reduce production instruction -> BEGIN list(instruction) END 
+-- On BEGIN reduce production instruction -> IF LPAR expression RPAR BEGIN list(instruction) END 
+-- On BEGIN reduce production instruction -> BEGIN list(instruction) END 
+** Conflict on WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN
+
+State 105:
+instruction -> IF LPAR expression RPAR BEGIN list(instruction) END ELSE . BEGIN list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+-- On BEGIN shift to state 106
+
+State 106:
+instruction -> IF LPAR expression RPAR BEGIN list(instruction) END ELSE BEGIN . list(instruction) END [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+-- On WHILE shift to state 72
+-- On VOID shift to state 2
+-- On RETURN shift to state 78
+-- On INT shift to state 3
+-- On IF shift to state 86
+-- On IDENT shift to state 4
+-- On COMMENT shift to state 91
+-- On BOOL shift to state 56
+-- On BEGIN shift to state 93
+-- On variable_decl shift to state 94
+-- On typ shift to state 95
+-- On simple_var_decl shift to state 97
+-- On list(instruction) shift to state 107
+-- On instruction shift to state 101
+-- On END reduce production list(instruction) -> 
+
+State 107:
+instruction -> IF LPAR expression RPAR BEGIN list(instruction) END ELSE BEGIN list(instruction) . END [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+-- On END shift to state 108
+
+State 108:
+instruction -> IF LPAR expression RPAR BEGIN list(instruction) END ELSE BEGIN list(instruction) END . [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
 -- On WHILE reduce production instruction -> IF LPAR expression RPAR BEGIN list(instruction) END ELSE BEGIN list(instruction) END 
 -- On VOID reduce production instruction -> IF LPAR expression RPAR BEGIN list(instruction) END ELSE BEGIN list(instruction) END 
 -- On RETURN reduce production instruction -> IF LPAR expression RPAR BEGIN list(instruction) END ELSE BEGIN list(instruction) END 
@@ -2050,32 +2234,14 @@ instruction -> IF LPAR expression RPAR BEGIN list(instruction) END ELSE BEGIN li
 -- On IDENT reduce production instruction -> IF LPAR expression RPAR BEGIN list(instruction) END ELSE BEGIN list(instruction) END 
 -- On END reduce production instruction -> IF LPAR expression RPAR BEGIN list(instruction) END ELSE BEGIN list(instruction) END 
 -- On ELSE reduce production instruction -> IF LPAR expression RPAR BEGIN list(instruction) END ELSE BEGIN list(instruction) END 
+-- On COMMENT reduce production instruction -> IF LPAR expression RPAR BEGIN list(instruction) END ELSE BEGIN list(instruction) END 
 -- On BOOL reduce production instruction -> IF LPAR expression RPAR BEGIN list(instruction) END ELSE BEGIN list(instruction) END 
+-- On BEGIN reduce production instruction -> IF LPAR expression RPAR BEGIN list(instruction) END ELSE BEGIN list(instruction) END 
 
-State 91:
-list(instruction) -> instruction . list(instruction) [ END ]
--- On WHILE shift to state 61
--- On VOID shift to state 2
--- On RETURN shift to state 67
--- On INT shift to state 3
--- On IF shift to state 75
--- On IDENT shift to state 4
--- On BOOL shift to state 50
--- On variable_decl shift to state 81
--- On typ shift to state 82
--- On simple_var_decl shift to state 84
--- On list(instruction) shift to state 92
--- On instruction shift to state 91
--- On END reduce production list(instruction) -> 
-
-State 92:
-list(instruction) -> instruction list(instruction) . [ END ]
--- On END reduce production list(instruction) -> instruction list(instruction) 
-
-State 93:
-instruction -> IF LPAR expression RPAR instruction . ELSE instruction [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
-instruction -> IF LPAR expression RPAR instruction . [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
--- On ELSE shift to state 94
+State 109:
+instruction -> IF LPAR expression RPAR instruction . ELSE instruction [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+instruction -> IF LPAR expression RPAR instruction . [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+-- On ELSE shift to state 110
 -- On WHILE reduce production instruction -> IF LPAR expression RPAR instruction 
 -- On VOID reduce production instruction -> IF LPAR expression RPAR instruction 
 -- On RETURN reduce production instruction -> IF LPAR expression RPAR instruction 
@@ -2084,25 +2250,29 @@ instruction -> IF LPAR expression RPAR instruction . [ WHILE VOID RETURN INT IF 
 -- On IDENT reduce production instruction -> IF LPAR expression RPAR instruction 
 -- On END reduce production instruction -> IF LPAR expression RPAR instruction 
 -- On ELSE reduce production instruction -> IF LPAR expression RPAR instruction 
+-- On COMMENT reduce production instruction -> IF LPAR expression RPAR instruction 
 -- On BOOL reduce production instruction -> IF LPAR expression RPAR instruction 
+-- On BEGIN reduce production instruction -> IF LPAR expression RPAR instruction 
 ** Conflict on ELSE
 
-State 94:
-instruction -> IF LPAR expression RPAR instruction ELSE . instruction [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
--- On WHILE shift to state 61
+State 110:
+instruction -> IF LPAR expression RPAR instruction ELSE . instruction [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+-- On WHILE shift to state 72
 -- On VOID shift to state 2
--- On RETURN shift to state 67
+-- On RETURN shift to state 78
 -- On INT shift to state 3
--- On IF shift to state 75
+-- On IF shift to state 86
 -- On IDENT shift to state 4
--- On BOOL shift to state 50
--- On variable_decl shift to state 81
--- On typ shift to state 82
--- On simple_var_decl shift to state 84
--- On instruction shift to state 95
+-- On COMMENT shift to state 91
+-- On BOOL shift to state 56
+-- On BEGIN shift to state 93
+-- On variable_decl shift to state 94
+-- On typ shift to state 95
+-- On simple_var_decl shift to state 97
+-- On instruction shift to state 111
 
-State 95:
-instruction -> IF LPAR expression RPAR instruction ELSE instruction . [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
+State 111:
+instruction -> IF LPAR expression RPAR instruction ELSE instruction . [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
 -- On WHILE reduce production instruction -> IF LPAR expression RPAR instruction ELSE instruction 
 -- On VOID reduce production instruction -> IF LPAR expression RPAR instruction ELSE instruction 
 -- On RETURN reduce production instruction -> IF LPAR expression RPAR instruction ELSE instruction 
@@ -2111,14 +2281,16 @@ instruction -> IF LPAR expression RPAR instruction ELSE instruction . [ WHILE VO
 -- On IDENT reduce production instruction -> IF LPAR expression RPAR instruction ELSE instruction 
 -- On END reduce production instruction -> IF LPAR expression RPAR instruction ELSE instruction 
 -- On ELSE reduce production instruction -> IF LPAR expression RPAR instruction ELSE instruction 
+-- On COMMENT reduce production instruction -> IF LPAR expression RPAR instruction ELSE instruction 
 -- On BOOL reduce production instruction -> IF LPAR expression RPAR instruction ELSE instruction 
+-- On BEGIN reduce production instruction -> IF LPAR expression RPAR instruction ELSE instruction 
 
-State 96:
-instruction -> WHILE LPAR expression RPAR BEGIN list(instruction) . END [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
--- On END shift to state 97
+State 112:
+instruction -> WHILE LPAR expression RPAR BEGIN list(instruction) . END [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
+-- On END shift to state 113
 
-State 97:
-instruction -> WHILE LPAR expression RPAR BEGIN list(instruction) END . [ WHILE VOID RETURN INT IF IDENT END ELSE BOOL ]
+State 113:
+instruction -> WHILE LPAR expression RPAR BEGIN list(instruction) END . [ WHILE VOID RETURN INT IF IDENT END ELSE COMMENT BOOL BEGIN ]
 -- On WHILE reduce production instruction -> WHILE LPAR expression RPAR BEGIN list(instruction) END 
 -- On VOID reduce production instruction -> WHILE LPAR expression RPAR BEGIN list(instruction) END 
 -- On RETURN reduce production instruction -> WHILE LPAR expression RPAR BEGIN list(instruction) END 
@@ -2127,77 +2299,15 @@ instruction -> WHILE LPAR expression RPAR BEGIN list(instruction) END . [ WHILE 
 -- On IDENT reduce production instruction -> WHILE LPAR expression RPAR BEGIN list(instruction) END 
 -- On END reduce production instruction -> WHILE LPAR expression RPAR BEGIN list(instruction) END 
 -- On ELSE reduce production instruction -> WHILE LPAR expression RPAR BEGIN list(instruction) END 
+-- On COMMENT reduce production instruction -> WHILE LPAR expression RPAR BEGIN list(instruction) END 
 -- On BOOL reduce production instruction -> WHILE LPAR expression RPAR BEGIN list(instruction) END 
+-- On BEGIN reduce production instruction -> WHILE LPAR expression RPAR BEGIN list(instruction) END 
 
-State 98:
-function_decl -> typ IDENT LPAR RPAR BEGIN list(instruction) . END [ VOID INT IDENT EOF BOOL ]
--- On END shift to state 99
-
-State 99:
-function_decl -> typ IDENT LPAR RPAR BEGIN list(instruction) END . [ VOID INT IDENT EOF BOOL ]
--- On VOID reduce production function_decl -> typ IDENT LPAR RPAR BEGIN list(instruction) END 
--- On INT reduce production function_decl -> typ IDENT LPAR RPAR BEGIN list(instruction) END 
--- On IDENT reduce production function_decl -> typ IDENT LPAR RPAR BEGIN list(instruction) END 
--- On EOF reduce production function_decl -> typ IDENT LPAR RPAR BEGIN list(instruction) END 
--- On BOOL reduce production function_decl -> typ IDENT LPAR RPAR BEGIN list(instruction) END 
-
-State 100:
-simple_var_decl -> typ . IDENT SEMI [ SEPARATOR RPAR ]
--- On IDENT shift to state 101
-
-State 101:
-simple_var_decl -> typ IDENT . SEMI [ SEPARATOR RPAR ]
--- On SEMI shift to state 57
-
-State 102:
-parameter_list -> simple_var_decl . [ RPAR ]
-parameter_list -> simple_var_decl . SEPARATOR parameter_list [ RPAR ]
--- On SEPARATOR shift to state 103
--- On RPAR reduce production parameter_list -> simple_var_decl 
-
-State 103:
-parameter_list -> simple_var_decl SEPARATOR . parameter_list [ RPAR ]
--- On VOID shift to state 2
--- On INT shift to state 3
--- On BOOL shift to state 50
--- On typ shift to state 100
--- On simple_var_decl shift to state 102
--- On parameter_list shift to state 104
--- On RPAR reduce production parameter_list -> 
-
-State 104:
-parameter_list -> simple_var_decl SEPARATOR parameter_list . [ RPAR ]
--- On RPAR reduce production parameter_list -> simple_var_decl SEPARATOR parameter_list 
-
-State 105:
-function_decl -> typ IDENT LPAR parameter_list . RPAR BEGIN list(instruction) END [ VOID INT IDENT EOF BOOL ]
--- On RPAR shift to state 106
-
-State 106:
-function_decl -> typ IDENT LPAR parameter_list RPAR . BEGIN list(instruction) END [ VOID INT IDENT EOF BOOL ]
--- On BEGIN shift to state 107
-
-State 107:
-function_decl -> typ IDENT LPAR parameter_list RPAR BEGIN . list(instruction) END [ VOID INT IDENT EOF BOOL ]
--- On WHILE shift to state 61
--- On VOID shift to state 2
--- On RETURN shift to state 67
--- On INT shift to state 3
--- On IF shift to state 75
--- On IDENT shift to state 4
--- On BOOL shift to state 50
--- On variable_decl shift to state 81
--- On typ shift to state 82
--- On simple_var_decl shift to state 84
--- On list(instruction) shift to state 108
--- On instruction shift to state 91
--- On END reduce production list(instruction) -> 
-
-State 108:
+State 114:
 function_decl -> typ IDENT LPAR parameter_list RPAR BEGIN list(instruction) . END [ VOID INT IDENT EOF BOOL ]
--- On END shift to state 109
+-- On END shift to state 115
 
-State 109:
+State 115:
 function_decl -> typ IDENT LPAR parameter_list RPAR BEGIN list(instruction) END . [ VOID INT IDENT EOF BOOL ]
 -- On VOID reduce production function_decl -> typ IDENT LPAR parameter_list RPAR BEGIN list(instruction) END 
 -- On INT reduce production function_decl -> typ IDENT LPAR parameter_list RPAR BEGIN list(instruction) END 
@@ -2205,36 +2315,36 @@ function_decl -> typ IDENT LPAR parameter_list RPAR BEGIN list(instruction) END 
 -- On EOF reduce production function_decl -> typ IDENT LPAR parameter_list RPAR BEGIN list(instruction) END 
 -- On BOOL reduce production function_decl -> typ IDENT LPAR parameter_list RPAR BEGIN list(instruction) END 
 
-State 110:
+State 116:
 declaration_list -> function_decl . declaration_list [ EOF ]
 -- On VOID shift to state 2
 -- On INT shift to state 3
 -- On IDENT shift to state 4
--- On BOOL shift to state 50
--- On variable_decl shift to state 51
--- On typ shift to state 52
--- On simple_var_decl shift to state 84
--- On function_decl shift to state 110
--- On declaration_list shift to state 111
+-- On BOOL shift to state 56
+-- On variable_decl shift to state 57
+-- On typ shift to state 58
+-- On simple_var_decl shift to state 97
+-- On function_decl shift to state 116
+-- On declaration_list shift to state 117
 -- On EOF reduce production declaration_list -> 
 
-State 111:
+State 117:
 declaration_list -> function_decl declaration_list . [ EOF ]
 -- On EOF reduce production declaration_list -> function_decl declaration_list 
 
-State 112:
+State 118:
 declaration_list -> variable_decl declaration_list . [ EOF ]
 -- On EOF reduce production declaration_list -> variable_decl declaration_list 
 
-State 113:
+State 119:
 program' -> program . [ # ]
 -- On # accept program
 
-State 114:
+State 120:
 program -> declaration_list . EOF [ # ]
--- On EOF shift to state 115
+-- On EOF shift to state 121
 
-State 115:
+State 121:
 program -> declaration_list EOF . [ # ]
 -- On # reduce production program -> declaration_list EOF 
 

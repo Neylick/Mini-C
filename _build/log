@@ -1,10 +1,10 @@
 # dune build
 # OCAMLPARAM: unset
 # Workspace root: "/mnt/c/Users/Neiliku~/Documents/COURS/Info/Compil/Caml miniC lexer"
-$ /usr/bin/nproc > /tmp/duneca61c2.output 2> /dev/null
+$ /usr/bin/nproc > /tmp/dune6591e9.output 2> /dev/null
 # Auto-detected concurrency: 16
 # disable binary cache
-$ /usr/bin/ocamlc.opt -config > /tmp/dunee2ae56.output
+$ /usr/bin/ocamlc.opt -config > /tmp/dune376195.output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -122,46 +122,19 @@ $ /usr/bin/ocamlc.opt -config > /tmp/dunee2ae56.output
 #      }
 #  }
 $ (cd _build/default && /usr/bin/menhir --explain --dump minic_parser.mly --base minic_parser --infer-write-query minic_parser__mock.ml.mock)
-$ (cd _build/default && /usr/bin/ocamldep.opt -modules -impl minic_typechecker.ml) > _build/default/.minic.eobjs/minic_typechecker.ml.d
 $ (cd _build/default && /usr/bin/ocamldep.opt -modules -impl minic_parser__mock.ml.mock) > _build/default/.minic.eobjs/minic_parser__mock.ml.mock.d
-$ (cd _build/default && /usr/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -warn-error -A -g -bin-annot -I .minic.eobjs/byte -no-alias-deps -opaque -open Dune__exe -o .minic.eobjs/byte/dune__exe__Minic_typechecker.cmo -c -impl minic_typechecker.ml)
-> File "minic_typechecker.ml", line 54, characters 14-16:
-> 54 |           let t1 = type_expr e1 in let t2 = type_expr e2 in
->                    ^^
-> Warning 26: unused variable t1.
-> File "minic_typechecker.ml", line 54, characters 39-41:
-> 54 |           let t1 = type_expr e1 in let t2 = type_expr e2 in
->                                             ^^
-> Warning 26: unused variable t2.
 $ (cd _build/default && /usr/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -warn-error -A -g -I .minic.eobjs/byte -open Dune__exe -short-paths -i -impl minic_parser__mock.ml.mock) > _build/default/minic_parser__mock.mli.inferred
-> File "minic_parser.mly", line 65, characters 62-63:
-> Warning 27: unused variable v.
-> File "minic_parser.mly", line 64, characters 35-36:
-> Warning 27: unused variable v.
-> File "minic_parser__mock.ml.mock", line 194, characters 653-654:
-> 194 |   let _ = fun (_eRR : exn) (_startpos : Lexing.position) (_endpos : Lexing.position) (_endpos__0_ : Lexing.position) (_symbolstartpos : Lexing.position) (_startofs : int) (_endofs : int) (_endofs__0_ : int) (_symbolstartofs : int) (_sloc : Lexing.position * Lexing.position) (_loc : Lexing.position * Lexing.position) (_5 : unit) (_startpos__5_ : Lexing.position) (_endpos__5_ : Lexing.position) (_startofs__5_ : int) (_endofs__5_ : int) (_loc__5_ : Lexing.position * Lexing.position) (_4 : unit) (_startpos__4_ : Lexing.position) (_endpos__4_ : Lexing.position) (_startofs__4_ : int) (_endofs__4_ : int) (_loc__4_ : Lexing.position * Lexing.position) (c : 'tv_expression) (_startpos_c_ : Lexing.position) (_endpos_c_ : Lexing.position) (_startofs_c_ : int) (_endofs_c_ : int) (_loc_c_ : Lexing.position * Lexing.position) (_2 : unit) (_startpos__2_ : Lexing.position) (_endpos__2_ : Lexing.position) (_startofs__2_ : int) (_endofs__2_ : int) (_loc__2_ : Lexing.position * Lexing.position) (_1 : unit) (_startpos__1_ : Lexing.position) (_endpos__1_ : Lexing.position) (_startofs__1_ : int) (_endofs__1_ : int) (_loc__1_ : Lexing.position * Lexing.position) ->
->                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ^
-> Warning 27: unused variable c.
-$ (cd _build/default && /usr/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -warn-error -A -g -I .minic.eobjs/byte -I .minic.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -open Dune__exe -o .minic.eobjs/native/dune__exe__Minic_typechecker.cmx -c -impl minic_typechecker.ml)
-> File "minic_typechecker.ml", line 54, characters 14-16:
-> 54 |           let t1 = type_expr e1 in let t2 = type_expr e2 in
->                    ^^
-> Warning 26: unused variable t1.
-> File "minic_typechecker.ml", line 54, characters 39-41:
-> 54 |           let t1 = type_expr e1 in let t2 = type_expr e2 in
->                                             ^^
-> Warning 26: unused variable t2.
 $ (cd _build/default && /usr/bin/menhir --explain --dump minic_parser.mly --base minic_parser --infer-read-reply minic_parser__mock.mli.inferred)
-> Warning: 21 states have shift/reduce conflicts.
+> Warning: 20 states have shift/reduce conflicts.
+> Warning: one state has reduce/reduce conflicts.
 > Warning: 327 shift/reduce conflicts were arbitrarily resolved.
+> Warning: 10 reduce/reduce conflicts were arbitrarily resolved.
+$ (cd _build/default && /usr/bin/ocamldep.opt -modules -intf minic_parser.mli) > _build/default/.minic.eobjs/minic_parser.mli.d
 $ (cd _build/default && /usr/bin/ocamldep.opt -modules -impl minic_parser.ml) > _build/default/.minic.eobjs/minic_parser.ml.d
+$ (cd _build/default && /usr/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -warn-error -A -g -bin-annot -I .minic.eobjs/byte -no-alias-deps -opaque -open Dune__exe -o .minic.eobjs/byte/dune__exe__Minic_parser.cmi -c -intf minic_parser.mli)
+$ (cd _build/default && /usr/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -warn-error -A -g -bin-annot -I .minic.eobjs/byte -no-alias-deps -opaque -open Dune__exe -o .minic.eobjs/byte/dune__exe__Minic_lexer.cmo -c -impl minic_lexer.ml)
+$ (cd _build/default && /usr/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -warn-error -A -g -bin-annot -I .minic.eobjs/byte -no-alias-deps -opaque -open Dune__exe -o .minic.eobjs/byte/dune__exe__Minic.cmo -c -impl minic.ml)
+$ (cd _build/default && /usr/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -warn-error -A -g -I .minic.eobjs/byte -I .minic.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -open Dune__exe -o .minic.eobjs/native/dune__exe__Minic_lexer.cmx -c -impl minic_lexer.ml)
+$ (cd _build/default && /usr/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -warn-error -A -g -I .minic.eobjs/byte -I .minic.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -open Dune__exe -o .minic.eobjs/native/dune__exe__Minic.cmx -c -impl minic.ml)
 $ (cd _build/default && /usr/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -warn-error -A -g -I .minic.eobjs/byte -I .minic.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -open Dune__exe -o .minic.eobjs/native/dune__exe__Minic_parser.cmx -c -impl minic_parser.ml)
-> File "minic_parser.mly", line 65, characters 62-63:
-> Warning 27: unused variable v.
-> File "minic_parser.ml", line 2405, characters 53-54:
-> 2405 |                 let ((_menhir_stack, _menhir_s), _, (c : (Minic_ast.expr))) = _menhir_stack in
->                                                             ^
-> Warning 27: unused variable c.
-> File "minic_parser.mly", line 64, characters 35-36:
-> Warning 27: unused variable v.
 $ (cd _build/default && /usr/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -warn-error -A -g -o minic.exe .minic.eobjs/native/dune__exe.cmx .minic.eobjs/native/dune__exe__Minic_ast.cmx .minic.eobjs/native/dune__exe__Minic_parser.cmx .minic.eobjs/native/dune__exe__Minic_lexer.cmx .minic.eobjs/native/dune__exe__Minic_typechecker.cmx .minic.eobjs/native/dune__exe__Minic.cmx)
