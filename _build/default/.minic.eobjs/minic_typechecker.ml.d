@@ -1,1 +1,1 @@
-minic_typechecker.ml: Hashtbl List Map Minic_ast String
+minic_typechecker.ml: Hashtbl List Minic_ast

@@ -15,13 +15,13 @@
 %token EOF
 
 %token PUTCHAR
-
 %token INT BOOL VOID
 
-%token LT GT 
-%token LET GET EQ
+(* Grouper pour le type checker *)
+%token LT GT LET GET EQ
+(* Grouper pour le type checker *)
 %token AND OR BAND BOR XOR BXOR NEQ BNEQ
-
+(* Grouper pour le type checker *)
 %token ADD MUL DIV MOD SUB
 
 %start program
@@ -49,30 +49,28 @@ global_scope_def:
 | fd = function_decl {Function(fd)}
 ;
 
-(*
-
-program:
-| dl = declaration_list EOF 
-  { let var_list, fun_list = dl in 
+(* Old way we did things
+  program:
+  | dl = declaration_list EOF 
+    { let var_list, fun_list = dl in 
+      { 
+        globals = var_list; 
+        functions = fun_list; 
+      } 
+    }
+  | error 
     { 
-      globals = var_list; 
-      functions = fun_list; 
-    } 
-  }
-| error 
-  { 
-    let pos = $startpos in
-    let message = Printf.sprintf "Syntax error at line %d:%d" pos.pos_lnum (pos.pos_cnum - pos.pos_bol) in 
-    failwith message 
-  }
-;
+      let pos = $startpos in
+      let message = Printf.sprintf "Syntax error at line %d:%d" pos.pos_lnum (pos.pos_cnum - pos.pos_bol) in 
+      failwith message 
+    }
+  ;
 
-declaration_list:
-  | { [], [] }  (* vide *)
-  | vd = variable_decl dl = declaration_list { let vl, fl = dl in vd :: vl, fl }
-  | fd = function_decl dl = declaration_list { let vl, fl = dl in vl, fd :: fl }
-;
-
+  declaration_list:
+    | { [], [] } 
+    | vd = variable_decl dl = declaration_list { let vl, fl = dl in vd :: vl, fl }
+    | fd = function_decl dl = declaration_list { let vl, fl = dl in vl, fd :: fl }
+  ;
 *)
 
 typ:
@@ -81,13 +79,13 @@ typ:
   | VOID { Void }
 ;
 
+(* 
+  Just a var decl, <type ident> 
+  ****** NO SEMICOLON ****** 
+*)
 simple_var_decl:
   | t = typ i = IDENT { (t, i, Undef) }
 
-parameter_list:
-  | { [] }
-  | d=simple_var_decl { let (t, i, _) = d in [(t,i)] } (* No separator in that case *)
-  | d=simple_var_decl SEPARATOR p=parameter_list { let (t, i, _) = d in (t,i)::p }
 
 (* Decls and sets *)
 variable_decl:
@@ -95,6 +93,12 @@ variable_decl:
   | d = simple_var_decl SEMI { d }
   | i = IDENT SET v = expression SEMI { (None, i, v) }
 ;
+
+(* Parameters in function *)
+parameter_list:
+  | { [] }
+  | d=simple_var_decl { let (t, i, _) = d in [(t,i)] } (* No separator in that case *)
+  | d=simple_var_decl SEPARATOR p=parameter_list { let (t, i, _) = d in (t,i)::p }
 
 (* Function decls *)
 function_decl:
@@ -106,6 +110,7 @@ function_decl:
         return = t;
     } }
 ;
+
 instruction:
   (* Return *)
     (* return _; *)

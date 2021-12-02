@@ -30,10 +30,10 @@ type expr =
     | BAnd  of expr * expr (* & *)
     | Xor  of expr * expr (* ^= *)
     | BXor  of expr * expr (* ^ *)
-  | Cst of int (* 0 *)
-  | BCst of bool (* true *)
-  | Undef
-  | Param
+  | Cst of int 
+  | BCst of bool 
+  | Undef (* Utilise pour les variables void et non initialisees *)
+  | Param (* Utilise pour les parametres, mais directement passe dans le pattern matching (sauf erreur) *)
 
 (* Représentation des instructions et séquences. *)
 type instr =
@@ -43,10 +43,15 @@ type instr =
   | While of expr * seq (* while (c) { s } *)
   | Scope of seq (* { s } *)
   | Return of expr (* return v; *)
+  | Expr of expr
   | Skip (* *)
 and seq = instr list
 
 (* Représentétion des fonctions. *)
+(* 
+  Je n'utilise pas de local parce qu'ils n'ont aucun impact hors du code de la fonction. 
+  Les verifications se font donc en interne.
+*)
 type fun_def = 
 {
   name: string;
@@ -56,10 +61,10 @@ type fun_def =
 }
 
 (* 
-Representation des definitions dans le programmes :
-- Fonction definies comme des fun_def (voir au dessus)
-- Variables globales definies comme des associations de type (typ), identifiant (string) et valeur (expression)
-Je ne separe pas les deux pour avoir acces a la timeline de nos definitions.
+  Representation des definitions dans le programmes :
+  - Fonction definies comme des fun_def (voir au dessus)
+  - Variables globales definies comme des associations de type (typ), identifiant (string) et valeur (expression)
+  Je ne separe pas les deux pour savoir quand ces definitions apparaissent.
 *)
 type global_scope_def =
   | Function of fun_def
