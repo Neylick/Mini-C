@@ -3,9 +3,10 @@
   open Minic_parser
 
   let resolve_keyword =
-    let h = Hashtbl.create 17 in
+    let h = Hashtbl.create 32 in
     List.iter (fun (str, token) -> Hashtbl.add h str token)
     [ 
+      (* Obligatoires *)
       "return",   RETURN;
       "true",     BOOL_CST true;
       "false",    BOOL_CST false;
@@ -16,6 +17,14 @@
       "while",    WHILE;
       "void",     VOID;
       "putchar",  PUTCHAR;
+
+      (* Ajouts *)
+      "do",       DO;
+      "break",    BREAK;
+      "continue", CONTINUE;
+      "for",      FOR;
+      "switch",   SWITCH;
+      "case",     CASE;
     ] ;
     fun s ->
       try  Hashtbl.find h s
@@ -43,10 +52,11 @@ rule token = parse
   | [' ' '\t' '\r']+ { token lexbuf }
   | line_comment { new_line lexbuf; token lexbuf }
   | "/*" { comment_block lexbuf; token lexbuf }
-  | octnumber as n { CST(int_of_string ("0o"^n)) } (* ocaml has a different syntax for octals, need to do the conversion *)
+  | octnumber as n { CST(int_of_string ("0o"^n)) } (* Caml has a different syntax for octals, need to do the conversion *)
   | number as n { CST(int_of_string n) }
   | ident as id { resolve_keyword id }
   | ";" { SEMI }
+  | ":" { DOTS2 }
   | "," { SEPARATOR }
   | "=" { SET }
   | "(" { LPAR }

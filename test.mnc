@@ -48,6 +48,10 @@ int main()
 		}
 		a = a * (b / c);
 		
+		for(int i=0; i < 6; i++)
+		{
+			putchar(i);
+		}
 	}
 	return 0;
 

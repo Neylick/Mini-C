@@ -2,6 +2,7 @@ type token =
     XOR
   | WHILE
   | VOID
+  | SWITCH
   | SUB
   | SET
   | SEPARATOR
@@ -21,13 +22,20 @@ type token =
   | IDENT of string
   | GT
   | GET
+  | FOR
   | EQ
   | EOF
   | END
   | ELSE
+  | DOTS2
+  | DO
   | DIV
+  | DEFAULT
   | CST of int
+  | CONTINUE
+  | CASE
   | BXOR
+  | BREAK
   | BOR
   | BOOL_CST of bool
   | BOOL
@@ -37,7 +45,8 @@ type token =
   | AND
   | ADD
 val menhir_begin_marker : int
-val xv_variable_decl : Minic_ast.typ * string * Minic_ast.expr
+val xv_variable_set : Minic_ast.typ * string * Minic_ast.expr
+val xv_variable_decl_set : Minic_ast.typ * string * Minic_ast.expr
 val xv_typ : Minic_ast.typ
 val xv_simple_var_decl : Minic_ast.typ * string * Minic_ast.expr
 val xv_program : Minic_ast.prog
@@ -47,6 +56,7 @@ val xv_instruction : Minic_ast.instr
 val xv_global_scope_def_list : Minic_ast.prog
 val xv_global_scope_def : Minic_ast.global_scope_def
 val xv_function_decl : Minic_ast.fun_def
+val xv_for_seq : Minic_ast.seq
 val xv_expression : Minic_ast.expr
 val xv_call_list : Minic_ast.expr list
 val menhir_end_marker : int

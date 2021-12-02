@@ -5,6 +5,7 @@ type token =
   | XOR
   | WHILE
   | VOID
+  | SWITCH
   | SUB
   | SET
   | SEPARATOR
@@ -24,13 +25,20 @@ type token =
   | IDENT of (string)
   | GT
   | GET
+  | FOR
   | EQ
   | EOF
   | END
   | ELSE
+  | DOTS2
+  | DO
   | DIV
+  | DEFAULT
   | CST of (int)
+  | CONTINUE
+  | CASE
   | BXOR
+  | BREAK
   | BOR
   | BOOL_CST of (bool)
   | BOOL

@@ -41,6 +41,8 @@ type instr =
   | Set of (typ * string * expr)
   | If of expr * seq * seq (* if (c) { s1 } else { s2 } *)
   | While of expr * seq (* while (c) { s } *)
+  | DoWhile of seq * expr (* do { s } while (c) *)
+  | For of seq * expr * seq * seq (* for(s1;c;s2){ s } *)
   | Scope of seq (* { s } *)
   | Return of expr (* return v; *)
   | Expr of expr

@@ -9,9 +9,14 @@
 %token <bool> BOOL_CST
 %token <string> IDENT
 
-%token WHILE IF ELSE
+%token WHILE IF ELSE DO FOR
+
+%token SWITCH CASE DEFAULT
+
+%token BREAK CONTINUE 
+
 %token LPAR RPAR BEGIN END
-%token RETURN SET SEMI SEPARATOR
+%token RETURN SET SEMI SEPARATOR DOTS2
 %token EOF
 
 %token PUTCHAR
@@ -45,7 +50,7 @@ global_scope_def_list:
 ;
 
 global_scope_def:
-  | vd = variable_decl {Variable(vd)}
+  | vd = variable_decl_set {Variable(vd)}
   | fd = function_decl {Function(fd)}
 ;
 
@@ -63,11 +68,23 @@ simple_var_decl:
   | t = typ i = IDENT { (t, i, Undef) }
 
 
+variable_set:
+  (* <T> ident = val *)
+    | t = typ i = IDENT SET v = expression { (t, i, v) }
+  (* ident = val *)
+    | i = IDENT SET v = expression { (None, i, v) }
+  (* ident ++ *)
+    | i=IDENT ADD ADD { (None, i, Add(Get(i),Cst(1))) }
+    | ADD ADD i=IDENT { (None, i, Add(Get(i),Cst(1))) }
+  (* ident -- *)
+    | i=IDENT SUB SUB { (None, i, Add(Get(i),Cst(1))) }
+    | SUB SUB i=IDENT { (None, i, Add(Get(i),Cst(1))) }
+;
+
 (* Decls and sets *)
-variable_decl:
-  | t = typ i = IDENT SET v = expression SEMI { (t, i, v) }
-  | d = simple_var_decl SEMI { d }
-  | i = IDENT SET v = expression SEMI { (None, i, v) }
+variable_decl_set:
+  | set = variable_set SEMI { set }
+  | decl = simple_var_decl SEMI { decl }
 ;
 
 (* Parameters in function *)
@@ -87,6 +104,11 @@ function_decl:
         return = t;
     } }
 ;
+
+for_seq:
+  | { [] }
+  | set=variable_set {[Set(set)]}
+  | set=variable_set SEPARATOR fs = for_seq {Set(set)::fs}
 
 instruction:
   (* Return *)
@@ -112,11 +134,18 @@ instruction:
     | WHILE LPAR c=expression RPAR BEGIN s = list(instruction) END { While(c,s) }
     (* While(c); *)
     | WHILE LPAR c=expression RPAR SEMI { While(c, []) }
+  (* Do While *)
+    (* do{ s } while( c ); *)
+    | DO BEGIN s = list(instruction) END WHILE LPAR c=expression RPAR SEMI { DoWhile(s,c) }
+  (* For *)
+    | FOR LPAR init_instr=for_seq SEMI cond = expression SEMI incr_instr=for_seq RPAR BEGIN s = list(instruction) END { For(init_instr, cond, incr_instr, s) } 
+    | FOR LPAR init_instr=for_seq SEMI SEMI incr_instr=for_seq RPAR BEGIN s = list(instruction) END { For(init_instr, BCst(true), incr_instr, s) } 
   (* Decls and sets *)
-    | decl = variable_decl { Set(decl) }
-    | PUTCHAR LPAR e=expression RPAR SEMI {Putchar(e)} 
+    | decl = variable_decl_set { Set(decl) }
   (* Scope creation : { s } *)
     | BEGIN s = list(instruction) END { Scope(s) }
+  (* Putchar *)
+    | PUTCHAR LPAR e=expression RPAR SEMI {Putchar(e)} 
 ;
 
 call_list:

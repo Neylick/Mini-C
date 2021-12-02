@@ -12,20 +12,28 @@ and find_return_seq s = List.fold_left (fun acc i -> find_return_instr i || acc)
 let typecheck_program (prog: prog) =  
   (* 
     TODO :
+     -  Binary operators
+    
+    (+) Switch/case/default (! default is optionnal !)... 
+    (+) break, continue 
+    (+) do while
+    (+) enums
+    (+) unions
+    (+) structs
 
-    (?) Ligne et colonne dans les messages d'erreur du type checker 
-    (?) Convertir les oct en decimal manuellement
-    (?) Return dans chaque path de fonction
-    (?) Traduire en assembleur
+    (#) Preproc parser : define, if, else, endif, error, ifdef, ifndef, undef, include
+
+    (?) Ligne et colonne dans les messages d'erreur du type checker
+
+    ($) Traduire en assembleur
   *)
 
-
   (* 
-    Using Hash tables to add and remove variables to correspond to the scope and
-    to change the variables values at need
+    On utilise des tables de hachage pour pouvoir ajouter et supprimer les variables
+    en changeant de blocs, et changer les valeurs des variables a la volee
     
-    Variable hash tables are ( name -> (type*name*expression) )
-    Function hash table is ( name -> {name, code, params, return} ) 
+    Hashtb, Variables : ( name -> (type * name * expression) )
+    Hashtb, Fonction  : ( name -> {name, code, params, return} ) 
   *)
 
   let global_env = Hashtbl.create 100 in
@@ -55,7 +63,7 @@ let typecheck_program (prog: prog) =
       if t1 <> t2 || t1 <> Bool 
       then failwith "[error] Boolean operand was given a non boolean expression"
       else Bool
-    (* Really depends on how we implement things temp : *)
+    (* Really depends on how we implement things, temp : *)
     | BNeq (e1, e2) |BOr (e1, e2) |BAnd (e1, e2) | BXor (e1, e2) -> 
       let t1 = type_expr e1 in 
       let t2 = type_expr e2 in
@@ -113,14 +121,38 @@ let typecheck_program (prog: prog) =
                                   else Hashtbl.add local_env i (t, v) 
       | If(c, s1, s2) -> 
         let t = type_expr c in
-        if t <> Bool then failwith "[error] Non boolean condition";
-        typecheck_instr (Scope s1);
-        typecheck_instr (Scope s2);
+        if t <> Bool then failwith "[error] Non boolean condition"
+        else
+        begin
+          typecheck_instr (Scope s1);
+          typecheck_instr (Scope s2);
+        end
       | While(c, s) ->  
         let t = type_expr c in
-        if t <> Bool then failwith "[error] Non boolean condition";
-        typecheck_instr (Scope s);
-
+        if t <> Bool 
+        then failwith "[error] Non boolean condition"
+        else typecheck_instr (Scope s)
+      | DoWhile(s, c) -> typecheck_seq [Scope(s) ; While(c, s)];
+      | For(s1,c,s2, block) ->
+        begin (* Makes a separate scope for our for loop*)
+        let prev_env = Hashtbl.copy local_env in 
+          typecheck_seq s1; (* The incr seq needs to impact the loop and incrementation seq *)
+          let t = type_expr c in
+          if t <> Bool 
+          then failwith "[error] Non boolean condition"
+          else 
+          begin
+            typecheck_instr (Scope s2);
+            typecheck_instr (Scope block);
+            Hashtbl.iter 
+            (
+              fun i _ -> 
+                if not (Hashtbl.mem prev_env i) 
+                then Hashtbl.remove local_env i
+            ) 
+            local_env;
+          end
+        end (* Going out of the for loop *)
     and typecheck_seq s = List.iter typecheck_instr s 
     in
     (* Typecheck function *)

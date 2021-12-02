@@ -3,9 +3,10 @@
   open Minic_parser
 
   let resolve_keyword =
-    let h = Hashtbl.create 17 in
+    let h = Hashtbl.create 32 in
     List.iter (fun (str, token) -> Hashtbl.add h str token)
     [ 
+      (* Obligatoires *)
       "return",   RETURN;
       "true",     BOOL_CST true;
       "false",    BOOL_CST false;
@@ -16,6 +17,14 @@
       "while",    WHILE;
       "void",     VOID;
       "putchar",  PUTCHAR;
+
+      (* Ajouts *)
+      "do",       DO;
+      "break",    BREAK;
+      "continue", CONTINUE;
+      "for",      FOR;
+      "switch",   SWITCH;
+      "case",     CASE;
     ] ;
     fun s ->
       try  Hashtbl.find h s
@@ -47,6 +56,7 @@ rule token = parse
   | number as n { CST(int_of_string n) }
   | ident as id { resolve_keyword id }
   | ";" { SEMI }
+  | ":" { DOTS2 }
   | "," { SEPARATOR }
   | "=" { SET }
   | "(" { LPAR }
