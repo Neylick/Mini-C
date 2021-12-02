@@ -14,8 +14,10 @@ let () =
       Printf.printf "Source %s : Type verified\n\n" file;
     with 
     | Invalid_argument _ ->  
-      Printf.printf "No more files to work on...\n";
-      Printf.printf "exited with code 0\n";
+      print_string "No more files to work on...\n";
+      print_string "exited with code 0\n";
       exit 0
-    | err -> raise(err)
+    | Failure(msg) ->
+      print_string (msg^"\n");
+      exit 1
   done

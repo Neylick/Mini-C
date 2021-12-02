@@ -3,17 +3,28 @@ int PARAM = 5;
 int myfun(int a, int b)
 {
 	bool my_bool = a>b;
-	return a + b;
+	if(my_bool) return a + b; 
+	else return a-b; // Removing this line will produce an error saying we don't have a return in the else branch.
 }
 
-// Comment can also be out of function
-/* Also /*works*/ with blocks, even with multiple layered ones */
-
+// Comment can be out of function
+/* Also 
+	/*
+	/*    works   */
+		*/ 
+			with 
+				blocks, 
+						even 
+							with 
+								multiple 
+										layered 
+												ones 
+*/
 
 int main() 
 {
 	/* 
-		THIS IS A COMMENT	
+		This is a comment		
 	*/
 	// THIS IS ALSO A COMMENT
 	
@@ -23,6 +34,7 @@ int main()
 		// Custom scope with local variables
 		{
 			int d = 0;
+			// Comments can be anywhere
 		}
 		int d = 2;
 		int b = 0xFFFF + 0X0001 % 0123 - 4;
@@ -35,10 +47,13 @@ int main()
 			else return 2;
 		}
 		a = a * (b / c);
+		
 	}
+	return 0;
 
 	/* OK */
 	// Ok
+
 	if(false || (true && false))
 	{
 		while(false^false); //while syntax
@@ -48,12 +63,11 @@ int main()
 	}
 	else
 	{
-
+		/*No problem here */
 	}
-  return 0+0;
 }
 
 void afficher()
 {
-	// We could do stuff here
+	// We could do stuff here but we don't need to
 }

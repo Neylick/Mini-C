@@ -5,7 +5,8 @@ open Minic_ast
 let rec find_return_instr = function
   | Return _ -> true
   | Scope s -> find_return_seq s
-  | If(_, s1, s2) -> find_return_seq s1 || find_return_seq s2
+  | If(_, _, []) -> false
+  | If(_, s1, s2) -> find_return_seq s1 && find_return_seq s2
   | While(_, s) ->  find_return_seq s
   | _ -> false
 and find_return_seq s = List.fold_left (fun acc i -> find_return_instr i || acc) false s
@@ -24,10 +25,6 @@ let typecheck_program (prog: prog) =
   let function_list = Hashtbl.create 100 in 
 
   let typecheck_function (fdef: fun_def) =
-    (* Return exists *)
-    if fdef.return <> Void && fdef.name <> "main"
-    then  if not (find_return_seq fdef.code)
-          then failwith "Couldn't find return in non void and non main function : error";
     let local_env = Hashtbl.create 100 in
 
     let rec type_expr = function
@@ -147,7 +144,9 @@ let typecheck_program (prog: prog) =
       | Variable(t,i,v) -> 
         Hashtbl.add global_env i (t, v) 
       | Function f -> 
-        Hashtbl.add function_list f.name f; 
-        typecheck_function f
+      (* Return exists *)
+      if f.return <> Void && not (find_return_seq f.code)
+      then failwith ("Some of the paths of "^f.name^" don't have return : error")
+      else Hashtbl.add function_list f.name f; typecheck_function f
     )
   prog

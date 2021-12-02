@@ -28,7 +28,7 @@
 - Formes de `return` alternatives : `return n;` et `return;`
 - Formes de `if` alternatives : `if(c) { s1 }` `if(c) i1 else i2` `if(c) i1`
 - Forme de `while` alternative : `while(c);`
-- Possibilite de verifier le typage de plusieurs fichier source en donnant plusieurs noms de fichier a notre execurable. (Et affichage en etape)
+- Possibilite de verifier le typage de plusieurs fichier source en donnant plusieurs noms de fichier a notre execurable. Arret a la premiere erreur.
 
 ### Gestion des erreurs
 - Verification de l'existence d'une fonction `main`
