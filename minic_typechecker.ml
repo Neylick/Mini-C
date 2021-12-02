@@ -15,6 +15,7 @@ let typecheck_program (prog: prog) =
   (* 
     TODO
     - Verifier le bon typage des globals.
+    - Verifier que les hex et les oct sont bien convertis (surement pas)
     
     (?) Ligne et colonne dans les messages d'erreur du type checker 
     (?) Return dans chaque path de fonction
@@ -57,15 +58,15 @@ let typecheck_program (prog: prog) =
         if t1 <> t2
         then failwith "Operand was given two expression with different size : error"
         else Bool
-      | Get i ->  let errmsg = "Undefined variable \""^i^"\" : error" in
-        begin 
+      | Get i -> 
+        begin
           try let t, v = Hashtbl.find local_env i in if v = Undef then failwith "Variable not initialised : error " else t
           with Not_found -> 
             try let t, v = Hashtbl.find global_env i in 
               if v = Undef 
               then failwith "Variable not initialised : error " 
               else t
-            with Not_found -> failwith errmsg
+            with Not_found -> failwith ("Undefined variable \""^i^"\" : error")
         end
       | Call (name, params) ->  
         begin
@@ -78,16 +79,16 @@ let typecheck_program (prog: prog) =
     let rec typecheck_instr = function
       | Skip -> ()
       | Expr e -> let _ = type_expr e in ()
+      | Return e -> let t = type_expr e in if t <> fdef.return then failwith "Return type doesn't match function declaration : error"
+      | Putchar c ->  let t = type_expr c in if t <> Int then failwith "Non integer type given to putchar : error" 
       | Scope s ->
         begin (* Makes a copy of the local environment to keep only the previously defined variables*)
           let prev_env = Hashtbl.copy local_env in 
           typecheck_seq s;
           Hashtbl.iter (fun i _ -> if not (Hashtbl.mem prev_env i) then Hashtbl.remove local_env i) local_env;
         end
-      | Return e -> let t = type_expr e in if t <> fdef.return then failwith "Return type doesn't match function declaration : error"
-      | Putchar c ->  let t = type_expr c in if t <> Int then failwith "Non integer type given to putchar : error"
-      | Set (t, i, Undef) -> Hashtbl.add local_env i (t, Undef) 
-      | Set (None, i, v) -> let errmsg = "Undefined variable : "^i in 
+      | Set (t, i, Undef) -> Hashtbl.add local_env i (t, Undef)
+      | Set (None, i, v) -> 
         begin
           try let t, _ = Hashtbl.find local_env i in let te = type_expr v in  
             if t <> te  
@@ -98,40 +99,43 @@ let typecheck_program (prog: prog) =
               if t <> te  
               then failwith "Value can't match declared type : error"
               else Hashtbl.add global_env i (t, v)
-            with Not_found -> failwith errmsg
+            with Not_found -> failwith ("Undefined variable : "^i)
         end
       | Set (t, i, v) -> 
         if (Hashtbl.mem local_env i) ||  (Hashtbl.mem global_env i) 
         then failwith "Variable declaration duplicate : error"
         else let te = type_expr v in if t <> te  then failwith "Value can't match declared type : error"
                                   else Hashtbl.add local_env i (t, v) 
-      | If(c, s1, s2) -> let t = type_expr c in
-                        if t <> Bool then failwith "Non boolean condition : error";
-                        typecheck_instr (Scope s1);
-                        typecheck_instr (Scope s2);
-      | While(c, s) ->  let t = type_expr c in
-                        if t <> Bool then failwith "Non boolean condition : error";
-                        typecheck_instr (Scope s);
+      | If(c, s1, s2) -> 
+        let t = type_expr c in
+        if t <> Bool then failwith "Non boolean condition : error";
+        typecheck_instr (Scope s1);
+        typecheck_instr (Scope s2);
+      | While(c, s) ->  
+        let t = type_expr c in
+        if t <> Bool then failwith "Non boolean condition : error";
+        typecheck_instr (Scope s);
 
     and typecheck_seq s = List.iter typecheck_instr s in
-    begin (* makes a copy of the local environment to keep only the previously defined variables*)
-    let prev_env = Hashtbl.copy local_env in 
-      let _ = List.iter (fun (t, i) -> Hashtbl.add local_env i (t, Param)) fdef.params in
-      typecheck_seq (fdef.code);
-      Hashtbl.iter (fun i _ -> if not (Hashtbl.mem prev_env i) then Hashtbl.remove local_env i) local_env;
-    end
+    (* Typecheck function *)
+      begin (* makes a copy of the local environment to keep only the previously defined variables*)
+        let prev_env = Hashtbl.copy local_env in 
+        let _ = List.iter (fun (t, i) -> Hashtbl.add local_env i (t, Param)) fdef.params in
+        typecheck_seq (fdef.code);
+        Hashtbl.iter (fun i _ -> if not (Hashtbl.mem prev_env i) then Hashtbl.remove local_env i) local_env;
+      end
   in
-  (* Only used for initial checks : exisiting main and maybe we could check some reserved globals/functions... *)
-  let functions, _ =
-    List.fold_right
-      (
-        fun def acc ->
-        match def with
-        | Variable(t,i,v) -> let (fs,vs) = acc in (fs, (t,i,v)::vs) 
-        | Function f -> let (fs,vs) = acc in (f::fs, vs)
-      )
-      prog ([],[])
-  in 
+  (* Only used for initial checks : exisiting main and maybe we could check some other reserved variables/functions... *)
+    let functions, _ =
+      List.fold_right
+        (
+          fun def acc ->
+          match def with
+          | Variable(t,i,v) -> let (fs,vs) = acc in (fs, (t,i,v)::vs) 
+          | Function f -> let (fs,vs) = acc in (f::fs, vs)
+        )
+        prog ([],[])
+    in 
 
   if not (List.fold_left (fun acc f -> if f.name = "main" then true else acc) false functions) 
   then failwith "Couldn't find main function (no entry point) : error";

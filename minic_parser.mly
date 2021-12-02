@@ -104,9 +104,9 @@ parameter_list:
 function_decl:
   | t = typ f = IDENT LPAR p = parameter_list RPAR BEGIN s = list(instruction) END
     { { 
-        name = f; 
-        code = s; 
-        params = p; 
+        name = f;
+        code = s;
+        params = p;
         return = t;
     } }
 ;
