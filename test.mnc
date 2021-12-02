@@ -1,6 +1,6 @@
 int PARAM = 5;
 
-int f() 
+int main() 
 {
 
 	int a = 0;

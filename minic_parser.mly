@@ -11,7 +11,7 @@
 
 %token WHILE IF ELSE
 %token LPAR RPAR BEGIN END
-%token RETURN SET SEMI
+%token RETURN SET SEMI SEPARATOR
 %token EOF
 
 %token INT BOOL VOID
@@ -56,22 +56,36 @@ typ:
   | VOID { Void }
 ;
 
+simple_var_decl:
+  | t = typ i = IDENT SEMI { (t, i, Undef) }
+
+parameter_list:
+| { [] }
+| d=simple_var_decl { let (t, i, v) = d in [(t,i)] } (* No separator in that case *)
+| d=simple_var_decl SEPARATOR p=parameter_list { let (t, i, v) = d in (t,i)::p }
+
 (* Decls and sets *)
 variable_decl:
   | t = typ i = IDENT SET v = expression SEMI { (t, i, v) }
-  | t = typ i = IDENT SEMI { (t, i, Undef) }
+  | d = simple_var_decl { d }
   | i = IDENT SET v = expression SEMI { (None, i, v) }
 ;
 
-(* 
-   TODO Params, verif return is here.
-*)
+(* Function decls *)
 function_decl:
   | t = typ f = IDENT LPAR RPAR BEGIN s = list(instruction) END
     { { 
         name = f; 
         code = s; 
         params = []; 
+        return = t;
+    } }
+
+  | t = typ f = IDENT LPAR p = parameter_list RPAR BEGIN s = list(instruction) END
+    { { 
+        name = f; 
+        code = s; 
+        params = p; 
         return = t;
     } }
 ;

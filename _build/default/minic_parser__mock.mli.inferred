@@ -4,6 +4,7 @@ type token =
   | VOID
   | SUB
   | SET
+  | SEPARATOR
   | SEMI
   | RPAR
   | RETURN
@@ -37,7 +38,9 @@ type token =
 val menhir_begin_marker : int
 val xv_variable_decl : Minic_ast.typ * string * Minic_ast.expr
 val xv_typ : Minic_ast.typ
+val xv_simple_var_decl : Minic_ast.typ * string * Minic_ast.expr
 val xv_program : Minic_ast.prog
+val xv_parameter_list : (Minic_ast.typ * string) list
 val xv_list_instruction_ : Minic_ast.seq
 val xv_instruction : Minic_ast.instr
 val xv_function_decl : Minic_ast.fun_def

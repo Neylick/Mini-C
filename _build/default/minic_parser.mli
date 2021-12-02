@@ -7,6 +7,7 @@ type token =
   | VOID
   | SUB
   | SET
+  | SEPARATOR
   | SEMI
   | RPAR
   | RETURN
