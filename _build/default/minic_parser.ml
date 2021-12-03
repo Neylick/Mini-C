@@ -150,7 +150,7 @@ let rec _menhir_goto_block_case_list : _menhir_env -> 'ttv_tail -> _menhir_state
         let _menhir_stack = Obj.magic _menhir_stack in
         let (((_menhir_stack, _menhir_s, (ecl : (Minic_ast.expr list))), _, (s : (Minic_ast.seq))), _, (cl : ((Minic_ast.expr list * Minic_ast.seq) list))) = _menhir_stack in
         let _v : ((Minic_ast.expr list * Minic_ast.seq) list) = 
-# 121 "minic_parser.mly"
+# 114 "minic_parser.mly"
                                                               ((ecl,s)::cl)
 # 156 "minic_parser.ml"
          in
@@ -225,7 +225,7 @@ let rec _menhir_goto_block_case_list : _menhir_env -> 'ttv_tail -> _menhir_state
             let _2 = () in
             let _1 = () in
             let _v : (Minic_ast.instr) = 
-# 152 "minic_parser.mly"
+# 145 "minic_parser.mly"
                                                                  ( Switch(e,cl, []) )
 # 231 "minic_parser.ml"
              in
@@ -256,7 +256,7 @@ and _menhir_goto_list_instruction_ : _menhir_env -> 'ttv_tail -> _menhir_state -
             let _3 = () in
             let _1 = () in
             let _v : (Minic_ast.instr) = 
-# 170 "minic_parser.mly"
+# 163 "minic_parser.mly"
                                     ( Scope(s) )
 # 262 "minic_parser.ml"
              in
@@ -345,7 +345,7 @@ and _menhir_goto_list_instruction_ : _menhir_env -> 'ttv_tail -> _menhir_state -
             let _2 = () in
             let _1 = () in
             let _v : (Minic_ast.instr) = 
-# 135 "minic_parser.mly"
+# 128 "minic_parser.mly"
                                                                                                     ( For(init_instr, BCst(true), incr_instr, s) )
 # 351 "minic_parser.ml"
              in
@@ -374,7 +374,7 @@ and _menhir_goto_list_instruction_ : _menhir_env -> 'ttv_tail -> _menhir_state -
             let _2 = () in
             let _1 = () in
             let _v : (Minic_ast.instr) = 
-# 134 "minic_parser.mly"
+# 127 "minic_parser.mly"
                                                                                                                       ( For(init_instr, cond, incr_instr, s) )
 # 380 "minic_parser.ml"
              in
@@ -458,7 +458,7 @@ and _menhir_goto_list_instruction_ : _menhir_env -> 'ttv_tail -> _menhir_state -
                 let _2 = () in
                 let _1 = () in
                 let _v : (Minic_ast.instr) = 
-# 143 "minic_parser.mly"
+# 136 "minic_parser.mly"
                                                                 ( If(c, s, []) )
 # 464 "minic_parser.ml"
                  in
@@ -494,7 +494,7 @@ and _menhir_goto_list_instruction_ : _menhir_env -> 'ttv_tail -> _menhir_state -
             let _2 = () in
             let _1 = () in
             let _v : (Minic_ast.instr) = 
-# 141 "minic_parser.mly"
+# 134 "minic_parser.mly"
                                                                                                        ( If(c,s1,s2) )
 # 500 "minic_parser.ml"
              in
@@ -536,7 +536,7 @@ and _menhir_goto_list_instruction_ : _menhir_env -> 'ttv_tail -> _menhir_state -
             let _2 = () in
             let _1 = () in
             let _v : (Minic_ast.instr) = 
-# 151 "minic_parser.mly"
+# 144 "minic_parser.mly"
                                                                                                      ( Switch(e, cl, def) )
 # 542 "minic_parser.ml"
              in
@@ -563,7 +563,7 @@ and _menhir_goto_list_instruction_ : _menhir_env -> 'ttv_tail -> _menhir_state -
             let _2 = () in
             let _1 = () in
             let _v : (Minic_ast.instr) = 
-# 127 "minic_parser.mly"
+# 120 "minic_parser.mly"
                                                                    ( While(c,s) )
 # 569 "minic_parser.ml"
              in
@@ -593,7 +593,7 @@ and _menhir_goto_list_instruction_ : _menhir_env -> 'ttv_tail -> _menhir_state -
             let _5 = () in
             let _3 = () in
             let _v : (Minic_ast.fun_def) = 
-# 98 "minic_parser.mly"
+# 93 "minic_parser.mly"
     ( { 
         name = f;
         code = s;
@@ -626,7 +626,7 @@ and _menhir_goto_conditional : _menhir_env -> 'ttv_tail -> _menhir_state -> (Min
     let _menhir_stack = Obj.magic _menhir_stack in
     let (c : (Minic_ast.instr)) = _v in
     let _v : (Minic_ast.instr) = 
-# 167 "minic_parser.mly"
+# 160 "minic_parser.mly"
                   (c)
 # 632 "minic_parser.ml"
      in
@@ -638,7 +638,7 @@ and _menhir_goto_return : _menhir_env -> 'ttv_tail -> _menhir_state -> (Minic_as
     let _menhir_stack = Obj.magic _menhir_stack in
     let (r : (Minic_ast.instr)) = _v in
     let _v : (Minic_ast.instr) = 
-# 168 "minic_parser.mly"
+# 161 "minic_parser.mly"
              (r)
 # 644 "minic_parser.ml"
      in
@@ -655,7 +655,7 @@ and _menhir_goto_expr_case_list : _menhir_env -> 'ttv_tail -> _menhir_state -> (
         let _3 = () in
         let _1 = () in
         let _v : (Minic_ast.expr list) = 
-# 116 "minic_parser.mly"
+# 109 "minic_parser.mly"
                                                ( e::ecl )
 # 661 "minic_parser.ml"
          in
@@ -709,7 +709,7 @@ and _menhir_goto_expr_case_list : _menhir_env -> 'ttv_tail -> _menhir_state -> (
 and _menhir_reduce1 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
   fun _menhir_env _menhir_stack _menhir_s ->
     let _v : ((Minic_ast.expr list * Minic_ast.seq) list) = 
-# 120 "minic_parser.mly"
+# 113 "minic_parser.mly"
     ( [] )
 # 715 "minic_parser.ml"
      in
@@ -740,7 +740,7 @@ and _menhir_goto_loop : _menhir_env -> 'ttv_tail -> _menhir_state -> (Minic_ast.
     let _menhir_stack = Obj.magic _menhir_stack in
     let (l : (Minic_ast.instr)) = _v in
     let _v : (Minic_ast.instr) = 
-# 166 "minic_parser.mly"
+# 159 "minic_parser.mly"
            (l)
 # 746 "minic_parser.ml"
      in
@@ -752,7 +752,7 @@ and _menhir_goto_int_op : _menhir_env -> 'ttv_tail -> _menhir_state -> (Minic_as
     let _menhir_stack = Obj.magic _menhir_stack in
     let (iop : (Minic_ast.expr)) = _v in
     let _v : (Minic_ast.expr) = 
-# 215 "minic_parser.mly"
+# 207 "minic_parser.mly"
                (iop)
 # 758 "minic_parser.ml"
      in
@@ -764,7 +764,7 @@ and _menhir_goto_bool_op : _menhir_env -> 'ttv_tail -> _menhir_state -> (Minic_a
     let _menhir_stack = Obj.magic _menhir_stack in
     let (bop : (Minic_ast.expr)) = _v in
     let _v : (Minic_ast.expr) = 
-# 214 "minic_parser.mly"
+# 206 "minic_parser.mly"
                 (bop)
 # 770 "minic_parser.ml"
      in
@@ -791,7 +791,7 @@ and _menhir_goto_funcall_args : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mi
             let _4 = () in
             let _2 = () in
             let _v : (Minic_ast.expr) = 
-# 209 "minic_parser.mly"
+# 201 "minic_parser.mly"
                                      (Call(f, p))
 # 797 "minic_parser.ml"
              in
@@ -808,7 +808,7 @@ and _menhir_goto_funcall_args : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mi
         let ((_menhir_stack, _menhir_s, (e : (Minic_ast.expr))), _, (cl : (Minic_ast.expr list))) = _menhir_stack in
         let _2 = () in
         let _v : (Minic_ast.expr list) = 
-# 179 "minic_parser.mly"
+# 172 "minic_parser.mly"
                                            ( e::cl )
 # 814 "minic_parser.ml"
          in
@@ -1150,7 +1150,7 @@ and _menhir_goto_parameter_list : _menhir_env -> 'ttv_tail -> _menhir_state -> (
         let ((_menhir_stack, _menhir_s, (d : (Minic_ast.typ * string * Minic_ast.expr))), _, (p : ((Minic_ast.typ * string) list))) = _menhir_stack in
         let _2 = () in
         let _v : ((Minic_ast.typ * string) list) = 
-# 92 "minic_parser.mly"
+# 88 "minic_parser.mly"
                                                  ( let (t, i, _) = d in (t,i)::p )
 # 1156 "minic_parser.ml"
          in
@@ -1334,7 +1334,7 @@ and _menhir_run100 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
         let _2 = () in
         let _1 = () in
         let _v : (Minic_ast.instr) = 
-# 162 "minic_parser.mly"
+# 155 "minic_parser.mly"
                   ( Return(Undef) )
 # 1340 "minic_parser.ml"
          in
@@ -1510,7 +1510,7 @@ and _menhir_run133 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
         let _2 = () in
         let _1 = () in
         let _v : (Minic_ast.instr) = 
-# 172 "minic_parser.mly"
+# 165 "minic_parser.mly"
                   ( Continue )
 # 1516 "minic_parser.ml"
          in
@@ -1536,7 +1536,7 @@ and _menhir_run135 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
         let _2 = () in
         let _1 = () in
         let _v : (Minic_ast.instr) = 
-# 173 "minic_parser.mly"
+# 166 "minic_parser.mly"
                ( Break )
 # 1542 "minic_parser.ml"
          in
@@ -1693,7 +1693,7 @@ and _menhir_goto_instruction : _menhir_env -> 'ttv_tail -> _menhir_state -> (Min
             let _2 = () in
             let _1 = () in
             let _v : (Minic_ast.instr) = 
-# 147 "minic_parser.mly"
+# 140 "minic_parser.mly"
                                                  ( If(c, [i], []) )
 # 1699 "minic_parser.ml"
              in
@@ -1713,7 +1713,7 @@ and _menhir_goto_instruction : _menhir_env -> 'ttv_tail -> _menhir_state -> (Min
         let _2 = () in
         let _1 = () in
         let _v : (Minic_ast.instr) = 
-# 145 "minic_parser.mly"
+# 138 "minic_parser.mly"
                                                                        ( If(c, [i1], [i2]) )
 # 1719 "minic_parser.ml"
          in
@@ -1750,7 +1750,7 @@ and _menhir_goto_global_scope_def : _menhir_env -> 'ttv_tail -> _menhir_state ->
 and _menhir_reduce35 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
   fun _menhir_env _menhir_stack _menhir_s ->
     let _v : (Minic_ast.expr list) = 
-# 177 "minic_parser.mly"
+# 170 "minic_parser.mly"
     ( [] )
 # 1756 "minic_parser.ml"
      in
@@ -1824,7 +1824,7 @@ and _menhir_goto_expression : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mini
             let _menhir_stack = Obj.magic _menhir_stack in
             let (_menhir_stack, _menhir_s, (e : (Minic_ast.expr))) = _menhir_stack in
             let _v : (Minic_ast.expr list) = 
-# 178 "minic_parser.mly"
+# 171 "minic_parser.mly"
                  ( [e] )
 # 1830 "minic_parser.ml"
              in
@@ -1881,7 +1881,7 @@ and _menhir_goto_expression : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mini
             let ((_menhir_stack, _menhir_s, (a : (Minic_ast.expr))), _, (b : (Minic_ast.expr))) = _menhir_stack in
             let _2 = () in
             let _v : (Minic_ast.expr) = 
-# 193 "minic_parser.mly"
+# 186 "minic_parser.mly"
                                    (Xor(a,b))
 # 1887 "minic_parser.ml"
              in
@@ -1938,7 +1938,7 @@ and _menhir_goto_expression : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mini
             let ((_menhir_stack, _menhir_s, (a : (Minic_ast.expr))), _, (b : (Minic_ast.expr))) = _menhir_stack in
             let _2 = () in
             let _v : (Minic_ast.expr) = 
-# 204 "minic_parser.mly"
+# 197 "minic_parser.mly"
                                    (Sub(a,b))
 # 1944 "minic_parser.ml"
              in
@@ -1995,7 +1995,7 @@ and _menhir_goto_expression : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mini
             let ((_menhir_stack, _menhir_s, (a : (Minic_ast.expr))), _, (b : (Minic_ast.expr))) = _menhir_stack in
             let _2 = () in
             let _v : (Minic_ast.expr) = 
-# 191 "minic_parser.mly"
+# 184 "minic_parser.mly"
                                   (Or(a,b))
 # 2001 "minic_parser.ml"
              in
@@ -2052,7 +2052,7 @@ and _menhir_goto_expression : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mini
             let ((_menhir_stack, _menhir_s, (a : (Minic_ast.expr))), _, (b : (Minic_ast.expr))) = _menhir_stack in
             let _2 = () in
             let _v : (Minic_ast.expr) = 
-# 195 "minic_parser.mly"
+# 188 "minic_parser.mly"
                                    (Neq(a,b))
 # 2058 "minic_parser.ml"
              in
@@ -2109,7 +2109,7 @@ and _menhir_goto_expression : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mini
             let ((_menhir_stack, _menhir_s, (a : (Minic_ast.expr))), _, (b : (Minic_ast.expr))) = _menhir_stack in
             let _2 = () in
             let _v : (Minic_ast.expr) = 
-# 201 "minic_parser.mly"
+# 194 "minic_parser.mly"
                                    (Mul(a,b))
 # 2115 "minic_parser.ml"
              in
@@ -2166,7 +2166,7 @@ and _menhir_goto_expression : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mini
             let ((_menhir_stack, _menhir_s, (a : (Minic_ast.expr))), _, (b : (Minic_ast.expr))) = _menhir_stack in
             let _2 = () in
             let _v : (Minic_ast.expr) = 
-# 203 "minic_parser.mly"
+# 196 "minic_parser.mly"
                                    (Mod(a,b))
 # 2172 "minic_parser.ml"
              in
@@ -2223,7 +2223,7 @@ and _menhir_goto_expression : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mini
             let ((_menhir_stack, _menhir_s, (a : (Minic_ast.expr))), _, (b : (Minic_ast.expr))) = _menhir_stack in
             let _2 = () in
             let _v : (Minic_ast.expr) = 
-# 183 "minic_parser.mly"
+# 176 "minic_parser.mly"
                                   (Lt(a,b))
 # 2229 "minic_parser.ml"
              in
@@ -2280,7 +2280,7 @@ and _menhir_goto_expression : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mini
             let ((_menhir_stack, _menhir_s, (a : (Minic_ast.expr))), _, (b : (Minic_ast.expr))) = _menhir_stack in
             let _2 = () in
             let _v : (Minic_ast.expr) = 
-# 185 "minic_parser.mly"
+# 178 "minic_parser.mly"
                                    (Leqt(a,b))
 # 2286 "minic_parser.ml"
              in
@@ -2337,7 +2337,7 @@ and _menhir_goto_expression : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mini
             let ((_menhir_stack, _menhir_s, (a : (Minic_ast.expr))), _, (b : (Minic_ast.expr))) = _menhir_stack in
             let _2 = () in
             let _v : (Minic_ast.expr) = 
-# 184 "minic_parser.mly"
+# 177 "minic_parser.mly"
                                   (Gt(a,b))
 # 2343 "minic_parser.ml"
              in
@@ -2394,7 +2394,7 @@ and _menhir_goto_expression : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mini
             let ((_menhir_stack, _menhir_s, (a : (Minic_ast.expr))), _, (b : (Minic_ast.expr))) = _menhir_stack in
             let _2 = () in
             let _v : (Minic_ast.expr) = 
-# 186 "minic_parser.mly"
+# 179 "minic_parser.mly"
                                    (Geqt(a,b))
 # 2400 "minic_parser.ml"
              in
@@ -2451,7 +2451,7 @@ and _menhir_goto_expression : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mini
             let ((_menhir_stack, _menhir_s, (a : (Minic_ast.expr))), _, (b : (Minic_ast.expr))) = _menhir_stack in
             let _2 = () in
             let _v : (Minic_ast.expr) = 
-# 187 "minic_parser.mly"
+# 180 "minic_parser.mly"
                                   (Eq(a,b))
 # 2457 "minic_parser.ml"
              in
@@ -2508,7 +2508,7 @@ and _menhir_goto_expression : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mini
             let ((_menhir_stack, _menhir_s, (a : (Minic_ast.expr))), _, (b : (Minic_ast.expr))) = _menhir_stack in
             let _2 = () in
             let _v : (Minic_ast.expr) = 
-# 202 "minic_parser.mly"
+# 195 "minic_parser.mly"
                                    (Div(a,b))
 # 2514 "minic_parser.ml"
              in
@@ -2565,7 +2565,7 @@ and _menhir_goto_expression : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mini
             let ((_menhir_stack, _menhir_s, (a : (Minic_ast.expr))), _, (b : (Minic_ast.expr))) = _menhir_stack in
             let _2 = () in
             let _v : (Minic_ast.expr) = 
-# 194 "minic_parser.mly"
+# 187 "minic_parser.mly"
                                     (BXor(a,b))
 # 2571 "minic_parser.ml"
              in
@@ -2622,7 +2622,7 @@ and _menhir_goto_expression : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mini
             let ((_menhir_stack, _menhir_s, (a : (Minic_ast.expr))), _, (b : (Minic_ast.expr))) = _menhir_stack in
             let _2 = () in
             let _v : (Minic_ast.expr) = 
-# 192 "minic_parser.mly"
+# 185 "minic_parser.mly"
                                    (BOr(a,b))
 # 2628 "minic_parser.ml"
              in
@@ -2679,7 +2679,7 @@ and _menhir_goto_expression : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mini
             let ((_menhir_stack, _menhir_s, (a : (Minic_ast.expr))), _, (b : (Minic_ast.expr))) = _menhir_stack in
             let _2 = () in
             let _v : (Minic_ast.expr) = 
-# 196 "minic_parser.mly"
+# 189 "minic_parser.mly"
                                     (BNeq(a,b))
 # 2685 "minic_parser.ml"
              in
@@ -2736,7 +2736,7 @@ and _menhir_goto_expression : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mini
             let ((_menhir_stack, _menhir_s, (a : (Minic_ast.expr))), _, (b : (Minic_ast.expr))) = _menhir_stack in
             let _2 = () in
             let _v : (Minic_ast.expr) = 
-# 190 "minic_parser.mly"
+# 183 "minic_parser.mly"
                                     (BAnd(a,b))
 # 2742 "minic_parser.ml"
              in
@@ -2793,7 +2793,7 @@ and _menhir_goto_expression : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mini
             let ((_menhir_stack, _menhir_s, (a : (Minic_ast.expr))), _, (b : (Minic_ast.expr))) = _menhir_stack in
             let _2 = () in
             let _v : (Minic_ast.expr) = 
-# 189 "minic_parser.mly"
+# 182 "minic_parser.mly"
                                    (And(a,b))
 # 2799 "minic_parser.ml"
              in
@@ -2850,7 +2850,7 @@ and _menhir_goto_expression : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mini
             let ((_menhir_stack, _menhir_s, (a : (Minic_ast.expr))), _, (b : (Minic_ast.expr))) = _menhir_stack in
             let _2 = () in
             let _v : (Minic_ast.expr) = 
-# 200 "minic_parser.mly"
+# 193 "minic_parser.mly"
                                    (Add(a,b))
 # 2856 "minic_parser.ml"
              in
@@ -2906,7 +2906,7 @@ and _menhir_goto_expression : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mini
             let _3 = () in
             let _1 = () in
             let _v : (Minic_ast.expr) = 
-# 213 "minic_parser.mly"
+# 205 "minic_parser.mly"
                            (e)
 # 2912 "minic_parser.ml"
              in
@@ -2971,7 +2971,7 @@ and _menhir_goto_expression : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mini
             ))), _, (v : (Minic_ast.expr))) = _menhir_stack in
             let _2 = () in
             let _v : (Minic_ast.typ * string * Minic_ast.expr) = 
-# 73 "minic_parser.mly"
+# 71 "minic_parser.mly"
                                    ( (None, i, v) )
 # 2977 "minic_parser.ml"
              in
@@ -3032,7 +3032,7 @@ and _menhir_goto_expression : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mini
             ))), _, (v : (Minic_ast.expr))) = _menhir_stack in
             let _3 = () in
             let _v : (Minic_ast.typ * string * Minic_ast.expr) = 
-# 71 "minic_parser.mly"
+# 69 "minic_parser.mly"
                                            ( (t, i, v) )
 # 3038 "minic_parser.ml"
              in
@@ -3138,7 +3138,7 @@ and _menhir_goto_expression : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mini
                 let _2 = () in
                 let _1 = () in
                 let _v : (Minic_ast.instr) = 
-# 129 "minic_parser.mly"
+# 122 "minic_parser.mly"
                                         ( While(c, []) )
 # 3144 "minic_parser.ml"
                  in
@@ -3262,7 +3262,7 @@ and _menhir_goto_expression : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mini
                 let _3 = () in
                 let _1 = () in
                 let _v : (Minic_ast.expr list) = 
-# 115 "minic_parser.mly"
+# 108 "minic_parser.mly"
                             ( [e] )
 # 3268 "minic_parser.ml"
                  in
@@ -3333,7 +3333,7 @@ and _menhir_goto_expression : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mini
                 let _2 = () in
                 let _1 = () in
                 let _v : (Minic_ast.instr) = 
-# 160 "minic_parser.mly"
+# 153 "minic_parser.mly"
                                          ( Return(e) )
 # 3339 "minic_parser.ml"
                  in
@@ -3417,7 +3417,7 @@ and _menhir_goto_expression : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mini
             let _3 = () in
             let _1 = () in
             let _v : (Minic_ast.instr) = 
-# 158 "minic_parser.mly"
+# 151 "minic_parser.mly"
                                ( Return(e) )
 # 3423 "minic_parser.ml"
              in
@@ -3484,7 +3484,7 @@ and _menhir_goto_expression : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mini
                 let _2 = () in
                 let _1 = () in
                 let _v : (Minic_ast.instr) = 
-# 171 "minic_parser.mly"
+# 164 "minic_parser.mly"
                                         (Putchar(e))
 # 3490 "minic_parser.ml"
                  in
@@ -3625,7 +3625,7 @@ and _menhir_goto_expression : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mini
                 let _2 = () in
                 let _1 = () in
                 let _v : (Minic_ast.instr) = 
-# 149 "minic_parser.mly"
+# 142 "minic_parser.mly"
                                      ( If(c, [], []) )
 # 3631 "minic_parser.ml"
                  in
@@ -3707,7 +3707,7 @@ and _menhir_goto_expression : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mini
                 let _2 = () in
                 let _1 = () in
                 let _v : (Minic_ast.instr) = 
-# 132 "minic_parser.mly"
+# 125 "minic_parser.mly"
                                                                            ( DoWhile(s,c) )
 # 3713 "minic_parser.ml"
                  in
@@ -3813,7 +3813,7 @@ and _menhir_reduce71 : _menhir_env -> ('ttv_tail * _menhir_state * (Minic_ast.ty
 # 3814 "minic_parser.ml"
     ))) = _menhir_stack in
     let _v : (Minic_ast.typ * string * Minic_ast.expr) = 
-# 65 "minic_parser.mly"
+# 64 "minic_parser.mly"
                       ( (t, i, Undef) )
 # 3819 "minic_parser.ml"
      in
@@ -3845,7 +3845,7 @@ and _menhir_reduce71 : _menhir_env -> ('ttv_tail * _menhir_state * (Minic_ast.ty
             let _menhir_stack = Obj.magic _menhir_stack in
             let (_menhir_stack, _menhir_s, (d : (Minic_ast.typ * string * Minic_ast.expr))) = _menhir_stack in
             let _v : ((Minic_ast.typ * string) list) = 
-# 91 "minic_parser.mly"
+# 87 "minic_parser.mly"
                       ( let (t, i, _) = d in [(t,i)] )
 # 3851 "minic_parser.ml"
              in
@@ -3868,7 +3868,7 @@ and _menhir_reduce71 : _menhir_env -> ('ttv_tail * _menhir_state * (Minic_ast.ty
             let (_menhir_stack, _menhir_s, (decl : (Minic_ast.typ * string * Minic_ast.expr))) = _menhir_stack in
             let _2 = () in
             let _v : (Minic_ast.typ * string * Minic_ast.expr) = 
-# 85 "minic_parser.mly"
+# 82 "minic_parser.mly"
                                 ( decl )
 # 3874 "minic_parser.ml"
              in
@@ -3907,7 +3907,7 @@ and _menhir_run73 : _menhir_env -> ('ttv_tail * _menhir_state * (Minic_ast.typ))
 and _menhir_reduce63 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
   fun _menhir_env _menhir_stack _menhir_s ->
     let _v : ((Minic_ast.typ * string) list) = 
-# 90 "minic_parser.mly"
+# 86 "minic_parser.mly"
     ( [] )
 # 3913 "minic_parser.ml"
      in
@@ -3928,7 +3928,7 @@ and _menhir_goto_for_seq : _menhir_env -> 'ttv_tail -> _menhir_state -> (Minic_a
         let ((_menhir_stack, _menhir_s, (set : (Minic_ast.typ * string * Minic_ast.expr))), _, (fs : (Minic_ast.seq))) = _menhir_stack in
         let _2 = () in
         let _v : (Minic_ast.seq) = 
-# 110 "minic_parser.mly"
+# 104 "minic_parser.mly"
                                             (Set(set)::fs)
 # 3934 "minic_parser.ml"
          in
@@ -4122,7 +4122,7 @@ and _menhir_goto_for_seq : _menhir_env -> 'ttv_tail -> _menhir_state -> (Minic_a
 and _menhir_reduce32 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
   fun _menhir_env _menhir_stack _menhir_s ->
     let _v : (Minic_ast.seq) = 
-# 108 "minic_parser.mly"
+# 102 "minic_parser.mly"
     ( [] )
 # 4128 "minic_parser.ml"
      in
@@ -4146,7 +4146,7 @@ and _menhir_goto_variable_decl_set : _menhir_env -> 'ttv_tail -> _menhir_state -
         let _menhir_stack = Obj.magic _menhir_stack in
         let (decl : (Minic_ast.typ * string * Minic_ast.expr)) = _v in
         let _v : (Minic_ast.instr) = 
-# 169 "minic_parser.mly"
+# 162 "minic_parser.mly"
                              ( Set(decl) )
 # 4152 "minic_parser.ml"
          in
@@ -4268,7 +4268,7 @@ and _menhir_run12 : _menhir_env -> 'ttv_tail -> _menhir_state -> (
 # 4269 "minic_parser.ml"
         ))) = _menhir_stack in
         let _v : (Minic_ast.expr) = 
-# 212 "minic_parser.mly"
+# 204 "minic_parser.mly"
             (Get(i))
 # 4274 "minic_parser.ml"
          in
@@ -4294,7 +4294,7 @@ and _menhir_run14 : _menhir_env -> 'ttv_tail -> _menhir_state -> (
 # 4295 "minic_parser.ml"
     )) = _v in
     let _v : (Minic_ast.expr) = 
-# 210 "minic_parser.mly"
+# 202 "minic_parser.mly"
           (Cst(n))
 # 4300 "minic_parser.ml"
      in
@@ -4314,7 +4314,7 @@ and _menhir_run15 : _menhir_env -> 'ttv_tail -> _menhir_state -> (
 # 4315 "minic_parser.ml"
     )) = _v in
     let _v : (Minic_ast.expr) = 
-# 211 "minic_parser.mly"
+# 203 "minic_parser.mly"
                (BCst(b))
 # 4320 "minic_parser.ml"
      in
@@ -4455,7 +4455,7 @@ and _menhir_goto_variable_set : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mi
             let (_menhir_stack, _menhir_s, (set : (Minic_ast.typ * string * Minic_ast.expr))) = _menhir_stack in
             let _2 = () in
             let _v : (Minic_ast.typ * string * Minic_ast.expr) = 
-# 84 "minic_parser.mly"
+# 81 "minic_parser.mly"
                             ( set )
 # 4461 "minic_parser.ml"
              in
@@ -4498,7 +4498,7 @@ and _menhir_goto_variable_set : _menhir_env -> 'ttv_tail -> _menhir_state -> (Mi
             let _menhir_stack = Obj.magic _menhir_stack in
             let (_menhir_stack, _menhir_s, (set : (Minic_ast.typ * string * Minic_ast.expr))) = _menhir_stack in
             let _v : (Minic_ast.seq) = 
-# 109 "minic_parser.mly"
+# 103 "minic_parser.mly"
                      ([Set(set)])
 # 4504 "minic_parser.ml"
              in
@@ -4804,7 +4804,7 @@ and _menhir_run3 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
             let _2 = () in
             let _1 = () in
             let _v : (Minic_ast.typ * string * Minic_ast.expr) = 
-# 79 "minic_parser.mly"
+# 77 "minic_parser.mly"
                       ( (None, i, Add(Get(i),Cst(1))) )
 # 4810 "minic_parser.ml"
              in
@@ -4861,7 +4861,7 @@ and _menhir_run7 : _menhir_env -> 'ttv_tail -> _menhir_state -> (
             let _3 = () in
             let _2 = () in
             let _v : (Minic_ast.typ * string * Minic_ast.expr) = 
-# 75 "minic_parser.mly"
+# 73 "minic_parser.mly"
                       ( (None, i, Add(Get(i),Cst(1))) )
 # 4867 "minic_parser.ml"
              in
@@ -4906,7 +4906,7 @@ and _menhir_run7 : _menhir_env -> 'ttv_tail -> _menhir_state -> (
             let _3 = () in
             let _2 = () in
             let _v : (Minic_ast.typ * string * Minic_ast.expr) = 
-# 78 "minic_parser.mly"
+# 76 "minic_parser.mly"
                       ( (None, i, Add(Get(i),Cst(1))) )
 # 4912 "minic_parser.ml"
              in
@@ -4960,7 +4960,7 @@ and _menhir_run65 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
             let _2 = () in
             let _1 = () in
             let _v : (Minic_ast.typ * string * Minic_ast.expr) = 
-# 76 "minic_parser.mly"
+# 74 "minic_parser.mly"
                       ( (None, i, Add(Get(i),Cst(1))) )
 # 4966 "minic_parser.ml"
              in

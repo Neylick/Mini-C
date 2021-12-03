@@ -1,3 +1,25 @@
+(* 
+  TODO :
+  (-)  Bitwise operators
+  (-)  Unary operators (Not, bitwise not, adress ? )
+
+  (?) Separer les checks dans un autre checker : type et syntax check ?
+  (?) Ligne et colonne dans les messages d'erreur du type checker
+
+  (+) lists
+  (+) pointers
+  (+) enums
+  (+) unions
+  (+) structs
+    
+  (@) Warning : Aucun break pour un switch 
+  (@) Warning : Manque de break *lors du fallback sur default*
+
+  (#) Preproc parser : define, if, else, endif, error, ifdef, ifndef, undef, include
+  (>) Here comes the call to the typecheck
+  ($) Assm parser : Traduire en assembleur
+*)
+
 let () =
   for arg_idx = 1 to 10 do
     try 

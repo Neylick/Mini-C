@@ -60,12 +60,10 @@ typ:
   | VOID { Void }
 ;
 
-(* Simplest varibale declaration *)
 simple_var_decl:
   | t = typ i = IDENT { (t, i, Undef) }
 ;
 
-(* Setting/Changing variable value *)
 variable_set:
   (* <T> ident = val *)
     | t = typ i = IDENT SET v = expression { (t, i, v) }
@@ -79,20 +77,17 @@ variable_set:
     | SUB SUB i=IDENT { (None, i, Add(Get(i),Cst(1))) }
 ;
 
-(* Decls and sets *)
 variable_decl_set:
   | set = variable_set SEMI { set }
   | decl = simple_var_decl SEMI { decl }
 ;
 
-(* Parameters in function *)
 parameter_list:
   | { [] }
   | d=simple_var_decl { let (t, i, _) = d in [(t,i)] } (* No separator in that case *)
   | d=simple_var_decl SEPARATOR p=parameter_list { let (t, i, _) = d in (t,i)::p }
 ;
 
-(* Function decls *)
 function_decl:
   | t = typ f = IDENT LPAR p = parameter_list RPAR BEGIN s = list(instruction) END
     { { 
@@ -103,19 +98,17 @@ function_decl:
     } }
 ;
 
-(* Things you can put in init/incr sequences of a for loop *)
 for_seq:
   | { [] }
   | set=variable_set {[Set(set)]}
   | set=variable_set SEPARATOR fs = for_seq {Set(set)::fs}
 ;
 
-(* Case list for a seq *)
 expr_case_list:
   | CASE e=expression DOTS2 { [e] }
   | CASE e=expression DOTS2 ecl=expr_case_list { e::ecl }
+;
 
-(* Cases of a switch statement, does not contain default case *)
 block_case_list :
   | { [] }
   | ecl=expr_case_list s=list(instruction) cl=block_case_list {(ecl,s)::cl}
@@ -204,7 +197,6 @@ int_op:
   | a=expression SUB b=expression  {Sub(a,b)}
 ;
 
-(* Expressions : Operator result, function call, constants, variable get, (expr)... *)
 expression:
   | f=IDENT LPAR p=funcall_args RPAR {Call(f, p)} 
   | n=CST {Cst(n)}

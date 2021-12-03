@@ -3,6 +3,7 @@
   (-)  Bitwise operators
   (-)  Unary operators (Not, bitwise not, adress ? )
 
+  (?) Separer les checks dans un autre checker : type et syntax check ?
   (?) Ligne et colonne dans les messages d'erreur du type checker
 
   (+) lists

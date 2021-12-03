@@ -169,19 +169,16 @@ let typecheck_program (prog: prog) =
       end
   in
 
-  (* Only used for initial checks : exisiting main and maybe we could check some other reserved variables/functions... *)
-    let functions, _ =
-      List.fold_right
-        (
-          fun def acc ->
-          match def with
-          | Variable(t,i,v) -> let (fs,vs) = acc in (fs, (t,i,v)::vs) 
-          | Function f -> let (fs,vs) = acc in (f::fs, vs)
-        )
-        prog ([],[])
-    in 
-
-  if not (List.fold_left (fun acc f -> if f.name = "main" then true else acc) false functions) 
+  (* Check for entry point, maybe define a special syntax to define entrypoint name? *)
+  if not 
+    (List.fold_left 
+      (
+        fun acc decl ->
+        match decl with 
+        | Function f -> if f.name = "main" then true else acc
+        | _ -> acc
+      ) 
+    false prog) 
   then failwith "[error] Couldn't find main function (no entry point)";
   
   (* Doing the checks that way makes the timeline linear, instead of finding any global and any functions. *)

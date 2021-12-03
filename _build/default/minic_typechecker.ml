@@ -12,28 +12,6 @@ and find_return_seq s = List.fold_left (fun acc i -> find_return_instr i || acc)
 
 let typecheck_program (prog: prog) =  
   (* 
-    TODO :
-      -  Bitwise operators
-      -  Unary operators (Not, bitwise not, adress ? )
-
-     (+) Verification de l'existence d'un break par switch 
-     (+) Warning pour le manque de switch *lors du fallback sur default*
-     (+) lists
-     (+) pointers
-     (+) enums
-     (+) unions
-     (+) structs
-
-     
-
-    (#) Preproc parser : define, if, else, endif, error, ifdef, ifndef, undef, include
-
-    (?) Ligne et colonne dans les messages d'erreur du type checker
-
-    ($) Traduire en assembleur
-  *)
-
-  (* 
     On utilise des tables de hachage pour pouvoir ajouter et supprimer les variables
     en changeant de blocs, et changer les valeurs des variables a la volee
     
@@ -191,19 +169,20 @@ let typecheck_program (prog: prog) =
       end
   in
 
-  (* Only used for initial checks : exisiting main and maybe we could check some other reserved variables/functions... *)
-    let functions, _ =
-      List.fold_right
-        (
-          fun def acc ->
-          match def with
-          | Variable(t,i,v) -> let (fs,vs) = acc in (fs, (t,i,v)::vs) 
-          | Function f -> let (fs,vs) = acc in (f::fs, vs)
-        )
-        prog ([],[])
-    in 
-
-  if not (List.fold_left (fun acc f -> if f.name = "main" then true else acc) false functions) 
+  (* 
+    Only used for initial checks : exisiting main and maybe we could check some other reserved variables/functions... 
+    TODO : Make this disappear completely
+  *)
+  
+  if not 
+    (List.fold_left 
+      (
+        fun acc decl ->
+        match decl with 
+        | Function f -> if f.name = "main" then true else acc
+        | _ -> acc
+      ) 
+    false prog) 
   then failwith "[error] Couldn't find main function (no entry point)";
   
   (* Doing the checks that way makes the timeline linear, instead of finding any global and any functions. *)
