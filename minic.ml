@@ -11,6 +11,7 @@
   (+) enums
   (+) unions
   (+) structs
+  
     
   (@) Warning : Aucun break pour un switch 
   (@) Warning : Manque de break *lors du fallback sur default*
