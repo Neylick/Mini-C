@@ -169,11 +169,7 @@ let typecheck_program (prog: prog) =
       end
   in
 
-  (* 
-    Only used for initial checks : exisiting main and maybe we could check some other reserved variables/functions... 
-    TODO : Make this disappear completely
-  *)
-  
+  (* Check for entry point, maybe define a special syntax to define entrypoint name? *)
   if not 
     (List.fold_left 
       (
