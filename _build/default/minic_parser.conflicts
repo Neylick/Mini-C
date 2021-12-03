@@ -1,5 +1,5 @@
 
-** Conflict (shift/reduce) in state 154.
+** Conflict (shift/reduce) in state 173.
 ** Token involved: ELSE
 ** This state is reached from program after reading:
 
@@ -14,23 +14,26 @@ global_scope_def global_scope_def_list
 function_decl 
 typ IDENT LPAR parameter_list RPAR BEGIN list(instruction) END 
                                          instruction list(instruction) 
+                                         conditional 
                                          (?)
 
-** In state 154, looking ahead at ELSE, shifting is permitted
+** In state 173, looking ahead at ELSE, shifting is permitted
 ** because of the following sub-derivation:
 
 IF LPAR expression RPAR instruction ELSE instruction 
+                        conditional 
                         IF LPAR expression RPAR instruction . ELSE instruction 
 
-** In state 154, looking ahead at ELSE, reducing production
-** instruction -> IF LPAR expression RPAR instruction 
+** In state 173, looking ahead at ELSE, reducing production
+** conditional -> IF LPAR expression RPAR instruction 
 ** is permitted because of the following sub-derivation:
 
 IF LPAR expression RPAR instruction ELSE instruction // lookahead token appears
+                        conditional // lookahead token is inherited
                         IF LPAR expression RPAR instruction . 
 
-** Conflict (shift/reduce) in state 149.
-** Tokens involved: WHILE VOID SUB RETURN PUTCHAR INT IF IDENT FOR END ELSE DO BOOL BEGIN ADD
+** Conflict (shift/reduce) in state 168.
+** Tokens involved: WHILE VOID SWITCH SUB RETURN PUTCHAR INT IF IDENT FOR END ELSE DO DEFAULT CONTINUE CASE BREAK BOOL BEGIN ADD
 ** The following explanations concentrate on token ELSE.
 ** This state is reached from program after reading:
 
@@ -45,21 +48,55 @@ global_scope_def global_scope_def_list
 function_decl 
 typ IDENT LPAR parameter_list RPAR BEGIN list(instruction) END 
                                          instruction list(instruction) 
+                                         conditional 
                                          (?)
 
-** In state 149, looking ahead at ELSE, shifting is permitted
+** In state 168, looking ahead at ELSE, shifting is permitted
 ** because of the following sub-derivation:
 
 IF LPAR expression RPAR BEGIN list(instruction) END . ELSE BEGIN list(instruction) END 
 
-** In state 149, looking ahead at ELSE, reducing production
+** In state 168, looking ahead at ELSE, reducing production
 ** instruction -> BEGIN list(instruction) END 
 ** is permitted because of the following sub-derivation:
 
 IF LPAR expression RPAR instruction ELSE instruction // lookahead token appears
                         BEGIN list(instruction) END . 
 
-** Conflict (shift/reduce) in state 52.
+** Conflict (shift/reduce) in state 97.
+** Token involved: CASE
+** This state is reached from program after reading:
+
+typ IDENT LPAR parameter_list RPAR BEGIN SWITCH LPAR expression RPAR BEGIN CASE expression DOTS2 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+program 
+global_scope_def_list EOF 
+global_scope_def global_scope_def_list 
+function_decl 
+typ IDENT LPAR parameter_list RPAR BEGIN list(instruction) END 
+                                         instruction list(instruction) 
+                                         conditional 
+                                         SWITCH LPAR expression RPAR BEGIN block_case_list DEFAULT DOTS2 list(instruction) END 
+                                                                           (?)
+
+** In state 97, looking ahead at CASE, shifting is permitted
+** because of the following sub-derivation:
+
+expr_case_list list(instruction) block_case_list 
+CASE expression DOTS2 expr_case_list 
+                      . CASE expression DOTS2 
+
+** In state 97, looking ahead at CASE, reducing production
+** expr_case_list -> CASE expression DOTS2 
+** is permitted because of the following sub-derivation:
+
+expr_case_list list(instruction) block_case_list // lookahead token appears because list(instruction) can vanish and block_case_list can begin with CASE
+CASE expression DOTS2 . 
+
+** Conflict (shift/reduce) in state 55.
 ** Tokens involved: XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 ** The following explanations concentrate on token XOR.
 ** This state is reached from program after reading:
@@ -77,20 +114,24 @@ variable_set SEMI
 IDENT SET expression 
           (?)
 
-** In state 52, looking ahead at XOR, shifting is permitted
+** In state 55, looking ahead at XOR, shifting is permitted
 ** because of the following sub-derivation:
 
+int_op 
 expression ADD expression 
+               bool_op 
                expression . XOR expression 
 
-** In state 52, looking ahead at XOR, reducing production
-** expression -> expression ADD expression 
+** In state 55, looking ahead at XOR, reducing production
+** int_op -> expression ADD expression 
 ** is permitted because of the following sub-derivation:
 
+bool_op 
 expression XOR expression // lookahead token appears
+int_op // lookahead token is inherited
 expression ADD expression . 
 
-** Conflict (shift/reduce) in state 50.
+** Conflict (shift/reduce) in state 53.
 ** Tokens involved: XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 ** The following explanations concentrate on token XOR.
 ** This state is reached from program after reading:
@@ -106,22 +147,25 @@ global_scope_def global_scope_def_list
 variable_decl_set 
 variable_set SEMI 
 IDENT SET expression 
+          bool_op 
           (?)
 
-** In state 50, looking ahead at XOR, reducing production
-** expression -> expression AND expression 
+** In state 53, looking ahead at XOR, reducing production
+** bool_op -> expression AND expression 
 ** is permitted because of the following sub-derivation:
 
 expression XOR expression // lookahead token appears
+bool_op // lookahead token is inherited
 expression AND expression . 
 
-** In state 50, looking ahead at XOR, shifting is permitted
+** In state 53, looking ahead at XOR, shifting is permitted
 ** because of the following sub-derivation:
 
 expression AND expression 
+               bool_op 
                expression . XOR expression 
 
-** Conflict (shift/reduce) in state 48.
+** Conflict (shift/reduce) in state 51.
 ** Tokens involved: XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 ** The following explanations concentrate on token XOR.
 ** This state is reached from program after reading:
@@ -137,22 +181,25 @@ global_scope_def global_scope_def_list
 variable_decl_set 
 variable_set SEMI 
 IDENT SET expression 
+          bool_op 
           (?)
 
-** In state 48, looking ahead at XOR, reducing production
-** expression -> expression BAND expression 
+** In state 51, looking ahead at XOR, reducing production
+** bool_op -> expression BAND expression 
 ** is permitted because of the following sub-derivation:
 
 expression XOR expression // lookahead token appears
+bool_op // lookahead token is inherited
 expression BAND expression . 
 
-** In state 48, looking ahead at XOR, shifting is permitted
+** In state 51, looking ahead at XOR, shifting is permitted
 ** because of the following sub-derivation:
 
 expression BAND expression 
+                bool_op 
                 expression . XOR expression 
 
-** Conflict (shift/reduce) in state 46.
+** Conflict (shift/reduce) in state 49.
 ** Tokens involved: XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 ** The following explanations concentrate on token XOR.
 ** This state is reached from program after reading:
@@ -168,22 +215,25 @@ global_scope_def global_scope_def_list
 variable_decl_set 
 variable_set SEMI 
 IDENT SET expression 
+          bool_op 
           (?)
 
-** In state 46, looking ahead at XOR, shifting is permitted
+** In state 49, looking ahead at XOR, shifting is permitted
 ** because of the following sub-derivation:
 
 expression BNEQ expression 
+                bool_op 
                 expression . XOR expression 
 
-** In state 46, looking ahead at XOR, reducing production
-** expression -> expression BNEQ expression 
+** In state 49, looking ahead at XOR, reducing production
+** bool_op -> expression BNEQ expression 
 ** is permitted because of the following sub-derivation:
 
 expression XOR expression // lookahead token appears
+bool_op // lookahead token is inherited
 expression BNEQ expression . 
 
-** Conflict (shift/reduce) in state 44.
+** Conflict (shift/reduce) in state 47.
 ** Tokens involved: XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 ** The following explanations concentrate on token XOR.
 ** This state is reached from program after reading:
@@ -199,22 +249,25 @@ global_scope_def global_scope_def_list
 variable_decl_set 
 variable_set SEMI 
 IDENT SET expression 
+          bool_op 
           (?)
 
-** In state 44, looking ahead at XOR, reducing production
-** expression -> expression BOR expression 
+** In state 47, looking ahead at XOR, reducing production
+** bool_op -> expression BOR expression 
 ** is permitted because of the following sub-derivation:
 
 expression XOR expression // lookahead token appears
+bool_op // lookahead token is inherited
 expression BOR expression . 
 
-** In state 44, looking ahead at XOR, shifting is permitted
+** In state 47, looking ahead at XOR, shifting is permitted
 ** because of the following sub-derivation:
 
 expression BOR expression 
+               bool_op 
                expression . XOR expression 
 
-** Conflict (shift/reduce) in state 42.
+** Conflict (shift/reduce) in state 45.
 ** Tokens involved: XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 ** The following explanations concentrate on token XOR.
 ** This state is reached from program after reading:
@@ -230,22 +283,25 @@ global_scope_def global_scope_def_list
 variable_decl_set 
 variable_set SEMI 
 IDENT SET expression 
+          bool_op 
           (?)
 
-** In state 42, looking ahead at XOR, shifting is permitted
+** In state 45, looking ahead at XOR, shifting is permitted
 ** because of the following sub-derivation:
 
 expression BXOR expression 
+                bool_op 
                 expression . XOR expression 
 
-** In state 42, looking ahead at XOR, reducing production
-** expression -> expression BXOR expression 
+** In state 45, looking ahead at XOR, reducing production
+** bool_op -> expression BXOR expression 
 ** is permitted because of the following sub-derivation:
 
 expression XOR expression // lookahead token appears
+bool_op // lookahead token is inherited
 expression BXOR expression . 
 
-** Conflict (shift/reduce) in state 40.
+** Conflict (shift/reduce) in state 43.
 ** Tokens involved: XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 ** The following explanations concentrate on token XOR.
 ** This state is reached from program after reading:
@@ -263,20 +319,24 @@ variable_set SEMI
 IDENT SET expression 
           (?)
 
-** In state 40, looking ahead at XOR, shifting is permitted
+** In state 43, looking ahead at XOR, shifting is permitted
 ** because of the following sub-derivation:
 
+int_op 
 expression DIV expression 
+               bool_op 
                expression . XOR expression 
 
-** In state 40, looking ahead at XOR, reducing production
-** expression -> expression DIV expression 
+** In state 43, looking ahead at XOR, reducing production
+** int_op -> expression DIV expression 
 ** is permitted because of the following sub-derivation:
 
+bool_op 
 expression XOR expression // lookahead token appears
+int_op // lookahead token is inherited
 expression DIV expression . 
 
-** Conflict (shift/reduce) in state 38.
+** Conflict (shift/reduce) in state 41.
 ** Tokens involved: XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 ** The following explanations concentrate on token XOR.
 ** This state is reached from program after reading:
@@ -292,22 +352,25 @@ global_scope_def global_scope_def_list
 variable_decl_set 
 variable_set SEMI 
 IDENT SET expression 
+          bool_op 
           (?)
 
-** In state 38, looking ahead at XOR, reducing production
-** expression -> expression EQ expression 
+** In state 41, looking ahead at XOR, reducing production
+** bool_op -> expression EQ expression 
 ** is permitted because of the following sub-derivation:
 
 expression XOR expression // lookahead token appears
+bool_op // lookahead token is inherited
 expression EQ expression . 
 
-** In state 38, looking ahead at XOR, shifting is permitted
+** In state 41, looking ahead at XOR, shifting is permitted
 ** because of the following sub-derivation:
 
 expression EQ expression 
+              bool_op 
               expression . XOR expression 
 
-** Conflict (shift/reduce) in state 36.
+** Conflict (shift/reduce) in state 39.
 ** Tokens involved: XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 ** The following explanations concentrate on token XOR.
 ** This state is reached from program after reading:
@@ -323,22 +386,25 @@ global_scope_def global_scope_def_list
 variable_decl_set 
 variable_set SEMI 
 IDENT SET expression 
+          bool_op 
           (?)
 
-** In state 36, looking ahead at XOR, reducing production
-** expression -> expression GET expression 
+** In state 39, looking ahead at XOR, reducing production
+** bool_op -> expression GET expression 
 ** is permitted because of the following sub-derivation:
 
 expression XOR expression // lookahead token appears
+bool_op // lookahead token is inherited
 expression GET expression . 
 
-** In state 36, looking ahead at XOR, shifting is permitted
+** In state 39, looking ahead at XOR, shifting is permitted
 ** because of the following sub-derivation:
 
 expression GET expression 
+               bool_op 
                expression . XOR expression 
 
-** Conflict (shift/reduce) in state 34.
+** Conflict (shift/reduce) in state 37.
 ** Tokens involved: XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 ** The following explanations concentrate on token XOR.
 ** This state is reached from program after reading:
@@ -354,22 +420,25 @@ global_scope_def global_scope_def_list
 variable_decl_set 
 variable_set SEMI 
 IDENT SET expression 
+          bool_op 
           (?)
 
-** In state 34, looking ahead at XOR, reducing production
-** expression -> expression GT expression 
+** In state 37, looking ahead at XOR, reducing production
+** bool_op -> expression GT expression 
 ** is permitted because of the following sub-derivation:
 
 expression XOR expression // lookahead token appears
+bool_op // lookahead token is inherited
 expression GT expression . 
 
-** In state 34, looking ahead at XOR, shifting is permitted
+** In state 37, looking ahead at XOR, shifting is permitted
 ** because of the following sub-derivation:
 
 expression GT expression 
+              bool_op 
               expression . XOR expression 
 
-** Conflict (shift/reduce) in state 32.
+** Conflict (shift/reduce) in state 35.
 ** Tokens involved: XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 ** The following explanations concentrate on token XOR.
 ** This state is reached from program after reading:
@@ -385,22 +454,25 @@ global_scope_def global_scope_def_list
 variable_decl_set 
 variable_set SEMI 
 IDENT SET expression 
+          bool_op 
           (?)
 
-** In state 32, looking ahead at XOR, reducing production
-** expression -> expression LET expression 
+** In state 35, looking ahead at XOR, reducing production
+** bool_op -> expression LET expression 
 ** is permitted because of the following sub-derivation:
 
 expression XOR expression // lookahead token appears
+bool_op // lookahead token is inherited
 expression LET expression . 
 
-** In state 32, looking ahead at XOR, shifting is permitted
+** In state 35, looking ahead at XOR, shifting is permitted
 ** because of the following sub-derivation:
 
 expression LET expression 
+               bool_op 
                expression . XOR expression 
 
-** Conflict (shift/reduce) in state 30.
+** Conflict (shift/reduce) in state 33.
 ** Tokens involved: XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 ** The following explanations concentrate on token XOR.
 ** This state is reached from program after reading:
@@ -416,22 +488,25 @@ global_scope_def global_scope_def_list
 variable_decl_set 
 variable_set SEMI 
 IDENT SET expression 
+          bool_op 
           (?)
 
-** In state 30, looking ahead at XOR, reducing production
-** expression -> expression LT expression 
+** In state 33, looking ahead at XOR, reducing production
+** bool_op -> expression LT expression 
 ** is permitted because of the following sub-derivation:
 
 expression XOR expression // lookahead token appears
+bool_op // lookahead token is inherited
 expression LT expression . 
 
-** In state 30, looking ahead at XOR, shifting is permitted
+** In state 33, looking ahead at XOR, shifting is permitted
 ** because of the following sub-derivation:
 
 expression LT expression 
+              bool_op 
               expression . XOR expression 
 
-** Conflict (shift/reduce) in state 28.
+** Conflict (shift/reduce) in state 31.
 ** Tokens involved: XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 ** The following explanations concentrate on token XOR.
 ** This state is reached from program after reading:
@@ -449,20 +524,24 @@ variable_set SEMI
 IDENT SET expression 
           (?)
 
-** In state 28, looking ahead at XOR, shifting is permitted
+** In state 31, looking ahead at XOR, shifting is permitted
 ** because of the following sub-derivation:
 
+int_op 
 expression MOD expression 
+               bool_op 
                expression . XOR expression 
 
-** In state 28, looking ahead at XOR, reducing production
-** expression -> expression MOD expression 
+** In state 31, looking ahead at XOR, reducing production
+** int_op -> expression MOD expression 
 ** is permitted because of the following sub-derivation:
 
+bool_op 
 expression XOR expression // lookahead token appears
+int_op // lookahead token is inherited
 expression MOD expression . 
 
-** Conflict (shift/reduce) in state 26.
+** Conflict (shift/reduce) in state 29.
 ** Tokens involved: XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 ** The following explanations concentrate on token XOR.
 ** This state is reached from program after reading:
@@ -480,20 +559,24 @@ variable_set SEMI
 IDENT SET expression 
           (?)
 
-** In state 26, looking ahead at XOR, shifting is permitted
+** In state 29, looking ahead at XOR, shifting is permitted
 ** because of the following sub-derivation:
 
+int_op 
 expression MUL expression 
+               bool_op 
                expression . XOR expression 
 
-** In state 26, looking ahead at XOR, reducing production
-** expression -> expression MUL expression 
+** In state 29, looking ahead at XOR, reducing production
+** int_op -> expression MUL expression 
 ** is permitted because of the following sub-derivation:
 
+bool_op 
 expression XOR expression // lookahead token appears
+int_op // lookahead token is inherited
 expression MUL expression . 
 
-** Conflict (shift/reduce) in state 24.
+** Conflict (shift/reduce) in state 27.
 ** Tokens involved: XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 ** The following explanations concentrate on token XOR.
 ** This state is reached from program after reading:
@@ -509,22 +592,25 @@ global_scope_def global_scope_def_list
 variable_decl_set 
 variable_set SEMI 
 IDENT SET expression 
+          bool_op 
           (?)
 
-** In state 24, looking ahead at XOR, shifting is permitted
+** In state 27, looking ahead at XOR, shifting is permitted
 ** because of the following sub-derivation:
 
 expression NEQ expression 
+               bool_op 
                expression . XOR expression 
 
-** In state 24, looking ahead at XOR, reducing production
-** expression -> expression NEQ expression 
+** In state 27, looking ahead at XOR, reducing production
+** bool_op -> expression NEQ expression 
 ** is permitted because of the following sub-derivation:
 
 expression XOR expression // lookahead token appears
+bool_op // lookahead token is inherited
 expression NEQ expression . 
 
-** Conflict (shift/reduce) in state 22.
+** Conflict (shift/reduce) in state 25.
 ** Tokens involved: XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 ** The following explanations concentrate on token XOR.
 ** This state is reached from program after reading:
@@ -540,22 +626,25 @@ global_scope_def global_scope_def_list
 variable_decl_set 
 variable_set SEMI 
 IDENT SET expression 
+          bool_op 
           (?)
 
-** In state 22, looking ahead at XOR, reducing production
-** expression -> expression OR expression 
+** In state 25, looking ahead at XOR, reducing production
+** bool_op -> expression OR expression 
 ** is permitted because of the following sub-derivation:
 
 expression XOR expression // lookahead token appears
+bool_op // lookahead token is inherited
 expression OR expression . 
 
-** In state 22, looking ahead at XOR, shifting is permitted
+** In state 25, looking ahead at XOR, shifting is permitted
 ** because of the following sub-derivation:
 
 expression OR expression 
+              bool_op 
               expression . XOR expression 
 
-** Conflict (shift/reduce) in state 20.
+** Conflict (shift/reduce) in state 23.
 ** Tokens involved: XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 ** The following explanations concentrate on token XOR.
 ** This state is reached from program after reading:
@@ -573,20 +662,24 @@ variable_set SEMI
 IDENT SET expression 
           (?)
 
-** In state 20, looking ahead at XOR, shifting is permitted
+** In state 23, looking ahead at XOR, shifting is permitted
 ** because of the following sub-derivation:
 
+int_op 
 expression SUB expression 
+               bool_op 
                expression . XOR expression 
 
-** In state 20, looking ahead at XOR, reducing production
-** expression -> expression SUB expression 
+** In state 23, looking ahead at XOR, reducing production
+** int_op -> expression SUB expression 
 ** is permitted because of the following sub-derivation:
 
+bool_op 
 expression XOR expression // lookahead token appears
+int_op // lookahead token is inherited
 expression SUB expression . 
 
-** Conflict (shift/reduce) in state 18.
+** Conflict (shift/reduce) in state 21.
 ** Tokens involved: XOR SUB OR NEQ MUL MOD LT LET GT GET EQ DIV BXOR BOR BNEQ BAND AND ADD
 ** The following explanations concentrate on token XOR.
 ** This state is reached from program after reading:
@@ -602,17 +695,20 @@ global_scope_def global_scope_def_list
 variable_decl_set 
 variable_set SEMI 
 IDENT SET expression 
+          bool_op 
           (?)
 
-** In state 18, looking ahead at XOR, shifting is permitted
+** In state 21, looking ahead at XOR, shifting is permitted
 ** because of the following sub-derivation:
 
 expression XOR expression 
+               bool_op 
                expression . XOR expression 
 
-** In state 18, looking ahead at XOR, reducing production
-** expression -> expression XOR expression 
+** In state 21, looking ahead at XOR, reducing production
+** bool_op -> expression XOR expression 
 ** is permitted because of the following sub-derivation:
 
 expression XOR expression // lookahead token appears
+bool_op // lookahead token is inherited
 expression XOR expression . 

@@ -2,7 +2,19 @@ int PARAM = 5;
 
 int myfun(int a, int b)
 {
-	bool my_bool = a>b;
+	switch(a)
+	{
+		//case true : a++; break; This line uncommented raises an error saying the case type doesn't match with switch expression
+		case 1 : a++; break;
+		case 2 : a--; break;
+		case 3 :
+		case 4 : // This is allowed.
+		a = a+5; 
+		break;
+		default : a = 0; break;
+	}
+
+	bool my_bool = a > b;
 	if(my_bool) return a + b; 
 	else return a-b; // Removing this line will produce an error saying we don't have a return in the else branch.
 }

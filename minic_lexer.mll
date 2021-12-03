@@ -19,12 +19,13 @@
       "putchar",  PUTCHAR;
 
       (* Ajouts *)
-      "do",       DO;
-      "break",    BREAK;
-      "continue", CONTINUE;
       "for",      FOR;
+      "do",       DO;
       "switch",   SWITCH;
       "case",     CASE;
+      "default",  DEFAULT;
+      "break",    BREAK;
+      "continue", CONTINUE;
     ] ;
     fun s ->
       try  Hashtbl.find h s

@@ -30,6 +30,8 @@
 ### Fonctionnalites
 - Constante entieres : hexadecimale `0xeFF1c4cE`, octale `0432213` et binaires `0b0_1_0_1_0_1`
 - Commentaires : `//` ligne et `/*` bloc `*/`
+- Ajout des boules `do while`	et `for`
+- Ajout des instructions `--` et `++` 
 - Formes de `return` alternatives : `return n;` et `return;`
 - Formes de `if` alternatives : `if(c) { s1 }` `if(c) i1 else i2` `if(c) i1`
 - Forme de `while` alternative : `while(c);`

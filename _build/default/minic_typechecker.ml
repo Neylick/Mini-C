@@ -6,20 +6,25 @@ let rec find_return_instr = function
   | If(_, _, []) -> false
   | If(_, s1, s2) -> find_return_seq s1 && find_return_seq s2
   | While(_, s) ->  find_return_seq s
+  | Switch(_, cl, def) -> (find_return_seq def) && (List.fold_left (fun acc (_, seq) -> (find_return_seq seq) && acc) true cl)
   | _ -> false
 and find_return_seq s = List.fold_left (fun acc i -> find_return_instr i || acc) false s
 
 let typecheck_program (prog: prog) =  
   (* 
     TODO :
-     -  Binary operators
-    
-    (+) Switch/case/default (! default is optionnal !)... 
-    (+) break, continue 
-    (+) do while
-    (+) enums
-    (+) unions
-    (+) structs
+      -  Bitwise operators
+      -  Unary operators (Not, bitwise not, adress ? )
+
+     (+) Verification de l'existence d'un break par switch 
+     (+) Warning pour le manque de switch *lors du fallback sur default*
+     (+) lists
+     (+) pointers
+     (+) enums
+     (+) unions
+     (+) structs
+
+     
 
     (#) Preproc parser : define, if, else, endif, error, ifdef, ifndef, undef, include
 
@@ -91,6 +96,8 @@ let typecheck_program (prog: prog) =
   let typecheck_function (fdef: fun_def) =
     let rec typecheck_instr = function
       | Skip -> ()
+      | Break -> ()
+      | Continue -> ()
       | Expr e -> let _ = type_expr e in ()
       | Return e -> let t = type_expr e in if t <> fdef.return then failwith "[error] Return type doesn't match function declaration"
       | Putchar c ->  let t = type_expr c in if t <> Int then failwith "[error] Non integer type given to putchar" 
@@ -153,6 +160,26 @@ let typecheck_program (prog: prog) =
             local_env;
           end
         end (* Going out of the for loop *)
+      | Switch(comp1, case_list, def) -> 
+        begin
+          let t1 = type_expr comp1 in
+          begin
+            List.iter 
+              (
+                fun (comp_list, seq) ->
+                  List.iter 
+                    (
+                      fun comp2 -> 
+                      if t1 <> (type_expr comp2 )
+                      then failwith "[error] Case type mismatch"
+                    )
+                  comp_list;
+                  typecheck_seq seq
+              )
+            case_list;
+            typecheck_seq def
+          end
+        end
     and typecheck_seq s = List.iter typecheck_instr s 
     in
     (* Typecheck function *)

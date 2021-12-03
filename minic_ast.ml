@@ -43,9 +43,12 @@ type instr =
   | While of expr * seq (* while (c) { s } *)
   | DoWhile of seq * expr (* do { s } while (c) *)
   | For of seq * expr * seq * seq (* for(s1;c;s2){ s } *)
+  | Switch of expr*(((expr list) * seq) list)*seq  (* switch(e) case a : ... break; default : .... break; *)
   | Scope of seq (* { s } *)
   | Return of expr (* return v; *)
   | Expr of expr
+  | Break
+  | Continue
   | Skip (* *)
 and seq = instr list
 
