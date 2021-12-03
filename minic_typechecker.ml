@@ -55,19 +55,20 @@ let typecheck_program (prog: prog) =
       else Bool
     | Get i -> 
       begin
-        try let t, v = Hashtbl.find local_env i in if v = Undef then failwith "[error] Variable not initialised" else t
+        try let t, v = Hashtbl.find local_env i in if v = Undef then failwith "[error] Variable \""^i^"\" was not initialised" else t
         with Not_found -> 
           try let t, v = Hashtbl.find global_env i in 
           if v = Undef 
-          then failwith "[error] Variable not initialised" 
+          then failwith "[error] Variable \""^i^"\" was not initialised" 
           else t
         with Not_found -> failwith ("[error] Undefined variable \""^i^"\"")
       end
     | Call (name, params) ->  
       begin
         try let f = Hashtbl.find function_list name in 
-        List.iter2 (fun p (t, _) -> if type_expr p <> t then failwith "[error] Parameter type unmatched") params f.params; f.return
-        with Not_found -> failwith ("[error] Function "^name^" is not defined")
+          try List.iter2 (fun p (t, _) -> if type_expr p <> t then failwith "[error] Function \""^name^"\": parameter type mismatch.") params f.params; f.return
+          with Invalid_argument _ -> failwith ("[error] Function \""^name^"\" expects "^(string_of_int (List.length f.params))^" parameters but was given "^(string_of_int (List.length params))^".")
+        with Not_found -> failwith ("[error] Function \""^name^"\" is not defined")
       end
   in 
   
@@ -77,8 +78,8 @@ let typecheck_program (prog: prog) =
       | Break -> ()
       | Continue -> ()
       | Expr e -> let _ = type_expr e in ()
-      | Return e -> let t = type_expr e in if t <> fdef.return then failwith "[error] Return type doesn't match function declaration"
-      | Putchar c ->  let t = type_expr c in if t <> Int then failwith "[error] Non integer type given to putchar" 
+      | Return e -> let t = type_expr e in if t <> fdef.return then failwith "[error] Function \""^fdef.name^"\": return type doesn't match function declaration."
+      | Putchar c ->  let t = type_expr c in if t <> Int then failwith "[error] Non integer type given to putchar." 
       | Scope s ->
         begin (* Makes a copy of the local environment to keep only the previously defined variables*)
           let prev_env = Hashtbl.copy local_env in 
@@ -90,23 +91,25 @@ let typecheck_program (prog: prog) =
         begin
           try let t, _ = Hashtbl.find local_env i in let te = type_expr v in  
             if t <> te  
-            then failwith "[error] Value can't match declared type"
+            then failwith "[error] \""^i^"\" : value can't match declared type."
             else Hashtbl.add local_env i (t, v)
           with Not_found -> 
             try let t, _ = Hashtbl.find global_env i in let te = type_expr v in 
               if t <> te  
-              then failwith "[error] Value can't match declared type"
+              then failwith "[error] \""^i^"\" : value can't match declared type."
               else Hashtbl.add global_env i (t, v)
-            with Not_found -> failwith ("[error] Undefined variable : "^i)
+            with Not_found -> failwith ("[error] Undefined variable \""^i^"\"")
         end
       | Set (t, i, v) -> 
         if (Hashtbl.mem local_env i) ||  (Hashtbl.mem global_env i) 
-        then failwith "[error] Variable declaration duplicate"
-        else let te = type_expr v in if t <> te  then failwith "[error] Value can't match declared type"
-                                  else Hashtbl.add local_env i (t, v) 
+        then failwith "[error] \""^i^"\" : variable declaration duplicate."
+        else let te = type_expr v in 
+          if t <> te  
+          then failwith "[error] \""^i^"\" : value can't match declared type."
+          else Hashtbl.add local_env i (t, v) 
       | If(c, s1, s2) -> 
         let t = type_expr c in
-        if t <> Bool then failwith "[error] Non boolean condition"
+        if t <> Bool then failwith "[error] Non boolean condition in if statement."
         else
         begin
           typecheck_instr (Scope s1);
@@ -115,7 +118,7 @@ let typecheck_program (prog: prog) =
       | While(c, s) ->  
         let t = type_expr c in
         if t <> Bool 
-        then failwith "[error] Non boolean condition"
+        then failwith "[error] Non boolean condition in while loop."
         else typecheck_instr (Scope s)
       | DoWhile(s, c) -> typecheck_seq [Scope(s) ; While(c, s)];
       | For(s1,c,s2, block) ->
@@ -124,7 +127,7 @@ let typecheck_program (prog: prog) =
           typecheck_seq s1; (* The incr seq needs to impact the loop and incrementation seq *)
           let t = type_expr c in
           if t <> Bool 
-          then failwith "[error] Non boolean condition"
+          then failwith "[error] Non boolean condition in for loop."
           else 
           begin
             typecheck_instr (Scope s2);
@@ -149,7 +152,7 @@ let typecheck_program (prog: prog) =
                     (
                       fun comp2 -> 
                       if t1 <> (type_expr comp2 )
-                      then failwith "[error] Case type mismatch"
+                      then failwith "[error] Case type mismatch."
                     )
                   comp_list;
                   typecheck_seq seq
@@ -179,7 +182,7 @@ let typecheck_program (prog: prog) =
         | _ -> acc
       ) 
     false prog) 
-  then failwith "[error] Couldn't find main function (no entry point)";
+  then failwith "[error] Couldn't find main function (no entry point).";
   
   (* Doing the checks that way makes the timeline linear, instead of finding any global and any functions. *)
   List.iter 
@@ -192,17 +195,18 @@ let typecheck_program (prog: prog) =
           then add to globals list.
         *)
         if (Hashtbl.mem global_env i) 
-        then failwith "[error] Variable declaration duplicate"
+        then failwith "[error] \""^i^"\" : variable declaration duplicate."
         else let te = type_expr v in 
           if t <> te  
-          then failwith "[error] Value can't match declared type"
+          then failwith "[error] \""^i^"\" : value can't match declared type."
           else Hashtbl.add global_env i (t, v)
       | Function f ->  
         (* 
           Assert return exists in all function path then add the function to the list.
+          In C, this is just a warning, maybe do the same here ?
         *)
         if f.return <> Void && not (find_return_seq f.code)
-        then failwith ("[error] Some of the paths of "^f.name^" don't have return")
+        then failwith ("[error] Some of the paths of "^f.name^" don't have return.")
         else Hashtbl.add function_list f.name f; 
         typecheck_function f
     )

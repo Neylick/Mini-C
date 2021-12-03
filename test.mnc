@@ -55,7 +55,7 @@ int main()
 		
 		if(a > b)
 		{
-			if(a < b) return myfun(a,b);
+			if(a < b) return myfun(a,b,c);
 			else return 2;
 		}
 		a = a * (b / c);
