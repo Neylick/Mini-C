@@ -28,6 +28,8 @@
 %token AND OR BAND BOR XOR BXOR NEQ BNEQ
 (* Grouper pour le type checker *)
 %token ADD MUL DIV MOD SUB
+(* Grouper pour le type checker *)
+%token NOT BNOT
 
 %start program
 %type <Minic_ast.prog> program
@@ -173,20 +175,17 @@ funcall_args:
 ;
 
 bool_op:
+  | NOT a=expression {Not(a)}
   | a=expression LT b=expression  {Lt(a,b)} 
   | a=expression GT b=expression  {Gt(a,b)}
   | a=expression LET b=expression  {Leqt(a,b)}
   | a=expression GET b=expression  {Geqt(a,b)}
   | a=expression EQ b=expression  {Eq(a,b)}
 
-  | a=expression AND b=expression  {And(a,b)}
-  | a=expression BAND b=expression  {BAnd(a,b)}
-  | a=expression OR b=expression  {Or(a,b)}
-  | a=expression BOR b=expression  {BOr(a,b)}
-  | a=expression XOR b=expression  {Xor(a,b)}
-  | a=expression BXOR b=expression  {BXor(a,b)}
   | a=expression NEQ b=expression  {Neq(a,b)}
-  | a=expression BNEQ b=expression  {BNeq(a,b)}
+  | a=expression AND b=expression  {And(a,b)}
+  | a=expression OR b=expression  {Or(a,b)}
+  | a=expression XOR b=expression  {Xor(a,b)}
 ;
 
 int_op:
@@ -197,6 +196,14 @@ int_op:
   | a=expression SUB b=expression  {Sub(a,b)}
 ;
 
+bitwise_op:
+  | BNOT a=expression {BNot(a)}
+  | a=expression BNEQ b=expression  {BNeq(a,b)}
+  | a=expression BAND b=expression  {BAnd(a,b)}
+  | a=expression BOR b=expression  {BOr(a,b)}
+  | a=expression BXOR b=expression  {BXor(a,b)}
+;
+
 expression:
   | f=IDENT LPAR p=funcall_args RPAR {Call(f, p)} 
   | n=CST {Cst(n)}
@@ -205,4 +212,5 @@ expression:
   | LPAR e=expression RPAR {e}
   | bop=bool_op {bop}
   | iop=int_op {iop}
+  | bitop=bitwise_op {bitop}
 ;

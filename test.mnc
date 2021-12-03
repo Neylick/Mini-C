@@ -55,7 +55,8 @@ int main()
 		
 		if(a > b)
 		{
-			if(a < b) return myfun(a,b,c);
+			// if(a < b) return myfun(a,b,c); //This line uncommented raises an error saying the number or parameters doesnt match. 
+			if(a < b) return myfun(a,b); 
 			else return 2;
 		}
 		a = a * (b / c);
@@ -70,7 +71,7 @@ int main()
 	/* OK */
 	// Ok
 
-	if(false || (true && false))
+	if(!false || (true && false))
 	{
 		while(false^false); //while syntax
 		bool b = true; //Redefining variables in different scopes

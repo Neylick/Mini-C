@@ -65,6 +65,8 @@ rule token = parse
   | "{" { BEGIN }
   | "}" { END }
   (* Ops *)
+    | '!' { NOT }
+    | '~' { BNOT }
     | '+' { ADD }
     | '*' { MUL }
     | '/'  { DIV }

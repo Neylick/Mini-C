@@ -10,6 +10,9 @@ type expr =
   | Get of string
   | Call of string * expr list  (* f(a,b,...) *)
   (* Ops *)
+    | Not of expr (* ! *)
+    | BNot of expr (* ~ *)
+
     | Add of expr * expr (* + *)
     | Mul of expr * expr (* * *)
     | Div  of expr * expr (* / *)
