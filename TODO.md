@@ -15,5 +15,6 @@
 - Warning : Missing break **on fallback to default**
 ## Autres parsers
 - Preproc parser : define, if, else, endif, error, ifdef, ifndef, undef, include
+	- Maybe do that in the lexer actually ? 
 - *typecheck*
-- (assm parser : Traduire en assembleur)
+- Assm parser : Traduire en assembleur

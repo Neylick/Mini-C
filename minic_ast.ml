@@ -41,24 +41,24 @@ type expr =
 (* Représentation des instructions et séquences. *)
 type instr =
   | Putchar of expr (* putchar(n); *)
-  | Set of (typ * string * expr)
+  | Set of (typ * string * expr) (* x = 0 *)
   | If of expr * seq * seq (* if (c) { s1 } else { s2 } *)
   | While of expr * seq (* while (c) { s } *)
   | DoWhile of seq * expr (* do { s } while (c) *)
-  | For of seq * expr * seq * seq (* for(s1;c;s2){ s } *)
+  | For of seq * expr * seq * seq (* for(s1; c; s2){ s } *)
   | Switch of expr*(((expr list) * seq) list)*seq  (* switch(e) case a : ... break; default : .... break; *)
   | Scope of seq (* { s } *)
   | Return of expr (* return v; *)
   | Expr of expr
-  | Break
-  | Continue
+  | Break (* break; *)
+  | Continue (* continue; *)
   | Skip (* *)
 and seq = instr list
 
 (* Représentétion des fonctions. *)
 (* 
   Je n'utilise pas de local parce qu'ils n'ont aucun impact hors du code de la fonction. 
-  Les verifications se font donc en interne.
+  (Les verifications se font donc en interne)
 *)
 type fun_def = 
 {
@@ -72,7 +72,7 @@ type fun_def =
   Representation des definitions dans le programmes :
   - Fonction definies comme des fun_def (voir au dessus)
   - Variables globales definies comme des associations de type (typ), identifiant (string) et valeur (expression)
-  Je ne separe pas les deux pour savoir quand ces definitions apparaissent.
+  Je ne separe pas les deux dans le programme pour savoir quand ces definitions apparaissent.
 *)
 type global_scope_def =
   | Function of fun_def

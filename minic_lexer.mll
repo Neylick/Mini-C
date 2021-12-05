@@ -40,13 +40,12 @@ let bindigit = ['0' '1']
 let hexnumber = ("0x" | "0X") hexdigit+   
 let octnumber = '0' octdigit*  
 let binnumber = ("0b" | "0B") bindigit ('_'? bindigit) (* You can put _ between digits in C *)
-let number = (['-']? digit+) | hexnumber |binnumber
+let number = (['-']? digit+) | hexnumber |binnumber (* Ocaml's string_to_int already does the conversion from binary and hex *)
 
 let alpha = ['a'-'z' 'A'-'Z']
 let ident = alpha (alpha | '_' | digit)*
 
-let line_comment = ("//" [^'\n']* '\n') 
-let block_comment = ("/*" _* "*/")
+let line_comment = ("//" [^'\n']* '\n')
 
 rule token = parse
   | ['\n'] { new_line lexbuf; token lexbuf }
