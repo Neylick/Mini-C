@@ -3,9 +3,9 @@ open Minic_ast
 let rec find_return_instr = function
   | Return _ -> true
   | Scope s -> find_return_seq s
-  | If(_, _, []) -> false
-  | If(_, s1, s2) -> find_return_seq s1 && find_return_seq s2
-  | While(_, s) ->  find_return_seq s
+  | If(_, _, Skip) -> false
+  | If(_, i1, i2) -> find_return_instr i1 && find_return_instr i2
+  | While(_, i) ->  find_return_instr i
   | Switch(_, cl, def) -> (find_return_seq def) && (List.fold_left (fun acc (_, seq) -> (find_return_seq seq) && acc) true cl)
   | _ -> false
 and find_return_seq s = List.fold_left (fun acc i -> find_return_instr i || acc) false s
@@ -108,20 +108,20 @@ let typecheck_program (prog: prog) =
           if t <> te  
           then failwith ("[error] \""^i^"\" : value can't match declared type.")
           else Hashtbl.add local_env i (t, v) 
-      | If(c, s1, s2) -> 
+      | If(c, i1, i2) -> 
         let t = type_expr c in
         if t <> Bool then failwith "[error] Non boolean condition in if statement."
         else
         begin
-          typecheck_instr (Scope s1);
-          typecheck_instr (Scope s2);
+          typecheck_instr i1;
+          typecheck_instr i2;
         end
-      | While(c, s) ->  
+      | While(c, i) ->  
         let t = type_expr c in
         if t <> Bool 
         then failwith "[error] Non boolean condition in while loop."
-        else typecheck_instr (Scope s)
-      | DoWhile(s, c) -> typecheck_seq [Scope(s) ; While(c, s)];
+        else typecheck_instr i
+      | DoWhile(i, c) -> typecheck_seq [i ; While(c, i)];
       | For(s1,c,s2, block) ->
         begin (* Makes a separate scope for our for loop*)
         let prev_env = Hashtbl.copy local_env in 
@@ -132,7 +132,7 @@ let typecheck_program (prog: prog) =
           else 
           begin
             typecheck_instr (Scope s2);
-            typecheck_instr (Scope block);
+            typecheck_instr block;
             Hashtbl.iter 
             (
               fun i _ -> 

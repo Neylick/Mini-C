@@ -9,27 +9,35 @@
 %token <bool> BOOL_CST
 %token <string> IDENT
 
-%token WHILE IF ELSE DO FOR
-
-%token SWITCH CASE DEFAULT
-
+%token WHILE DO FOR
+%token IF ELSE SWITCH CASE DEFAULT
 %token BREAK CONTINUE 
-
-%token LPAR RPAR BEGIN END
 %token RETURN SET SEMI SEPARATOR DOTS2
+%token LPAR RPAR BEGIN END
+
+%left RPAR
+%left SEMI
+%right ELSE
+%left CASE DOTS2
+
 %token EOF
 
 %token PUTCHAR
 %token INT BOOL VOID
 
+
 (* Grouper pour le type checker *)
 %token LT GT LET GET EQ
+%left LT GT LET GET EQ
 (* Grouper pour le type checker *)
 %token AND OR BAND BOR XOR BXOR NEQ BNEQ
+%left AND OR BAND BOR XOR BXOR NEQ BNEQ
 (* Grouper pour le type checker *)
 %token ADD MUL DIV MOD SUB
+%left ADD MUL DIV MOD SUB
 (* Grouper pour le type checker *)
 %token NOT BNOT
+%left NOT BNOT
 
 %start program
 %type <Minic_ast.prog> program
@@ -118,33 +126,29 @@ block_case_list :
 
 loop:
   (* While *)
-    (* While(c){s} *)
-    | WHILE LPAR c=expression RPAR BEGIN s = list(instruction) END { While(c,s) }
+    (* While(c) i *)
+    | WHILE LPAR c=expression RPAR i=instruction { While(c,i) }
     (* While(c); *)
-    | WHILE LPAR c=expression RPAR SEMI { While(c, []) }
+    | WHILE LPAR c=expression RPAR SEMI { While(c, Skip) }
   (* Do While *)
     (* do{ s } while( c ); *)
-    | DO BEGIN s = list(instruction) END WHILE LPAR c=expression RPAR SEMI { DoWhile(s,c) }
+    | DO BEGIN i = instruction END WHILE LPAR c=expression RPAR SEMI { DoWhile(i,c) }
   (* For *)
-    | FOR LPAR init_instr=for_seq SEMI cond = expression SEMI incr_instr=for_seq RPAR BEGIN s = list(instruction) END { For(init_instr, cond, incr_instr, s) } 
-    | FOR LPAR init_instr=for_seq SEMI SEMI incr_instr=for_seq RPAR BEGIN s = list(instruction) END { For(init_instr, BCst(true), incr_instr, s) } 
+    | FOR LPAR init_instr=for_seq SEMI cond = expression SEMI incr_instr=for_seq RPAR BEGIN i = instruction END { For(init_instr, cond, incr_instr, i) } 
+    | FOR LPAR init_instr=for_seq SEMI SEMI incr_instr=for_seq RPAR BEGIN i = instruction END { For(init_instr, BCst(true), incr_instr, i) } 
 ;
 
 conditional:
   (* If *)
-    (* if(c) {s1} else {s2}*)
-    | IF LPAR c=expression RPAR BEGIN s1 = list(instruction) END ELSE BEGIN s2 = list(instruction) END { If(c,s1,s2) }
-    (* if(c) {s} *)    
-    | IF LPAR c=expression RPAR BEGIN s = list(instruction) END { If(c, s, []) }
     (* if(c) i1 else i2*)
-    | IF LPAR c=expression RPAR i1 = instruction ELSE i2 = instruction { If(c, [i1], [i2]) } 
+    | IF LPAR c=expression RPAR i1 = instruction ELSE i2 = instruction { If(c, i1, i2) } 
     (* if(c) i*)
-    | IF LPAR c=expression RPAR i = instruction  { If(c, [i], []) } 
+    | IF LPAR c=expression RPAR i = instruction  { If(c, i, Skip) } 
     (* if(c);*)
-    | IF LPAR c=expression RPAR SEMI { If(c, [], []) } 
+    | IF LPAR c=expression RPAR SEMI { If(c, Skip, Skip) } 
   (* Switch *)
     | SWITCH LPAR e=expression RPAR BEGIN cl=block_case_list DEFAULT DOTS2 def=list(instruction) END { Switch(e, cl, def) }
-    | SWITCH LPAR e=expression RPAR BEGIN cl=block_case_list END { Switch(e,cl, []) }
+    | SWITCH LPAR e=expression RPAR BEGIN cl=block_case_list END { Switch(e, cl, []) }
 ;
 
 
@@ -152,7 +156,7 @@ return:
   (* return _; *)
     | RETURN e=expression SEMI { Return(e) }
   (* return(_);*)
-    | RETURN BEGIN e=expression END SEMI { Return(e) }
+    | RETURN LPAR e=expression RPAR SEMI { Return(e) }
   (* return;*)
     | RETURN SEMI { Return(Undef) }
 ;

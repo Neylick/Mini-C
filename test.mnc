@@ -4,7 +4,7 @@ int myfun(int a, int b)
 {
 	switch(a)
 	{
-		//case true : a++; break; This line uncommented raises an error saying the case type doesn't match with switch expression
+		//case true : a++; break; //This line uncommented raises an error saying the case type doesn't match with switch expression
 		case 1 : a++; break;
 		case 2 : a--; break;
 		case 3 :
@@ -55,13 +55,13 @@ int main()
 		
 		if(a > b)
 		{
-			// if(a < b) return myfun(a,b,c); //This line uncommented raises an error saying the number or parameters doesnt match. 
+			//if(a < b) return myfun(a,b,c); //This line uncommented raises an error saying the number or parameters doesnt match. 
 			if(a < b) return myfun(a,b); 
 			else return 2;
 		}
 		a = a * (b / c);
 		
-		for(int i=0; i < 6; i++)
+		for(int i = 0; i < 6; i++)
 		{
 			putchar(i);
 		}
@@ -73,7 +73,7 @@ int main()
 
 	if(!false || (true && false))
 	{
-		while(false^false); //while syntax
+		while(false^false);
 		bool b = true; //Redefining variables in different scopes
 		b = b & b | b;
 		int d = 0;
