@@ -3,7 +3,6 @@ let () =
     try 
       let file = Sys.argv.(arg_idx) in
       let in_channel = open_in file in  
-      Printf.printf "Source %s : Building lexer...\n" file;
       let lexbuf = Lexing.from_channel in_channel in
       
       Printf.printf "Source %s : Creating AST...\n" file;

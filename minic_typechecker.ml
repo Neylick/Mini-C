@@ -26,7 +26,7 @@ let typecheck_program (prog: prog) =
   let rec type_expr = function
     | Cst _ ->  Int
     | BCst _ -> Bool
-    | Undef -> Void 
+    | Undef -> Void
     | Param -> None 
     | Not b -> let t = type_expr b in if t <> Bool then failwith "[error] Boolean operand was given a non boolean expression" else Bool
     | BNot b -> type_expr b
@@ -143,6 +143,10 @@ let typecheck_program (prog: prog) =
           end
         end (* Going out of the for loop *)
       | Switch(comp1, case_list, def) -> 
+        (* 
+          Here we create a scope because we don't have a break notion in the typecheck, 
+          we can't do that in a compiler 
+        *)
         begin
           let t1 = type_expr comp1 in
           begin
@@ -156,16 +160,16 @@ let typecheck_program (prog: prog) =
                       then failwith "[error] Case type mismatch."
                     )
                   comp_list;
-                  typecheck_seq seq
+                  typecheck_instr (Scope seq)
               )
             case_list;
-            typecheck_seq def
+            typecheck_instr (Scope def)
           end
         end
     and typecheck_seq s = List.iter typecheck_instr s 
     in
     (* Typecheck function *)
-      begin (* makes a copy of the local environment to keep only the previously defined variables*)
+      begin (* Makes a copy of the local environment to keep only the previously defined variables*)
         let prev_env = Hashtbl.copy local_env in 
         let _ = List.iter (fun (t, i) -> Hashtbl.add local_env i (t, Param)) fdef.params in
         typecheck_seq (fdef.code);
@@ -173,7 +177,6 @@ let typecheck_program (prog: prog) =
       end
   in
 
-  (* Check for entry point, maybe define a special syntax to define entrypoint name? *)
   if not 
     (List.fold_left 
       (

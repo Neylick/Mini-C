@@ -39,7 +39,7 @@ let bindigit = ['0' '1']
 
 let hexnumber = ("0x" | "0X") hexdigit+   
 let octnumber = '0' octdigit*  
-let binnumber = ("0b" | "0B") bindigit ('_'? bindigit) (* You can put _ between digits in C *)
+let binnumber = ("0b" | "0B") bindigit ('_'? bindigit) (* You can put '_' between binary digits in C *)
 let number = (['-']? digit+) | hexnumber |binnumber (* Ocaml's string_to_int already does the conversion from binary and hex *)
 
 let alpha = ['a'-'z' 'A'-'Z']
@@ -95,3 +95,8 @@ and comment_block = parse
 | "/*" { comment_block lexbuf; comment_block lexbuf}
 | ['\n'] { new_line lexbuf; comment_block lexbuf }
 | _ { comment_block lexbuf }
+
+(* 
+  we don't have an eof case because we don't want to prevent 
+  compilation if comments are not closed 
+*)

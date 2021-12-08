@@ -1,6 +1,13 @@
 %{
   open Lexing
   open Minic_ast
+  
+  let pos = ref dummy_pos
+  let associate_line_char_info node =
+    let pos_str = Printf.sprintf "line %d:%d" !pos.pos_lnum (!pos.pos_cnum - !pos.pos_bol) in 
+    (node, pos_str)
+  
+
 %}
 
 (* Déclaration des lexèmes *)
@@ -43,12 +50,11 @@
 %type <Minic_ast.prog> program
 
 %%
-
 program:
   | p = global_scope_def_list EOF {p}
   | error 
     { 
-        let pos = $startpos in
+        let pos = $startpos in 
         let message = Printf.sprintf "Syntax error at line %d:%d" pos.pos_lnum (pos.pos_cnum - pos.pos_bol) in 
         failwith message 
     }
@@ -60,14 +66,14 @@ global_scope_def_list:
 ;
 
 global_scope_def:
-  | vd = variable_decl_set {Variable(vd)}
-  | fd = function_decl {Function(fd)}
+  | vd = variable_decl_set { (Variable(vd)) }
+  | fd = function_decl { (Function(fd)) }
 ;
 
 typ:
-  | INT { Int }
-  | BOOL { Bool }
-  | VOID { Void }
+  | INT { (Int) }
+  | BOOL { (Bool) }
+  | VOID { (Void) }
 ;
 
 simple_var_decl:
@@ -88,8 +94,8 @@ variable_set:
 ;
 
 variable_decl_set:
-  | set = variable_set SEMI { set }
-  | decl = simple_var_decl SEMI { decl }
+  | set = variable_set SEMI { (set) }
+  | decl = simple_var_decl SEMI { (decl) }
 ;
 
 parameter_list:
