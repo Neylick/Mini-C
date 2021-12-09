@@ -3,12 +3,10 @@
   open Minic_ast
   
   let get_line_col_from_pos pos = (pos.pos_lnum, (pos.pos_cnum - pos.pos_bol))
-
-  let associate_line_char_info node pos =
-    let l,c = (get_line_col_from_pos pos) in 
-    let pos_str = Printf.sprintf "line %d:%d" l c in
-    (node, pos_str)
   
+  let get_pos_string pos = 
+    let l,c = (get_line_col_from_pos pos) in 
+    (Printf.sprintf "line %d:%d" l c)
   
 %}
 
@@ -77,7 +75,7 @@ _expression:
   | bitop=bitwise_op { bitop }
 ;
 
-expression: e=_expression { (associate_line_char_info e $startpos) } ;
+expression: e=_expression { (e , get_pos_string $startpos) } ;
 
 _instruction:
   | l=loop { l }
@@ -90,7 +88,7 @@ _instruction:
   | BREAK SEMI { Break }
 ;
 
-instruction: i = _instruction { (associate_line_char_info i $startpos) } ;
+instruction: i = _instruction { (i , get_pos_string $startpos) } ;
 
 
 global_scope_def_list:
@@ -99,8 +97,8 @@ global_scope_def_list:
 ;
 
 global_scope_def:
-  | vd = variable_decl_set { let v, i = associate_line_char_info vd $startpos in Variable(v,i) }
-  | fd = function_decl { let _, info = associate_line_char_info (fd) $startpos in Function(fd, info) }
+  | vd = variable_decl_set { Variable(vd , get_pos_string $startpos) }
+  | fd = function_decl {Function(fd , get_pos_string $startpos) }
 ;
 
 typ:
@@ -149,8 +147,8 @@ function_decl:
 
 for_seq:
   | { [] }
-  | set=variable_set {[( associate_line_char_info (Set(set)) $startpos )]}
-  | set=variable_set SEPARATOR fs = for_seq {( associate_line_char_info (Set(set)) $startpos )::fs}
+  | set=variable_set {[( Set(set), get_pos_string $startpos )]}
+  | set=variable_set SEPARATOR fs = for_seq {( Set(set), get_pos_string $startpos )::fs}
 ;
 
 expr_case_list:

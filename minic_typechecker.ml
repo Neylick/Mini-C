@@ -2,9 +2,6 @@ open Minic_ast
 
 let init_env_size = 0
 
-let keepleft listOtuples = let (l, _) = List.split listOtuples in l
-let keepright listOtuples = let (_, r) = List.split listOtuples in r
-
 let rec find_return_instr i = 
   let instr, _ = i in
   match instr with
@@ -28,8 +25,7 @@ let typecheck_program (prog: prog) =
     Hashtb, Fonction  : ( name -> {name, code, params, return} * string ) 
   *)
 
-  let global_env = Hashtbl.create init_env_size in
-  let local_env = Hashtbl.create init_env_size in
+  let var_env = Hashtbl.create init_env_size in
   let function_list = Hashtbl.create init_env_size in
 
   let rec type_expr e = 
@@ -67,9 +63,7 @@ let typecheck_program (prog: prog) =
       else t1
     | Get i -> 
       begin
-        try let t, v, _ = Hashtbl.find local_env i in if v = Undef then failwith ("<"^infos^">[error] Variable \""^i^"\" was not initialised") else t
-        with Not_found -> 
-          try let t, v, _= Hashtbl.find global_env i in 
+        try let t, v, _ = Hashtbl.find var_env i in 
           if v = Undef 
           then failwith ("<"^infos^">[error] Variable \""^i^"\" was not initialised") 
           else t
@@ -96,30 +90,25 @@ let typecheck_program (prog: prog) =
       | Return e -> let t = type_expr e in if t <> fdef.return then failwith ("<"^infos^">[error] Function \""^fdef.name^"\": return type doesn't match function declaration.")
       | Scope s ->
         begin (* Makes a copy of the local environment to keep only the previously defined variables*)
-          let prev_env = Hashtbl.copy local_env in 
+          let prev_env = Hashtbl.copy var_env in 
           typecheck_seq s;
-          Hashtbl.iter (fun i _ -> if not (Hashtbl.mem prev_env i) then Hashtbl.remove local_env i) local_env;
+          Hashtbl.iter (fun i _ -> if not (Hashtbl.mem prev_env i) then Hashtbl.remove var_env i) var_env;
         end
       | Set (None, id, e) -> 
         begin
-          try let t, _, varinfo = Hashtbl.find local_env id in let te = type_expr e in  
+          try let t, _, varinfo = Hashtbl.find var_env id in let te = type_expr e in  
             if t <> te  
             then failwith ("<"^infos^">[error] \""^id^"\" : value can't match declared type.")
-            else Hashtbl.replace local_env id (t, fst e , varinfo) 
-          with Not_found -> 
-            try let t, _, varinfo = Hashtbl.find global_env id in let te = type_expr e in 
-              if t <> te  
-              then failwith ("<"^infos^">[error] \""^id^"\" : value can't match declared type.")
-              else Hashtbl.replace global_env id (t, fst e , varinfo) 
-            with Not_found -> failwith ("<"^infos^">[error] Undefined variable \""^id^"\"")
+            else Hashtbl.replace var_env id (t, fst e , varinfo) 
+          with Not_found -> failwith ("<"^infos^">[error] Undefined variable \""^id^"\"")
         end
       | Set (t, id, e) -> 
-        if (Hashtbl.mem local_env id) ||  (Hashtbl.mem global_env id) 
+        if (Hashtbl.mem var_env id)
         then failwith ("<"^infos^">[error] \""^id^"\" : variable declaration duplicate.")
         else let te = type_expr e in 
           if te <> None && t <> te (* Is initialized and has the good type *)
           then failwith ("<"^infos^">[error] \""^id^"\" : value can't match declared type.")
-          else Hashtbl.add local_env id (t, fst e , snd e) 
+          else Hashtbl.add var_env id (t, fst e , snd e) 
       | If(e, i1, i2) -> 
         let t = type_expr e in
         if t <> Bool then failwith ("<"^infos^">[error] Non boolean condition in if statement.")
@@ -132,7 +121,7 @@ let typecheck_program (prog: prog) =
       | DoWhile(i, e) -> typecheck_seq [i ; (While(e, i), infos)];
       | For(s1, e, s2, block) ->
         begin (* Makes a separate scope for our for loop*)
-        let prev_env = Hashtbl.copy local_env in 
+        let prev_env = Hashtbl.copy var_env in 
           typecheck_seq s1; (* The incr seq needs to impact the loop and incrementation seq *)
           let t = type_expr e in
           if t <> Bool 
@@ -145,9 +134,9 @@ let typecheck_program (prog: prog) =
             (
               fun i _ -> 
                 if not (Hashtbl.mem prev_env i) 
-                then Hashtbl.remove local_env i
+                then Hashtbl.remove var_env i
             ) 
-            local_env;
+            var_env;
           end
         end (* Going out of the for loop *)
       | Switch(e, case_list, def) -> 
@@ -178,10 +167,10 @@ let typecheck_program (prog: prog) =
     in
     (* Typecheck function *)
       begin (* Makes a copy of the local environment to keep only the previously defined variables*)
-        let prev_env = Hashtbl.copy local_env in 
-        let _ = List.iter (fun (p, pinfos) -> let pt, pid = p in Hashtbl.add local_env pid (pt, Param, pinfos)) fdef.params in
+        let prev_env = Hashtbl.copy var_env in 
+        let _ = List.iter (fun (p, pinfos) -> let pt, pid = p in Hashtbl.add var_env pid (pt, Param, pinfos)) fdef.params in
         typecheck_seq (fdef.code);
-        Hashtbl.iter (fun i _ -> if not (Hashtbl.mem prev_env i) then Hashtbl.remove local_env i) local_env;
+        Hashtbl.iter (fun i _ -> if not (Hashtbl.mem prev_env i) then Hashtbl.remove var_env i) var_env;
       end
   in
   if not 
@@ -206,19 +195,18 @@ let typecheck_program (prog: prog) =
           then add to globals list.
         *)
         let t,i,e = v in 
-        if (Hashtbl.mem global_env i) 
+        if (Hashtbl.mem var_env i) 
         then failwith ("<"^infos^">[error] \""^i^"\" : variable declaration duplicate.")
         else let te = type_expr e in 
           if t <> te  
           then failwith ("<"^infos^">[error] \""^i^"\" : value can't match declared type.")
-          else Hashtbl.add global_env i (t, fst e, snd e)
+          else Hashtbl.add var_env i (t, fst e, snd e)
       | Function(f, infos) ->  
         (* 
           Assert return exists in all function path then add the function to the list.
           In C, this is just a warning, maybe do the same here ?
           We also check the function code here.
         *)
-        
         if f.return <> Void && not (find_return_seq f.code)
         then failwith ("<"^infos^">[error] Some of the paths of "^f.name^" don't have return.")
         else Hashtbl.add function_list f.name f; 

@@ -3,7 +3,7 @@
 - Check for missing error detection
 - Nothing ? 
 ## Utilitaire
-- Ligne et colonne dans les messages d'erreur du type checker
+- Changer les correspondances des lignes et colonnes sur les differentes instruction (par ex : switch)
 ## Fonctionalites
 - casts 
 - enums
