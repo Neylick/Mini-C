@@ -6,7 +6,7 @@ type typ =
   | None
 
 (* Représentation des expressions.*)
-type expr =
+type _expr =
   | Get of string
   | Call of string * expr list  (* f(a,b,...) *)
   (* Ops *)
@@ -37,9 +37,10 @@ type expr =
   | BCst of bool 
   | Undef (* Utilise pour les variables void et non initialisees *)
   | Param (* Utilise pour les parametres, mais directement passe dans le pattern matching (sauf erreur) *)
+and expr= _expr * string (* with line char info *)
 
 (* Représentation des instructions et séquences. *)
-type instr =
+type _instr =
   | Putchar of expr (* putchar(n); *)
   | Set of (typ * string * expr) (* x = 0 *)
   | If of expr * instr * instr (* if (c) { s1 } else { s2 } *)
@@ -53,9 +54,10 @@ type instr =
   | Break (* break; *)
   | Continue (* continue; *)
   | Skip (* *)
+and instr = _instr * string (* with line char info *)
 and seq = instr list
 
-(* Représentétion des fonctions. *)
+(* Représentation des fonctions. *)
 (* 
   Je n'utilise pas de local parce qu'ils n'ont aucun impact hors du code de la fonction. 
   (Les verifications se font donc en interne)
@@ -63,7 +65,7 @@ and seq = instr list
 type fun_def = 
 {
   name: string;
-  params: (typ * string) list;
+  params: ((typ * string) * string) list;
   return: typ;
   code: seq;
 }
@@ -75,8 +77,8 @@ type fun_def =
   Je ne separe pas les deux dans le programme pour savoir quand ces definitions apparaissent.
 *)
 type global_scope_def =
-  | Function of fun_def
-  | Variable of (typ * string * expr)
+  | Function of fun_def * string
+  | Variable of (typ * string * expr) * string
   
 (* Représentation des programmes. *)
 type prog = global_scope_def list

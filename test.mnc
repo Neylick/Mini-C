@@ -59,6 +59,7 @@ int main()
 			if(a < b) return myfun(a,b); 
 			else return 2;
 		}
+		
 		a = a * (b / c);
 		
 		for(int i = 0; i < 6; i++)

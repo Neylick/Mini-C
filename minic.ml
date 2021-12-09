@@ -6,7 +6,7 @@ let () =
       let lexbuf = Lexing.from_channel in_channel in
       
       Printf.printf "Source %s : Creating AST...\n" file;
-      let ast = Minic_parser.program Minic_lexer.token lexbuf in
+      let ast = Minic_parser.program Minic_lexer.tokenize lexbuf in
       close_in in_channel;
       Printf.printf "Source %s : Verifying AST type...\n" file;
       Minic_typechecker.typecheck_program ast;

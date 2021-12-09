@@ -4,7 +4,7 @@
 
   let resolve_keyword =
     let h = Hashtbl.create 32 in
-    List.iter (fun (str, token) -> Hashtbl.add h str token)
+    List.iter (fun (str, tokenize) -> Hashtbl.add h str tokenize)
     [ 
       (* Obligatoires *)
       "return",   RETURN;
@@ -47,11 +47,11 @@ let ident = alpha (alpha | '_' | digit)*
 
 let line_comment = ("//" [^'\n']* '\n')
 
-rule token = parse
-  | ['\n'] { new_line lexbuf; token lexbuf }
-  | [' ' '\t' '\r']+ { token lexbuf }
-  | line_comment { new_line lexbuf; token lexbuf }
-  | "/*" { comment_block lexbuf; token lexbuf }
+rule tokenize = parse
+  | ['\n'] { new_line lexbuf; tokenize lexbuf }
+  | [' ' '\t' '\r']+ { tokenize lexbuf }
+  | line_comment { new_line lexbuf; tokenize lexbuf }
+  | "/*" { comment_block lexbuf; tokenize lexbuf }
   | octnumber as n { CST(int_of_string ("0o"^n)) } (* Caml has a different syntax for octals, need to do the conversion *)
   | number as n { CST(int_of_string n) }
   | ident as id { resolve_keyword id }
