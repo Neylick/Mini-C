@@ -26,25 +26,24 @@
 - Analyse syntaxique
 - Verification des types (Types de retour, type de parametres, type des variables)
 ## Details d'implementation :
-- Utilisation de Hashmap pour remplacer les "valeurs" apres les initialisation, permettre la sortie du code des expressions et donc l'utilisation pour les variables globales.
+- Utilisation d'une Hashmap pour gerer la notion de changement d'environnements.
 ## Ajouts :
 ### Fonctionnalites
-- Affichage de la position de l'element lie a l'erreur
-- Constante entieres : hexadecimale `0xeFF1c4cE`, octale `0432213` et binaires `0b0_1_0_1_0_1`
+- Constante entieres : hexadecimale `0xeFF1c4cE`, binaires `0b0_1_0_1_0_1` et octale `0432213` (correspondant a `0ox432213` en Caml)
 - Commentaires : `//` ligne et `/*` bloc `*/`
 - Boucles `do while`	et `for`
 - Operation conditionelle `switch`, avec les instructions associees : `break`, `default`, `case`.
 - Instruction `continue` (sans effet dans le typechecker)
 - Instructions `--` et `++` 
-- Formes de `return` alternatives : `return n;` et `return;`
+- Formes de `return` alternatives : `return n;` et `return;` (en plus de `return(n);`) 
 - Formes de `if` alternatives : `if(c) { s1 }` `if(c) i1 else i2` `if(c) i1`
-- Forme de `while` alternative : `while(c);`
+- Forme de `while` alternative : `while(c);` qui boucle a l'infini si aucune instruction est donne et la condition est vraie.
 - Possibilite de verifier le typage de plusieurs fichier source en donnant plusieurs noms de fichier a notre execurable. Arret a la premiere erreur.
 ### Gestion des erreurs
 - Verification de l'existence d'une fonction `main`
 - Verification de l'existence d'un `return` dans une fonction non `void`
 - Verification de l'ordre dans les definitions des **variables globales** et des **fonctions** : *erreur lors de l'utilisation d'un element non defini*
-- Detection des **doubles declarations** de variables avec la definition des **limites des blocs** de code.
+- Detection des **doubles declarations** de variables.
 ## Details d'implementation
 - Ajout d'une chaine de caractere pour les expressions et instructions (et pour les fonctions et variables globales), correspondant a une chaine de characteres "ligne:colonne" donnant une meilleure indication de la source des erreurs.
 - Changement de la representation du programme : liste de declaration arrivant les unes apres les autres, permettant de savoir si une fonction ou une variable est definie a un moment donne.
