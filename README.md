@@ -1,50 +1,53 @@
+This small project is an 3rd year double degree project in compilation made to typecheck and detect errors in small C programs with a few implemented functionalities.
+
+Here are the details
+
 # Implementation
-## Implementation necessaire :
-### Variables Globales
+## Mandatory implementations :
+### Variables (globals or locals)
 - int taille = 64;
-### Fonctions 
+### Functions 
 - int pgcd(int a,int b) { ... }
 ### Instuctions
-- Fonction d'affichage par code ASCII `putchar(n);`
-- Affectation de valeur a une variable `x = n;`
-- Blocs conditionnels `if(c) { s1 } else { s2 }`
-- Boucle conditionnelle `while (c) { s }`
-- Renvoie de valeur des fonctions `return (c);`
+- ASCII display `putchar(n);`
+- Value assignements to variables `x = n;`
+- If statement `if(c) { s1 } else { s2 }`
+- While loop `while (c) { s }`
+- Return in functions `return (c);`
 - expressions
 ### Expressions
-- Constantes booleennes et entieres `42`, `true`... 
-- Operateurs logiques et entiers `+`, `*`, `<` ... 
+- Constants `42`, `true`... 
+- Operators (boolean, integers) `+`, `*`, `<` ... 
 - Variables `x` 
-- Appel de fonction `f(x1,x2...)` 
+- Function calls `f(x1,x2...)` 
 ### Types
-- Entiers `int` 
-- Booleens `bool` 
-- Vide `void`	
+- Integers `int` 
+- Boolean `bool` 
+- Void `void`	
 ### Fonctionnalites
-- Gestion du cas `int n = 0;` (Declaration et initialisation)
-- Analyse lexicale
-- Analyse syntaxique
-- Verification des types (Types de retour, type de parametres, type des variables)
-## Details d'implementation :
-- Utilisation d'une Hashmap pour gerer la notion de changement d'environnements.
+- Declaration & init at once `int n = 0;` 
+- Lexical analysis
+- Syntaxical analysis
+- Typecheck (Return, parameters, Variable assignment)
+## Details :
+- Hashmap are used to emulate environment changes.
 ## Ajouts :
 ### Fonctionnalites
-- Constante entieres : hexadecimale `0xeFF1c4cE`, binaires `0b0_1_0_1_0_1` et octale `0432213` (correspondant a `0ox432213` en Caml)
-- Commentaires : `//` ligne et `/*` bloc `*/`
-- Boucles `do while`	et `for`
-- Operation conditionelle `switch`, avec les instructions associees : `break`, `default`, `case`.
-- Instruction `continue` (sans effet dans le typechecker)
-- Instructions `--` et `++` 
-- Formes de `return` alternatives : `return n;` et `return;` (en plus de `return(n);`) 
-- Formes de `if` alternatives : `if(c) { s1 }` `if(c) i1 else i2` `if(c) i1`
-- Forme de `while` alternative : `while(c);` qui boucle a l'infini si aucune instruction est donne et la condition est vraie.
-- Possibilite de verifier le typage de plusieurs fichier source en donnant plusieurs noms de fichier a notre execurable. Arret a la premiere erreur.
-### Gestion des erreurs
-- Verification de l'existence d'une fonction `main`
-- Verification de l'existence d'un `return` dans une fonction non `void`
-- Verification de l'ordre dans les definitions des **variables globales** et des **fonctions** : *erreur lors de l'utilisation d'un element non defini*
-- Detection des **doubles declarations** de variables.
-## Details d'implementation
-- Ajout d'une chaine de caractere pour les expressions et instructions (et pour les fonctions et variables globales), correspondant a une chaine de characteres "ligne:colonne" donnant une meilleure indication de la source des erreurs.
-- Changement de la representation du programme : liste de declaration arrivant les unes apres les autres, permettant de savoir si une fonction ou une variable est definie a un moment donne.
-- Definition de fonctions d'aide : convertir la position en chaine de charactere dans le generateur d'ast et une fonction indiquant la presence d'un return dans chaque branche du code d'une fonction dans le typechecker.
+- Integer constants : hexa `0xeFF1c4cE`, binary `0b0_1_0_1_0_1` et octals `0432213` (= `0ox432213` in Caml)
+- Comments : `//` line & `/*` bloc `*/`
+- Loops `do while` & `for`
+- Switch statement `switch`, with the associated instructions : `break`, `default`, `case`.
+- Instruction `continue` (no real effect in typechecker)
+- Instructions `--` & `++` 
+- Alternative `return` forms : `return n;` & `return;` & `return(n);`
+- Alternative `if` forms : `if(c) { s1 }` `if(c) i1 else i2` `if(c) i1`
+- Alternative `while` forms : `while(c);` looping forever if c is true
+- Typechecking multiple files at once
+### Errors
+- Asserts `main` exists
+- Assets a `return` statement is placed in every branch of any non `void` function
+- Order of definitions for **global variables** & **functions** : *error when calling undefined variables*
+- Double declaration (functions and variables).
+## Details
+- Error details giving line and column of the error
+- The program is now just instructions followed by one another, instead of variables and functions declaration lists.
